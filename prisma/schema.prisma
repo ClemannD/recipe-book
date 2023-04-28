@@ -11,8 +11,92 @@ datasource db {
     relationMode = "prisma"
 }
 
-model Example {
+model User {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+
+    Household   Household?   @relation(fields: [householdId], references: [id])
+    householdId String?
+    RecipeType  RecipeType[]
+    Recipe      Recipe[]
+    Meal        Meal[]
+    MealPlan    MealPlan[]
+}
+
+model Household {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    name               String  @db.Char(255)
+    onecartHouseholdId String? @db.Char(255)
+
+    users       User[]
+    recipeTypes RecipeType[]
+    Recipe      Recipe[]
+    Meal        Meal[]
+    MealPlan    MealPlan[]
+}
+
+model RecipeType {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdBy User     @relation(fields: [userId], references: [id])
+
+    name  String
+    icon  String
+    color String
+
+    Household   Household? @relation(fields: [householdId], references: [id])
+    householdId String?
+    userId      String
+    Recipes     Recipe[]
+}
+
+model Recipe {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdBy User     @relation(fields: [userId], references: [id])
+
+    name         String
+    recipeTypes  RecipeType[]
+    instructions String       @db.Text
+    imageUrl     String?      @db.MediumText
+
+    Household   Household? @relation(fields: [householdId], references: [id])
+    householdId String?
+    userId      String
+    Meals       Meal[]
+}
+
+model Meal {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdBy User     @relation(fields: [userId], references: [id])
+
+    recipes Recipe[]
+
+    Household   Household? @relation(fields: [householdId], references: [id])
+    householdId String?
+    userId      String
+    MealPlan    MealPlan?  @relation(fields: [mealPlanId], references: [id])
+    mealPlanId  String?
+}
+
+model MealPlan {
+    id        String   @id @default(cuid())
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+    createdBy User     @relation(fields: [userId], references: [id])
+
+    name  String
+    meals Meal[]
+
+    Household   Household? @relation(fields: [householdId], references: [id])
+    householdId String?
+    userId      String
 }
