@@ -1,9 +1,15 @@
-import { z } from "zod";
-
-import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
+import { authenticatedProcedure, createTRPCRouter } from '~/server/api/trpc';
 
 export const householdRouter = createTRPCRouter({
-  getAll: publicProcedure.query(({ ctx }) => {
-    return ctx.prisma.household.findMany();
+  getCurrentUserHousehold: authenticatedProcedure.query(({ ctx }) => {
+    return ctx.prisma.household.findFirst({
+      where: {
+        users: {
+          some: {
+            id: ctx.userId,
+          },
+        },
+      },
+    });
   }),
 });

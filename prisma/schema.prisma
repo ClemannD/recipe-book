@@ -12,16 +12,12 @@ datasource db {
 }
 
 model User {
-    id        String   @id @default(cuid())
+    id        String   @id
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
-    Household   Household?   @relation(fields: [householdId], references: [id])
+    Household   Household? @relation(fields: [householdId], references: [id])
     householdId String?
-    RecipeType  RecipeType[]
-    Recipe      Recipe[]
-    Meal        Meal[]
-    MealPlan    MealPlan[]
 }
 
 model Household {
@@ -34,56 +30,53 @@ model Household {
 
     users       User[]
     recipeTypes RecipeType[]
-    Recipe      Recipe[]
-    Meal        Meal[]
-    MealPlan    MealPlan[]
+    recipes     Recipe[]
+    meals       Meal[]
+    mealPlans   MealPlan[]
 }
 
 model RecipeType {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    createdBy User     @relation(fields: [userId], references: [id])
+    createdBy String
 
     name  String
     icon  String
     color String
 
-    Household   Household? @relation(fields: [householdId], references: [id])
+    household   Household? @relation(fields: [householdId], references: [id])
     householdId String?
-    userId      String
-    Recipes     Recipe[]
+    recipes     Recipe[]
 }
 
 model Recipe {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    createdBy User     @relation(fields: [userId], references: [id])
+    createdBy String
 
     name         String
     recipeTypes  RecipeType[]
     instructions String       @db.Text
     imageUrl     String?      @db.MediumText
 
-    Household   Household? @relation(fields: [householdId], references: [id])
+    household   Household? @relation(fields: [householdId], references: [id])
     householdId String?
-    userId      String
-    Meals       Meal[]
+    meals       Meal[]
 }
 
 model Meal {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    createdBy User     @relation(fields: [userId], references: [id])
+    createdBy String
 
     recipes Recipe[]
 
-    Household   Household? @relation(fields: [householdId], references: [id])
+    household   Household? @relation(fields: [householdId], references: [id])
     householdId String?
-    userId      String
-    MealPlan    MealPlan?  @relation(fields: [mealPlanId], references: [id])
+    mealPlan    MealPlan?  @relation(fields: [mealPlanId], references: [id])
     mealPlanId  String?
 }
 
@@ -91,12 +84,11 @@ model MealPlan {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    createdBy User     @relation(fields: [userId], references: [id])
+    createdBy String
 
     name  String
     meals Meal[]
 
-    Household   Household? @relation(fields: [householdId], references: [id])
+    household   Household? @relation(fields: [householdId], references: [id])
     householdId String?
-    userId      String
 }

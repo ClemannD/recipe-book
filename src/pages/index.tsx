@@ -1,17 +1,61 @@
-import { type NextPage } from "next";
+import { type NextPage } from 'next';
 
-import { api } from "~/utils/api";
-import Layout from "../components/layout";
+import { api } from '~/utils/api';
+import Layout from '../components/layout';
+import { Input } from '../components/forms/input';
+import { Form, Formik } from 'formik';
+import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { Button, ButtonSize } from '../components/button';
 
 const Home: NextPage = () => {
-  const { data } = api.household.getAll.useQuery();
+  const { data: household, isLoading } =
+    api.household.getCurrentUserHousehold.useQuery();
 
-  console.log(data);
+  console.log(household);
+
+  const householdFormSchema = z.object({
+    householdName: z.string().min(1),
+  });
 
   return (
     <>
       <Layout>
-        <main className="flex min-h-screen  bg-gradient-to-b from-[#c9e2f0] to-[#f5f5f5]"></main>
+        <main>
+          {!household && !isLoading && (
+            <div className="flex flex-col items-center justify-center">
+              <div className="mt-10  w-96 rounded-sm bg-white p-4 shadow-lg">
+                <h1 className="text-2xl font-bold">
+                  You are not in a household
+                </h1>
+                <p className="mb-3">Please create one</p>
+
+                <Formik
+                  initialValues={{
+                    householdName: '',
+                  }}
+                  validationSchema={toFormikValidationSchema(
+                    householdFormSchema
+                  )}
+                  onSubmit={async (values) => {
+                    console.log(values);
+                  }}
+                >
+                  <Form>
+                    <Input
+                      label="🏡 Household Name"
+                      name="householdName"
+                    ></Input>
+
+                    <Button type="submit" size={ButtonSize.Block}>
+                      Create
+                    </Button>
+                  </Form>
+                </Formik>
+              </div>
+            </div>
+          )}
+        </main>
       </Layout>
     </>
   );

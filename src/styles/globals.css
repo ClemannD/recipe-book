@@ -1,3 +1,9 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+  @apply bg-gradient-to-b from-sky-100 to-[#f5f5f5];
+
+  overscroll-behavior: none;
+}
