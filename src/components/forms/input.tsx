@@ -1,6 +1,6 @@
 import { useField } from 'formik';
-import { forwardRef, useEffect } from 'react';
-import { Label } from './label';
+import { forwardRef } from 'react';
+import Label from './label';
 
 export type InputProps = {
   label?: string;
@@ -19,38 +19,37 @@ export type InputProps = {
   style?: React.CSSProperties;
 };
 
-export const Input = forwardRef(
-  (
-    {
-      label,
-      subLabel,
-      errorMessage,
-      hideErrorMessage,
-      style,
-      ...props
-    }: InputProps,
-    ref: React.Ref<HTMLInputElement>
-  ) => {
-    const [field, meta] = useField(props);
+const Input = (
+  {
+    label,
+    subLabel,
+    errorMessage,
+    hideErrorMessage,
+    style,
+    ...props
+  }: InputProps,
+  ref: React.Ref<HTMLInputElement>
+) => {
+  const [field, meta] = useField(props);
 
-    return (
-      <div
-        className={`
+  return (
+    <div
+      className={`
             mb-6
             ${hideErrorMessage ? 'mb-0' : ''} 
             ${(meta.touched && meta.error) || errorMessage ? 'mb-2' : ''}
         `}
-      >
-        {label && (
-          <Label
-            label={label}
-            subLabel={subLabel}
-            id={props.id || props.name}
-          ></Label>
-        )}
-        <input
-          ref={ref}
-          className={`
+    >
+      {label && (
+        <Label
+          label={label}
+          subLabel={subLabel}
+          id={props.id || props.name}
+        ></Label>
+      )}
+      <input
+        ref={ref}
+        className={`
             h-10
             w-full
             rounded-sm
@@ -69,15 +68,15 @@ export const Input = forwardRef(
             disabled:cursor-not-allowed
             disabled:bg-gray-400
         `}
-          {...field}
-          {...props}
-        />
-        {!hideErrorMessage && ((meta.touched && meta.error) || errorMessage) ? (
-          <div className="mt-1 text-sm text-red-600">
-            {meta.error || errorMessage}
-          </div>
-        ) : null}
-      </div>
-    );
-  }
-);
+        {...field}
+        {...props}
+      />
+      {!hideErrorMessage && ((meta.touched && meta.error) || errorMessage) ? (
+        <div className="mt-1 text-sm text-red-600">
+          {meta.error || errorMessage}
+        </div>
+      ) : null}
+    </div>
+  );
+};
+export default forwardRef(Input);

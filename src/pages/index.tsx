@@ -2,11 +2,11 @@ import { type NextPage } from 'next';
 
 import { api } from '~/utils/api';
 import Layout from '../components/layout';
-import { Input } from '../components/forms/input';
 import { Form, Formik } from 'formik';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { Button, ButtonSize } from '../components/button';
+import Input from '../components/forms/input';
+import Button, { ButtonSize } from '../components/button';
 
 const Home: NextPage = () => {
   const { data: household, isLoading } =
@@ -37,7 +37,7 @@ const Home: NextPage = () => {
                   validationSchema={toFormikValidationSchema(
                     householdFormSchema
                   )}
-                  onSubmit={async (values) => {
+                  onSubmit={(values) => {
                     console.log(values);
                   }}
                 >

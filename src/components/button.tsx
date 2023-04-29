@@ -1,4 +1,4 @@
-import { CSSProperties, MutableRefObject } from 'react';
+import type { CSSProperties, KeyboardEvent, MutableRefObject } from 'react';
 
 export enum ButtonAppearance {
   Primary = 'primary',
@@ -66,7 +66,7 @@ export type ButtonProps = {
   onBlur?: (event: any) => void;
 };
 
-export function Button({
+const Button = ({
   type = 'button',
   clickHandler = () => {},
   appearance = ButtonAppearance.Primary,
@@ -82,7 +82,7 @@ export function Button({
   children,
   onFocus,
   onBlur,
-}: ButtonProps) {
+}: ButtonProps) => {
   return (
     <button
       id={id}
@@ -110,7 +110,7 @@ export function Button({
       onClick={isDisabled || isSubmitting ? () => {} : clickHandler}
       onFocus={onFocus}
       onBlur={onBlur}
-      onKeyDown={(event: any) => {
+      onKeyDown={(event: KeyboardEvent) => {
         if (event.key === 'Enter') {
           clickHandler(event);
           event.stopPropagation();
@@ -120,4 +120,6 @@ export function Button({
       {isSubmitting ? <span>{isSubmittingText || 'Loading..'}</span> : children}
     </button>
   );
-}
+};
+
+export default Button;
