@@ -1,5 +1,7 @@
 import { UserButton, useUser } from '@clerk/nextjs';
 import Head from 'next/head';
+import Link from 'next/link';
+import { Skeleton } from './ui/skeleton';
 
 const Layout = (props: { children: React.ReactNode; title?: string }) => {
   const user = useUser();
@@ -38,12 +40,37 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
             <h1 className="text-3xl font-bold">Recipe Book</h1>
           </div>
           <div className="flex h-20 items-center justify-center">
-            <UserButton /> <div className="ml-3">{user.user?.fullName}</div>
+            {user ? (
+              <>
+                <UserButton /> <div className="ml-3">{user.user?.fullName}</div>
+              </>
+            ) : (
+              <Skeleton className="h-10 w-40" />
+            )}
+          </div>
+
+          <div className="flex flex-col items-center justify-center gap-y-3 p-6">
+            <NavItem href="/">Home</NavItem>
+            <NavItem href="/recipes">Recipes</NavItem>
+            <NavItem href="/recipe-types">Recipe Types</NavItem>
           </div>
         </div>
-        <div className="flex-grow">{props.children}</div>
+        <div className="max-h-screen flex-grow overflow-y-auto">
+          {props.children}
+        </div>
       </div>
     </>
+  );
+};
+
+const NavItem = (props: { href: string; children: React.ReactNode }) => {
+  return (
+    <Link
+      href={props.href}
+      className="flex h-10 w-full items-center justify-center rounded text-lg font-medium text-slate-900 transition-colors ease-in-out hover:bg-slate-200"
+    >
+      {props.children}
+    </Link>
   );
 };
 

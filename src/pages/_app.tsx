@@ -10,7 +10,7 @@ import '~/styles/globals.css';
 import { api } from '~/utils/api';
 import { Toaster } from '../components/ui/toast/toaster';
 
-const publicPages = ['/sign-in/[[...index]]', '/sign-up/[[...index]]'];
+const publicPages = ['/sign-in/[[...index]]', '/sign-up/[[...index]]', '/'];
 
 function MyApp({ Component, pageProps }: AppProps) {
   // Get the pathname
