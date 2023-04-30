@@ -5,10 +5,10 @@ import { BarLoader } from 'react-spinners';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { api } from '~/utils/api';
-import Button, { ButtonSize } from '../components/button';
-import Input from '../components/forms/input';
-import Layout from '../components/layout';
-import RecipeForm from '../components/recipe-form';
+import Button, { ButtonSize } from '../../components/button';
+import Input from '../../components/forms/input';
+import Layout from '../../components/layout';
+import RecipeForm from '../../components/recipe-form';
 import { useState } from 'react';
 
 const Home: NextPage = () => {
