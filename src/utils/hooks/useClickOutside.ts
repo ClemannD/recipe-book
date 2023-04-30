@@ -1,7 +1,7 @@
-import { type MutableRefObject, useEffect } from 'react';
+import { type RefObject, useEffect } from 'react';
 
 function useClickOutside(
-  ref: MutableRefObject<HTMLDivElement>,
+  ref: RefObject<HTMLDivElement> | null,
   callback: () => void
 ) {
   useEffect(() => {
@@ -9,7 +9,7 @@ function useClickOutside(
      * Alert if clicked on outside of element
      */
     function handleClickOutside(event: MouseEvent) {
-      if (ref.current && !ref.current.contains(event.target as Node)) {
+      if (ref?.current && !ref.current.contains(event.target as Node)) {
         callback();
       }
     }
