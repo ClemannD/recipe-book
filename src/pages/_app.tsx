@@ -1,17 +1,16 @@
-import { AppProps, type AppType } from "next/app";
-
-import { api } from "~/utils/api";
-
-import "~/styles/globals.css";
 import {
   ClerkProvider,
   RedirectToSignIn,
   SignedIn,
   SignedOut,
-} from "@clerk/nextjs";
-import { useRouter } from "next/router";
+} from '@clerk/nextjs';
+import type { AppProps } from 'next/app';
+import { useRouter } from 'next/router';
+import '~/styles/globals.css';
+import { api } from '~/utils/api';
+import { Toaster } from '../components/ui/toast/toaster';
 
-const publicPages = ["/sign-in/[[...index]]", "/sign-up/[[...index]]"];
+const publicPages = ['/sign-in/[[...index]]', '/sign-up/[[...index]]'];
 
 function MyApp({ Component, pageProps }: AppProps) {
   // Get the pathname
@@ -30,6 +29,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         <>
           <SignedIn>
             <Component {...pageProps} />
+            <Toaster />
           </SignedIn>
           <SignedOut>
             <RedirectToSignIn />

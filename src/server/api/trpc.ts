@@ -35,6 +35,9 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
   return {
     prisma,
     userId: authSession.userId,
+    householdId: (authSession.user?.privateMetadata.householdId ?? null) as
+      | string
+      | null,
   };
 };
 
@@ -48,7 +51,7 @@ export const createTRPCContext = (opts: CreateNextContextOptions) => {
 import { TRPCError, initTRPC } from '@trpc/server';
 import superjson from 'superjson';
 import { ZodError } from 'zod';
-import { getAuth } from '@clerk/nextjs/server';
+import { clerkClient, getAuth } from '@clerk/nextjs/server';
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -91,7 +94,8 @@ const enforceUserIdAuthenticated = t.middleware(async ({ ctx, next }) => {
   if (!ctx.userId) {
     throw new TRPCError({
       code: 'UNAUTHORIZED',
-      message: 'You must be logged in to access this.',
+      message:
+        '[enforceUserIdAuthenticated] You must be logged in to access this.',
     });
   }
 
@@ -117,6 +121,47 @@ const enforceUserIdAuthenticated = t.middleware(async ({ ctx, next }) => {
   });
 });
 
+const setUserHouseholdId = t.middleware(async ({ ctx, next }) => {
+  if (!ctx.userId) {
+    throw new TRPCError({
+      code: 'UNAUTHORIZED',
+      message:
+        '[setUserHouseholdId middleware] You must be logged in to access this.',
+    });
+  }
+
+  let householdId = ctx.householdId;
+  if (!householdId) {
+    const user = await prisma.user.findUnique({
+      where: {
+        id: ctx.userId,
+      },
+    });
+
+    if (!user) {
+      throw new TRPCError({
+        code: 'INTERNAL_SERVER_ERROR',
+        message: '[setUserHouseholdId middleware] User not found',
+      });
+    }
+
+    householdId = user.householdId;
+
+    await clerkClient.users.updateUserMetadata(ctx.userId, {
+      privateMetadata: {
+        householdId: user.householdId,
+      },
+    });
+  }
+
+  return next({
+    ctx: {
+      userId: ctx.userId,
+      householdId,
+    },
+  });
+});
+
 /**
  * Authenticated procedure
  *
@@ -124,6 +169,6 @@ const enforceUserIdAuthenticated = t.middleware(async ({ ctx, next }) => {
  * guarantee that a user querying is authorized, but you can still access user session data if they
  * are logged in.
  */
-export const authenticatedProcedure = t.procedure.use(
-  enforceUserIdAuthenticated
-);
+export const authenticatedProcedure = t.procedure
+  .use(enforceUserIdAuthenticated)
+  .use(setUserHouseholdId);

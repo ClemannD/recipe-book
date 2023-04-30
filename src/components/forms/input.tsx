@@ -1,6 +1,7 @@
 import { useField } from 'formik';
 import { forwardRef } from 'react';
 import Label from './label';
+import { cn } from '../../utils/cn';
 
 export type InputProps = {
   label?: string;
@@ -16,7 +17,8 @@ export type InputProps = {
   autoFocus?: boolean;
   max?: number;
   min?: number;
-  style?: React.CSSProperties;
+  className?: string;
+  inputClassName?: string;
 };
 
 const Input = (
@@ -25,7 +27,8 @@ const Input = (
     subLabel,
     errorMessage,
     hideErrorMessage,
-    style,
+    className = '',
+    inputClassName = '',
     ...props
   }: InputProps,
   ref: React.Ref<HTMLInputElement>
@@ -34,11 +37,14 @@ const Input = (
 
   return (
     <div
-      className={`
+      className={cn(
+        `
             mb-6
             ${hideErrorMessage ? 'mb-0' : ''} 
             ${(meta.touched && meta.error) || errorMessage ? 'mb-2' : ''}
-        `}
+        `,
+        className
+      )}
     >
       {label && (
         <Label
@@ -49,25 +55,11 @@ const Input = (
       )}
       <input
         ref={ref}
-        className={`
-            h-10
-            w-full
-            rounded-sm
-            border
-            border-gray-300
-            px-3
-            py-0
-            text-base
-            focus:border-sky-600
-            focus:outline-none
-            ${
-              (meta.touched && meta.error) || errorMessage
-                ? 'border-red-600'
-                : ''
-            }
-            disabled:cursor-not-allowed
-            disabled:bg-gray-400
-        `}
+        className={cn(
+          'flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+          inputClassName
+        )}
+        onClick={(e) => e.stopPropagation()}
         {...field}
         {...props}
       />

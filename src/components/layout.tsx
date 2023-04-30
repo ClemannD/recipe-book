@@ -1,7 +1,9 @@
-import { UserButton } from '@clerk/nextjs';
+import { UserButton, useUser } from '@clerk/nextjs';
 import Head from 'next/head';
 
 const Layout = (props: { children: React.ReactNode; title?: string }) => {
+  const user = useUser();
+
   return (
     <>
       <Head>
@@ -16,13 +18,27 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
             </svg>"
         ></link>
       </Head>
-      <div className="flex min-h-screen flex-col">
+
+      {/* <div className="flex min-h-screen flex-col">
         <div className="flex h-16 w-full flex-row items-center justify-between bg-white px-4 shadow-sm">
           <div className="flex items-center">
             <h1 className="text-2xl font-bold">🥘📖 Recipe Book</h1>
           </div>
           <div className="flex items-center">
             <UserButton />
+          </div>
+        </div>
+        <div className="flex-grow">{props.children}</div>
+      </div> */}
+
+      <div className="flex">
+        <div className="flex h-screen w-72 min-w-[18rem] flex-col bg-zinc-50 shadow-lg">
+          <div className="flex flex-col items-center justify-center py-6">
+            <p className="mb-4 text-5xl">🥘 📖</p>
+            <h1 className="text-3xl font-bold">Recipe Book</h1>
+          </div>
+          <div className="flex h-20 items-center justify-center">
+            <UserButton /> <div className="ml-3">{user.user?.fullName}</div>
           </div>
         </div>
         <div className="flex-grow">{props.children}</div>

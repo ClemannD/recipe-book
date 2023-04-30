@@ -14,10 +14,10 @@ export enum ButtonAppearance {
 
 const appearanceStyles: Record<ButtonAppearance, string> = {
   primary: `
-    bg-sky-500
+    bg-teal-700
     text-white
     shadow-sm
-    hover:bg-sky-600
+    hover:bg-teal-600
     disabled:bg-gray-300
     disabled:text-gray-500
     disabled:border-gray-800
@@ -91,7 +91,7 @@ const Button = ({
       style={style}
       className={`
         flex
-        h-10
+        h-8
         cursor-pointer
         items-center
         justify-center
@@ -106,6 +106,7 @@ const Button = ({
         ease-in-out
         ${appearanceStyles[appearance]}
         ${sizeStyles[size]}
+        ${className}
       `}
       onClick={isDisabled || isSubmitting ? () => {} : clickHandler}
       onFocus={onFocus}
