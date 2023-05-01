@@ -30,7 +30,7 @@ const RecipeTypePage: React.FC = () => {
     <Layout>
       <div className="p-10">
         <h1 className="text-3xl font-bold">Recipe Types</h1>
-        <h2 className="mt-2 text-xl text-gray-600">
+        <h2 className="mt-1 text-xl text-gray-600">
           Recipe Types are used to categorize your recipes
         </h2>
 

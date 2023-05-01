@@ -109,7 +109,7 @@ const Home: NextPage = () => {
                   p-10
                   `}
                 >
-                  {isSideExpanded && <RecipeForm />}
+                  {/* {isSideExpanded && <RecipeForm />} */}
                 </div>
               </div>
             </div>

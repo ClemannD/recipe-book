@@ -3,6 +3,42 @@ import { createTRPCRouter, authenticatedProcedure } from '../trpc';
 import { TRPCError } from '@trpc/server';
 
 export const recipeRouter = createTRPCRouter({
+  getRecipe: authenticatedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      if (!ctx.householdId) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You must be in a household to create a recipe',
+        });
+      }
+
+      console.log(
+        `🔎 Getting recipe with id ${input.id} for user ${
+          ctx.userId
+        } and householdId ${ctx.householdId ?? ''}...`
+      );
+
+      const recipe = await ctx.prisma.recipe.findUnique({
+        where: {
+          id: input.id,
+        },
+        include: {
+          ingredients: true,
+          recipeTypes: true,
+        },
+      });
+
+      if (!recipe) {
+        throw new TRPCError({
+          code: 'NOT_FOUND',
+          message: `Recipe with id ${input.id} not found`,
+        });
+      }
+
+      return recipe;
+    }),
+
   getRecipes: authenticatedProcedure.query(({ ctx }) => {
     if (!ctx.householdId) {
       throw new TRPCError({
@@ -95,6 +131,7 @@ export const recipeRouter = createTRPCRouter({
         recipeTypeIds: z.array(z.string()).optional(),
         ingredients: z.array(
           z.object({
+            id: z.string().optional(),
             name: z.string().min(1),
             quantity: z.number(),
             unit: z.string().min(1),
@@ -123,9 +160,32 @@ export const recipeRouter = createTRPCRouter({
           instructions: input.instructions,
           imageUrl: input.imageUrl,
           ingredients: {
-            create: input.ingredients,
+            deleteMany: {
+              recipeId: input.id,
+              NOT: input.ingredients
+                .filter((ingredient) => ingredient.id)
+                .map((ingredient) => ({
+                  id: ingredient.id,
+                })),
+            },
+            upsert: input.ingredients.map((ingredient) => ({
+              where: {
+                id: ingredient.id ?? '',
+              },
+              create: {
+                name: ingredient.name,
+                quantity: ingredient.quantity,
+                unit: ingredient.unit,
+              },
+              update: {
+                name: ingredient.name,
+                quantity: ingredient.quantity,
+                unit: ingredient.unit,
+              },
+            })),
           },
           recipeTypes: {
+            set: [],
             connect: input.recipeTypeIds?.map((id) => ({ id })),
           },
         },

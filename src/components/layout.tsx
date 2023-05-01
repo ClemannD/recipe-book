@@ -34,7 +34,7 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
       </div> */}
 
       <div className="flex">
-        <div className="flex h-screen w-72 min-w-[18rem] flex-col bg-zinc-50 shadow-lg">
+        <div className="flex h-screen w-72 min-w-[18rem] flex-col bg-white shadow-lg">
           <div className="flex flex-col items-center justify-center py-6">
             <p className="mb-4 text-5xl">🥘 📖</p>
             <h1 className="text-3xl font-bold">Recipe Book</h1>
