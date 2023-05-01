@@ -38,7 +38,7 @@ const RecipesPage = () => {
   return (
     <Layout>
       <div className="flex">
-        <div className="min-w-[550px] flex-grow p-10">
+        <div className="max-h-screen min-w-[550px] flex-grow overflow-y-auto p-10">
           <div className="flex items-end justify-between">
             <div>
               <h1 className="text-3xl font-bold">Recipes</h1>
