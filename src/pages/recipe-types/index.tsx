@@ -17,7 +17,6 @@ import {
 import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../components/ui/toast/use-toast';
 import { api } from '../../utils/api';
-import useClickOutside from '../../utils/hooks/useClickOutside';
 
 const RecipeTypePage: React.FC = () => {
   const {
@@ -80,10 +79,15 @@ const RecipeTypeBox = ({
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  // const [targetIdsToIgnore, setTargetIdsToIgnore] = useState<string[]>([]);
 
-  useClickOutside(ref, () => {
-    setIsEditing(false);
-  });
+  // useClickOutside(
+  //   ref,
+  //   () => {
+  //     setIsEditing(false);
+  //   },
+  //   targetIdsToIgnore
+  // );
 
   return (
     <div
@@ -98,7 +102,14 @@ const RecipeTypeBox = ({
       }}
     >
       {isEditing || !recipeType ? (
-        <RecipeTypeForm recipeType={recipeType} onSubmitted={onSubmitted} />
+        <RecipeTypeForm
+          recipeType={recipeType}
+          onSubmitted={onSubmitted}
+          // setEmojiPickerTargetId={(targetId) => {
+          //   console.log('targetId', targetId);
+          //   setTargetIdsToIgnore((prev) => [...prev, targetId]);
+          // }}
+        />
       ) : (
         <>
           <div className="mr-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-200 p-2 text-4xl">
@@ -121,11 +132,21 @@ const Picker = dynamic(
 const RecipeTypeForm = ({
   recipeType,
   onSubmitted,
-}: {
+}: // setEmojiPickerTargetId,
+{
   recipeType?: RecipeType;
   onSubmitted: () => Promise<void>;
+  // setEmojiPickerTargetId: (id: string) => void;
 }) => {
   const { toast } = useToast();
+
+  // const emojiPickerRef = useRef<HTMLElement>(null);
+
+  // useEffect(() => {
+  //   if (emojiPickerRef.current) {
+  //     setEmojiPickerTargetId(emojiPickerRef.current.id);
+  //   }
+  // }, [emojiPickerRef.current?.id]);
 
   const recipeTypeSchema = z.object({
     name: z.string().nonempty(),
@@ -195,25 +216,35 @@ const RecipeTypeForm = ({
                     {values.icon}
                   </div>
                 </PopoverTrigger>
-                <PopoverContent className="w-auto border-none p-0">
-                  <Picker
-                    onEmojiClick={(emoji) => {
-                      setFieldValue('icon', emoji.emoji);
-                      setIsPopoverOpen(false);
-                    }}
-                    searchDisabled
-                    skinTonesDisabled
-                    categories={[
-                      {
-                        name: 'Food & Drink',
-                        category: Categories.FOOD_DRINK,
-                      },
-                      {
-                        name: 'Animals',
-                        category: Categories.ANIMALS_NATURE,
-                      },
-                    ]}
-                  />
+                <PopoverContent
+                  className="w-auto border-none p-0"
+                  // ref={emojiPickerRef}
+                >
+                  <div>
+                    <Picker
+                      onEmojiClick={(emoji, e: MouseEvent) => {
+                        console.log('emoji', emoji);
+                        setFieldValue('icon', emoji.emoji);
+                        setIsPopoverOpen(false);
+                      }}
+                      // searchDisabled
+                      skinTonesDisabled
+                      categories={[
+                        {
+                          name: 'Food & Drink',
+                          category: Categories.FOOD_DRINK,
+                        },
+                        {
+                          name: 'Animals',
+                          category: Categories.ANIMALS_NATURE,
+                        },
+                        {
+                          name: 'Objects',
+                          category: Categories.OBJECTS,
+                        },
+                      ]}
+                    />
+                  </div>
                 </PopoverContent>
               </Popover>
 

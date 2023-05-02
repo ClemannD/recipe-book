@@ -1,15 +1,14 @@
 import { type Ingredient, type Recipe, type RecipeType } from '@prisma/client';
 import clsx from 'clsx';
 import { ArrowRight } from 'lucide-react';
-import { use, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import Layout from '../../components/layout';
 import RecipeForm from '../../components/recipe-form';
 import { Button } from '../../components/ui/button';
+import { PlainInput } from '../../components/ui/input-plain';
 import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../components/ui/toast/use-toast';
 import { api } from '../../utils/api';
-import Input from '../../components/forms/input';
-import { PlainInput } from '../../components/ui/input-plain';
 
 export type FullRecipe = Recipe & {
   recipeTypes: RecipeType[];
@@ -20,8 +19,6 @@ const RecipesPage = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<FullRecipe | null>(null);
   const [editingRecipe, setEditingRecipe] = useState<FullRecipe | null>(null);
-
-  const [showFilters, setShowFilters] = useState(false);
 
   const [search, setSearch] = useState('');
   const [recipeTypeFilter, setRecipeTypeFilter] = useState<string[] | null>(
