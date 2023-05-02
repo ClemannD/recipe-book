@@ -1,13 +1,15 @@
 import { type Ingredient, type Recipe, type RecipeType } from '@prisma/client';
 import clsx from 'clsx';
 import { ArrowRight } from 'lucide-react';
-import { useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import Layout from '../../components/layout';
 import RecipeForm from '../../components/recipe-form';
 import { Button } from '../../components/ui/button';
 import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../components/ui/toast/use-toast';
 import { api } from '../../utils/api';
+import Input from '../../components/forms/input';
+import { PlainInput } from '../../components/ui/input-plain';
 
 export type FullRecipe = Recipe & {
   recipeTypes: RecipeType[];
@@ -19,34 +21,94 @@ const RecipesPage = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<FullRecipe | null>(null);
   const [editingRecipe, setEditingRecipe] = useState<FullRecipe | null>(null);
 
+  const [showFilters, setShowFilters] = useState(false);
+
+  const [search, setSearch] = useState('');
+  const [recipeTypeFilter, setRecipeTypeFilter] = useState<string[] | null>(
+    null
+  );
+  const [recipes, setRecipes] = useState<FullRecipe[] | null>(null);
+
   const {
-    data: recipes,
+    data: recipesData,
     isLoading,
     refetch: refetchRecipes,
-  } = api.recipe.getRecipes.useQuery(undefined, {
-    onSuccess: (data) => {
-      if (selectedRecipe) {
-        setSelectedRecipe(
-          data.find((recipe) => recipe.id === selectedRecipe.id) || null
-        );
+  } = api.recipe.getRecipes.useQuery();
+
+  const {
+    data: recipeTypes,
+    // isLoading,
+    // refetch,
+  } = api.recipeType.getRecipeTypes.useQuery();
+
+  useEffect(() => {
+    if (selectedRecipe) {
+      setSelectedRecipe(
+        recipesData?.find((recipe) => recipe.id === selectedRecipe.id) || null
+      );
+    }
+  }, [recipesData, selectedRecipe]);
+
+  useEffect(() => {
+    if (recipesData) {
+      setRecipes(recipesData);
+    }
+  }, [recipesData]);
+
+  useEffect(() => {
+    if (recipesData) {
+      let recipesToShow = recipesData;
+
+      if (search) {
+        recipesToShow =
+          recipesData?.filter(
+            (recipe) =>
+              recipe.name.toLowerCase().includes(search.toLowerCase()) ||
+              recipe.ingredients.some((ingredient) =>
+                ingredient.name.toLowerCase().includes(search.toLowerCase())
+              ) ||
+              recipe.recipeTypes.some((recipeType) =>
+                recipeType.name.toLowerCase().includes(search.toLowerCase())
+              )
+          ) || null;
       }
-    },
-  });
+
+      if (recipeTypeFilter?.length ?? 0 > 0) {
+        recipesToShow =
+          recipesToShow?.filter((recipe) =>
+            recipeTypeFilter?.every((recipeTypeId) =>
+              recipe.recipeTypes.some(
+                (recipeType) => recipeType.id === recipeTypeId
+              )
+            )
+          ) || null;
+      }
+
+      setRecipes(recipesToShow);
+    }
+  }, [recipesData, search, recipeTypeFilter]);
 
   const { toast, dismiss } = useToast();
 
   return (
     <Layout>
       <div className="flex">
-        <div className="max-h-screen min-w-[550px] flex-grow overflow-y-auto p-10">
-          <div className="flex items-end justify-between">
+        <div className="max-h-screen min-w-[550px] flex-grow overflow-y-auto p-10 ">
+          <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
             <div>
-              <h1 className="text-3xl font-bold">Recipes</h1>
-              <h2 className="mt-1 text-xl text-gray-600">
-                Your collection of recipes
-              </h2>
+              <h1 className="text-2xl font-bold">Recipes</h1>
+              <h2 className="mt-1 text-gray-600">Your collection of recipes</h2>
             </div>
-            <div>
+            <div className="flex flex-grow justify-end gap-4">
+              <PlainInput
+                placeholder="🔎 Search"
+                value={search}
+                className="w-96"
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                }}
+              />
+
               <Button
                 onClick={() => {
                   setIsCreating(true);
@@ -58,7 +120,45 @@ const RecipesPage = () => {
             </div>
           </div>
 
-          <div className="mt-10">
+          {/* <div
+            className={clsx(
+              ' w-full overflow-hidden rounded bg-white shadow-sm transition-all duration-300 ease-in-out',
+              showFilters ? 'mb-6 h-36' : 'h-0'
+            )}
+          > */}
+          <div className="mb-6 flex flex-wrap gap-2">
+            {recipeTypes?.map((recipeType) => (
+              <div
+                className={clsx(
+                  'flex h-6 w-auto cursor-pointer items-center justify-center rounded-full  p-2 text-sm tracking-wide transition-all ease-in-out hover:scale-105',
+                  recipeTypeFilter?.includes(recipeType.id)
+                    ? 'bg-slate-900 text-white'
+                    : 'bg-white'
+                )}
+                key={recipeType.id + recipeType.name + recipeType.icon}
+                onClick={() => {
+                  if (recipeTypeFilter?.includes(recipeType.id)) {
+                    setRecipeTypeFilter(
+                      recipeTypeFilter?.filter((id) => id !== recipeType.id)
+                    );
+                  } else {
+                    setRecipeTypeFilter([
+                      ...(recipeTypeFilter || []),
+                      recipeType.id,
+                    ]);
+                  }
+                }}
+              >
+                {recipeType.icon}{' '}
+                <span className="ml-2 text-xs font-medium ">
+                  {recipeType.name}
+                </span>
+              </div>
+            ))}
+          </div>
+          {/* </div> */}
+
+          <div className="">
             <div
               className={clsx(
                 // `grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3`
@@ -120,7 +220,7 @@ const RecipesPage = () => {
           className={clsx(
             `relative h-screen max-h-screen max-w-[700px] overflow-y-auto bg-white shadow-lg transition-all duration-500 ease-in-out`,
             selectedRecipe || isCreating || editingRecipe
-              ? 'w-[700px] min-w-[700px]'
+              ? 'w-[600px] min-w-[600px]'
               : 'w-0 min-w-0'
           )}
         >
@@ -169,23 +269,23 @@ const RecipeCard = ({
 }) => {
   return (
     <div
-      className="flex max-h-[150px] min-w-[400px] max-w-[600px] flex-1 cursor-pointer rounded bg-white shadow-sm transition-all ease-in-out hover:scale-[1.02]"
+      className="flex max-h-[130px] min-w-[400px] flex-1 cursor-pointer rounded bg-white shadow-sm transition-all ease-in-out hover:scale-[1.02]"
       onClick={onClick}
     >
       <div>
         <img
-          className="h-[150px] w-[150px] min-w-[150px] rounded-l object-cover"
+          className="h-[130px] w-[130px] min-w-[130px] rounded-l object-cover"
           src={recipe.imageUrl!}
           alt={recipe.name}
         />
       </div>
-      <div className="flex flex-col  p-4">
-        <h3 className="mb-2 text-xl font-bold">{recipe.name}</h3>
+      <div className="flex flex-col p-3">
+        <h3 className="mb-2 text-lg font-bold">{recipe.name}</h3>
 
         <div className="flex flex-wrap gap-2">
           {recipe.recipeTypes.map((recipeType) => (
             <div
-              className="flex h-6 w-auto items-center justify-center rounded-full bg-slate-200 p-2 text-sm tracking-wide "
+              className="flex h-6 w-auto items-center justify-center rounded-full bg-slate-200 p-2 text-xs tracking-wide "
               key={recipeType.id + recipeType.name + recipeType.icon}
             >
               {recipeType.icon}{' '}
@@ -220,11 +320,11 @@ const RecipeDisplay = ({
         </button>
       </div>
       <img
-        className="h-[300px] w-full object-cover object-center"
+        className="h-[400px] w-full object-cover object-center"
         src={recipe.imageUrl!}
         alt=""
       />
-      <div className="flex flex-col p-4">
+      <div className="flex flex-col p-4 pb-20">
         <div className="flex items-center justify-between">
           <h2 className="mb-3 text-2xl font-bold">{recipe.name}</h2>
           <Button variant={'secondary'} onClick={() => onEditClick()}>
