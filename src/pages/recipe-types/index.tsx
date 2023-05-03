@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Categories } from 'emoji-picker-react';
 import { Form, Formik } from 'formik';
 import dynamic from 'next/dynamic';
-import { useRef, useState } from 'react';
+import { Ref, useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import Input from '../../components/forms/input';
@@ -17,6 +17,8 @@ import {
 import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../components/ui/toast/use-toast';
 import { api } from '../../utils/api';
+import useClickOutside from '../../utils/hooks/useClickOutside';
+import useOnClickOutside from '../../utils/hooks/useClickOutside';
 
 const RecipeTypePage: React.FC = () => {
   const {
@@ -78,37 +80,37 @@ const RecipeTypeBox = ({
   onSubmitted: () => Promise<void>;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  // const [targetIdsToIgnore, setTargetIdsToIgnore] = useState<string[]>([]);
+  const recipeBoxRef = useRef<HTMLDivElement>(null);
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  // useClickOutside(
-  //   ref,
-  //   () => {
-  //     setIsEditing(false);
-  //   },
-  //   targetIdsToIgnore
-  // );
+  useOnClickOutside(recipeBoxRef, () => {
+    if (!isPopoverOpen) {
+      setIsEditing(false);
+    }
+  });
 
   return (
     <div
-      ref={ref}
+      ref={recipeBoxRef}
       className={clsx(
         'flex h-24 items-center rounded bg-white p-4 shadow-sm',
         recipeType &&
           'cursor-pointer transition-all ease-in-out hover:scale-[1.02]'
       )}
       onClick={() => {
-        setIsEditing(!isEditing);
+        setIsEditing(true);
       }}
     >
       {isEditing || !recipeType ? (
         <RecipeTypeForm
           recipeType={recipeType}
           onSubmitted={onSubmitted}
-          // setEmojiPickerTargetId={(targetId) => {
-          //   console.log('targetId', targetId);
-          //   setTargetIdsToIgnore((prev) => [...prev, targetId]);
-          // }}
+          onPopoverOpened={() => {
+            setIsPopoverOpen(true);
+          }}
+          onPopoverClosed={() => {
+            setIsPopoverOpen(false);
+          }}
         />
       ) : (
         <>
@@ -132,21 +134,21 @@ const Picker = dynamic(
 const RecipeTypeForm = ({
   recipeType,
   onSubmitted,
-}: // setEmojiPickerTargetId,
-{
+
+  onPopoverOpened,
+  onPopoverClosed,
+}: {
   recipeType?: RecipeType;
   onSubmitted: () => Promise<void>;
-  // setEmojiPickerTargetId: (id: string) => void;
+  onPopoverOpened?: () => void;
+  onPopoverClosed?: () => void;
 }) => {
   const { toast } = useToast();
 
-  // const emojiPickerRef = useRef<HTMLElement>(null);
-
-  // useEffect(() => {
-  //   if (emojiPickerRef.current) {
-  //     setEmojiPickerTargetId(emojiPickerRef.current.id);
-  //   }
-  // }, [emojiPickerRef.current?.id]);
+  const emojiPickerRef = useRef<HTMLDivElement>(null);
+  useOnClickOutside(emojiPickerRef, () => {
+    setIsPopoverOpen(false);
+  });
 
   const recipeTypeSchema = z.object({
     name: z.string().nonempty(),
@@ -177,6 +179,14 @@ const RecipeTypeForm = ({
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
+  useEffect(() => {
+    if (isPopoverOpen) {
+      onPopoverOpened?.();
+    } else {
+      onPopoverClosed?.();
+    }
+  }, [isPopoverOpen, onPopoverClosed, onPopoverOpened]);
+
   return (
     <div className="w-full">
       <Formik
@@ -203,48 +213,31 @@ const RecipeTypeForm = ({
             <div className="flex items-center">
               <Popover
                 open={isPopoverOpen}
-                onOpenChange={(isOpen) => setIsPopoverOpen(isOpen)}
+                // onOpenChange={(isOpen) => setIsPopoverOpen(isOpen)}
               >
-                <PopoverTrigger>
+                <PopoverTrigger className="mr-4 ">
                   <div
-                    className="mr-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-200 p-2 text-4xl transition-all ease-in-out hover:scale-105"
+                    className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-200 p-2 text-4xl transition-all ease-in-out hover:scale-105"
                     onClick={(e) => {
-                      e.stopPropagation();
                       setIsPopoverOpen(!isPopoverOpen);
+                      e.stopPropagation();
                     }}
                   >
                     {values.icon}
                   </div>
                 </PopoverTrigger>
                 <PopoverContent
-                  className="w-auto border-none p-0"
-                  // ref={emojiPickerRef}
+                  className="w-[350px] border-none p-0"
+                  ref={emojiPickerRef}
                 >
-                  <div>
-                    <Picker
-                      onEmojiClick={(emoji, e: MouseEvent) => {
-                        console.log('emoji', emoji);
-                        setFieldValue('icon', emoji.emoji);
-                        setIsPopoverOpen(false);
-                      }}
-                      // searchDisabled
-                      skinTonesDisabled
-                      categories={[
-                        {
-                          name: 'Food & Drink',
-                          category: Categories.FOOD_DRINK,
-                        },
-                        {
-                          name: 'Animals',
-                          category: Categories.ANIMALS_NATURE,
-                        },
-                        {
-                          name: 'Objects',
-                          category: Categories.OBJECTS,
-                        },
-                      ]}
-                    />
-                  </div>
+                  <Picker
+                    onEmojiClick={(emoji) => {
+                      setFieldValue('icon', emoji.emoji);
+                      setIsPopoverOpen(false);
+                    }}
+                    // searchDisabled
+                    skinTonesDisabled
+                  />
                 </PopoverContent>
               </Popover>
 
