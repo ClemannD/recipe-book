@@ -40,6 +40,10 @@ const RecipesPage = () => {
 
   useEffect(() => {
     setIsExpanded(!!selectedRecipe);
+
+    setSelectedRecipe(
+      recipesData?.find((recipe) => recipe.id === selectedRecipe?.id) ?? null
+    );
   }, [recipesData, selectedRecipe]);
 
   useEffect(() => {
@@ -109,7 +113,32 @@ const RecipesPage = () => {
 
               <Button
                 onClick={() => {
+                  if (editingRecipe) {
+                    toast({
+                      title: `You are currently ${
+                        isCreating ? 'creating' : 'editing'
+                      } a recipe`,
+                      description: 'Are you sure you want to switch recipes?',
+                      duration: 5000,
+
+                      action: (
+                        <Button
+                          onClick={() => {
+                            setIsCreating(true);
+                            setSelectedRecipe(null);
+                            setEditingRecipe(null);
+                            dismiss();
+                          }}
+                        >
+                          Discard
+                        </Button>
+                      ),
+                    });
+                    return;
+                  }
+
                   setIsCreating(true);
+                  setEditingRecipe(null);
                   setSelectedRecipe(null);
                 }}
               >
@@ -242,7 +271,7 @@ const RecipesPage = () => {
             />
           )}
 
-          {editingRecipe && (
+          {editingRecipe && !isCreating && (
             <RecipeForm
               recipe={editingRecipe}
               onClose={() => setEditingRecipe(null)}
@@ -253,7 +282,7 @@ const RecipesPage = () => {
             />
           )}
 
-          {isCreating && (
+          {isCreating && !editingRecipe && (
             <RecipeForm
               onClose={() => setIsCreating(false)}
               onSuccess={async () => {
@@ -426,7 +455,7 @@ const RecipeDisplay = ({
                       {/* convert decimal ingredient.quantity to nearest fraction */}
                       {ingredient.quantity && (
                         <span className="text-sm ">
-                          {convertNumberToFractionIfNeeded(ingredient.quantity)}
+                          {roundToCleanFraction(ingredient.quantity)}
                         </span>
                       )}{' '}
                     </div>
@@ -445,47 +474,77 @@ const RecipeDisplay = ({
   );
 };
 
-// display a decimal as a fraction
-// 1.5 should show as 1 1/2
-// 1 should show as 1
-const convertNumberToFractionIfNeeded = (decimal: number) => {
-  const wholeNumber = Math.floor(decimal);
-  const remainder = decimal - wholeNumber;
-  const fraction = convertDecimalToFraction(remainder);
+/**
+ * This monstrosity comes from ChatGPT. The prompt was:
+ * "Code only. Code in typescript. Give me a function which will take in a number and round it to the nearest clean fraction.
+ * It should display 1.5 as "1 1/2" and should display 1 as "1" and should display 1.33 as "1 1/3" and it should display 0.33 as "1/3".
+ * It should round weird fractions to the nearest clean fraction. That is to say, 0.555555 should show as "1/2".  1.625452 should show as "1 2/3""
+ *
+ * I had to make some slight modifications to make it work still.
+ */
+function roundToCleanFraction(num: number): string {
+  const EPSILON = 0.00000000001;
+  const whole = Math.floor(num); // 0
+  const fraction = num - whole; // 0.5
 
-  return fraction
-    ? wholeNumber
-      ? `${wholeNumber} ${fraction}`
-      : fraction
-    : wholeNumber;
-};
+  const fractions = [
+    { fraction: 0, name: '' },
+    { fraction: 1 / 10, name: '1/10' },
+    { fraction: 2 / 10, name: '2/10' },
+    { fraction: 3 / 10, name: '3/10' },
+    { fraction: 7 / 10, name: '7/10' },
+    { fraction: 9 / 10, name: '9/10' },
 
-const convertDecimalToFraction = (decimal: number) => {
-  // if not a decimal, return
-  if (decimal % 1 === 0) {
-    return decimal;
+    { fraction: 1 / 8, name: '1/8' },
+    { fraction: 3 / 8, name: '3/8' },
+    { fraction: 5 / 8, name: '5/8' },
+    { fraction: 7 / 8, name: '7/8' },
+
+    { fraction: 1 / 6, name: '1/6' },
+    { fraction: 5 / 6, name: '5/6' },
+
+    { fraction: 1 / 5, name: '1/5' },
+    { fraction: 2 / 5, name: '2/5' },
+    { fraction: 3 / 5, name: '3/5' },
+    { fraction: 4 / 5, name: '4/5' },
+
+    { fraction: 1 / 4, name: '1/4' },
+    { fraction: 3 / 4, name: '3/4' },
+
+    { fraction: 1 / 3, name: '1/3' },
+    { fraction: 2 / 3, name: '2/3' },
+
+    { fraction: 1 / 2, name: '1/2' },
+    { fraction: 1, name: '' },
+  ];
+
+  // handle whole number case
+  if (Math.abs(fraction) < EPSILON) {
+    return `${whole}`;
   }
 
-  if (decimal === 0.33) {
-    return '1/3';
+  // find the nearest clean fraction
+  let smallestDifference = Infinity;
+  let closestFraction = fractions[0];
+  for (let i = 0; i < fractions.length; i++) {
+    const fractionValue = fractions[i]!.fraction;
+    const difference = Math.abs(fractionValue - fraction);
+    if (difference < smallestDifference) {
+      smallestDifference = difference;
+      closestFraction = fractions[i];
+    }
   }
 
-  const tolerance = 1.0e-6;
-  let h1 = 1;
-  let h2 = 0;
-  let k1 = 0;
-  let k2 = 1;
-  let b = decimal;
-  do {
-    const a = Math.floor(b);
-    let aux = h1;
-    h1 = a * h1 + h2;
-    h2 = aux;
-    aux = k1;
-    k1 = a * k1 + k2;
-    k2 = aux;
-    b = 1 / (b - a);
-  } while (Math.abs(decimal - h1 / k1) > decimal * tolerance);
+  // handle negative number case
+  if (num < 0) {
+    return `-${whole} ${closestFraction!.name}`;
+  }
 
-  return `${h1}/${k1}`;
-};
+  // handle mixed number case
+  if (whole > 0) {
+    return `${whole} ${closestFraction!.name}`;
+  }
+
+  // handle proper fraction case
+  return closestFraction!.name;
+}

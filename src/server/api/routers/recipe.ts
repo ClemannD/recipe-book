@@ -195,4 +195,29 @@ export const recipeRouter = createTRPCRouter({
 
       return recipe;
     }),
+
+  deleteRecipe: authenticatedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.householdId) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You must be in a household to create a recipe',
+        });
+      }
+
+      console.log(
+        `🗑 Deleting recipe with id ${input.id} for household ${ctx.householdId}...`
+      );
+
+      const recipe = await ctx.prisma.recipe.delete({
+        where: {
+          id: input.id,
+        },
+      });
+
+      console.log(`✅ Deleted recipe ${recipe.id}`);
+
+      return recipe;
+    }),
 });

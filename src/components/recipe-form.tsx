@@ -23,7 +23,7 @@ const RecipeForm = ({
   onClose: () => void;
   onSuccess: () => Promise<void>;
 }) => {
-  const { toast } = useToast();
+  const { toast, dismiss } = useToast();
 
   const {
     data: recipeTypes,
@@ -33,15 +33,17 @@ const RecipeForm = ({
 
   const recipeFormSchema = z.object({
     name: z.string().min(1),
-    instructions: z.string().min(1),
+    instructions: z.string().optional(),
     recipeTypes: z.array(z.string().min(1)).optional(),
-    imageUrl: z.string().min(1),
+    imageUrl: z.string().optional(),
     ingredients: z.array(
-      z.object({
-        name: z.string().min(1),
-        quantity: z.number().min(0),
-        unit: z.string().min(1),
-      })
+      z
+        .object({
+          name: z.string().min(1),
+          quantity: z.number().min(0),
+          unit: z.string().min(1),
+        })
+        .optional()
     ),
   });
 
@@ -63,6 +65,17 @@ const RecipeForm = ({
 
         toast({
           title: 'Recipe updated',
+        });
+      },
+    });
+
+  const { mutate: deleteRecipe, isLoading: isDeletingRecipe } =
+    api.recipe.deleteRecipe.useMutation({
+      onSuccess: async () => {
+        await onSuccess();
+
+        toast({
+          title: 'Recipe deleted',
         });
       },
     });
@@ -122,7 +135,7 @@ const RecipeForm = ({
           }
         }}
       >
-        {({ values, setFieldValue }) => (
+        {({ values, setFieldValue, errors }) => (
           <Form className="flex flex-col">
             <Input label="Name" name="name" />
             <Input
@@ -210,10 +223,42 @@ const RecipeForm = ({
             <Button
               className="mt-8 "
               type="submit"
+              disabled={Object.keys(errors).length > 0}
               isSubmitting={isCreatingRecipe || isUpdatingRecipe}
             >
               {recipe ? 'Update' : 'Create'} Recipe
             </Button>
+
+            {/* delete recipe button that has a toast to confirm we actually want to delete */}
+            {recipe && (
+              <Button
+                className="mt-4 "
+                variant="destructive"
+                isSubmitting={isDeletingRecipe}
+                onClick={() => {
+                  toast({
+                    title: `Are you sure you want to delete this Recipe?`,
+                    description: 'This action cannot be undone.',
+                    duration: 10000,
+
+                    action: (
+                      <Button
+                        variant="destructive"
+                        onClick={() => {
+                          deleteRecipe({ id: recipe.id });
+                          dismiss();
+                        }}
+                      >
+                        Discard
+                      </Button>
+                    ),
+                  });
+                  return;
+                }}
+              >
+                Delete Recipe
+              </Button>
+            )}
           </Form>
         )}
       </Formik>
