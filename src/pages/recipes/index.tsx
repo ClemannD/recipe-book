@@ -1,12 +1,6 @@
 import { type Ingredient, type Recipe, type RecipeType } from '@prisma/client';
 import clsx from 'clsx';
-import {
-  ArrowLeft,
-  ArrowRight,
-  Expand,
-  Maximize,
-  Minimize,
-} from 'lucide-react';
+import { ArrowLeft, Expand, Minimize } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Layout from '../../components/layout';
 import RecipeForm from '../../components/recipe-form';
@@ -427,6 +421,10 @@ const convertDecimalToFraction = (decimal: number) => {
   // if not a decimal, return
   if (decimal % 1 === 0) {
     return decimal;
+  }
+
+  if (decimal === 0.33) {
+    return '1/3';
   }
 
   const tolerance = 1.0e-6;
