@@ -223,6 +223,7 @@ const RecipesPage = () => {
                     }
 
                     setSelectedRecipe(recipe);
+                    setIsExpanded(true);
                   }}
                 />
               ))}
