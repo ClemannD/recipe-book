@@ -1,9 +1,8 @@
 import type { RecipeType } from '@prisma/client';
 import clsx from 'clsx';
-import { Categories } from 'emoji-picker-react';
 import { Form, Formik } from 'formik';
 import dynamic from 'next/dynamic';
-import { Ref, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import Input from '../../components/forms/input';
@@ -17,8 +16,8 @@ import {
 import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../components/ui/toast/use-toast';
 import { api } from '../../utils/api';
-import useClickOutside from '../../utils/hooks/useClickOutside';
 import useOnClickOutside from '../../utils/hooks/useClickOutside';
+import { X } from 'lucide-react';
 
 const RecipeTypePage: React.FC = () => {
   const {
@@ -36,15 +35,15 @@ const RecipeTypePage: React.FC = () => {
         </h2>
 
         <div className="mt-10">
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+          {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-4"> */}
+          <div className="flex flex-wrap gap-4">
             {isLoading && (
               <>
-                <Skeleton className="h-24" />
-                <Skeleton className="h-24" />
-                <Skeleton className="h-24" />
-                <Skeleton className="h-24" />
-                <Skeleton className="h-24" />
-                <Skeleton className="h-24" />
+                <Skeleton className="h-20 min-w-[375px] max-w-[750px] flex-1" />
+                <Skeleton className="h-20 min-w-[375px] max-w-[750px] flex-1" />
+                <Skeleton className="h-20 min-w-[375px] max-w-[750px] flex-1" />
+                <Skeleton className="h-20 min-w-[375px] max-w-[750px] flex-1" />
+                <Skeleton className="h-20 min-w-[375px] max-w-[750px] flex-1" />
               </>
             )}
 
@@ -63,6 +62,12 @@ const RecipeTypePage: React.FC = () => {
                 await refetch();
               }}
             />
+
+            {/* Hack because I want flex wrap but with all elements to maintain their size */}
+            <div className="h-1 min-w-[375px] max-w-[750px] flex-1"></div>
+            <div className="h-1 min-w-[375px] max-w-[750px] flex-1"></div>
+            <div className="h-1 min-w-[375px] max-w-[750px] flex-1"></div>
+            <div className="h-1 min-w-[375px] max-w-[750px] flex-1"></div>
           </div>
         </div>
       </div>
@@ -93,8 +98,9 @@ const RecipeTypeBox = ({
     <div
       ref={recipeBoxRef}
       className={clsx(
-        'flex h-24 items-center rounded bg-white p-4 shadow-sm',
+        'flex h-20 min-w-[375px] max-w-[750px] flex-1 items-center rounded bg-white p-4 shadow-sm',
         recipeType &&
+          !isEditing &&
           'cursor-pointer transition-all ease-in-out hover:scale-[1.02]'
       )}
       onClick={() => {
@@ -114,10 +120,10 @@ const RecipeTypeBox = ({
         />
       ) : (
         <>
-          <div className="mr-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-200 p-2 text-4xl">
+          <div className="mr-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-200 p-2 text-3xl">
             {recipeType.icon}
           </div>
-          <h3 className="text-2xl font-bold">{recipeType.name}</h3>
+          <h3 className="text-xl font-bold">{recipeType.name}</h3>
         </>
       )}
     </div>
@@ -177,6 +183,28 @@ const RecipeTypeForm = ({
       },
     });
 
+  const [deleteIsLoading, setDeleteIsLoading] = useState(false);
+  const { mutate: deleteRecipeType } =
+    api.recipeType.deleteRecipeType.useMutation({
+      onMutate: () => {
+        console.log('onMutate');
+      },
+      onSuccess: async () => {
+        await onSubmitted();
+        console.log('onSuccess');
+
+        setDeleteIsLoading(false);
+        toast({
+          title: 'Recipe Type Deleted',
+          description: 'Your recipe type has been deleted',
+        });
+      },
+    });
+
+  useEffect(() => {
+    console.log('deleteIsLoading', deleteIsLoading);
+  }, [deleteIsLoading]);
+
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   useEffect(() => {
@@ -188,7 +216,7 @@ const RecipeTypeForm = ({
   }, [isPopoverOpen, onPopoverClosed, onPopoverOpened]);
 
   return (
-    <div className="w-full">
+    <div className="relative w-full">
       <Formik
         initialValues={{
           name: recipeType?.name ?? '',
@@ -217,7 +245,7 @@ const RecipeTypeForm = ({
               >
                 <PopoverTrigger className="mr-4 ">
                   <div
-                    className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-200 p-2 text-4xl transition-all ease-in-out hover:scale-105"
+                    className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-200 p-2 text-3xl transition-all ease-in-out hover:scale-105"
                     onClick={(e) => {
                       setIsPopoverOpen(!isPopoverOpen);
                       e.stopPropagation();
@@ -235,7 +263,6 @@ const RecipeTypeForm = ({
                       setFieldValue('icon', emoji.emoji);
                       setIsPopoverOpen(false);
                     }}
-                    // searchDisabled
                     skinTonesDisabled
                   />
                 </PopoverContent>
@@ -262,6 +289,38 @@ const RecipeTypeForm = ({
               >
                 {recipeType ? 'Update' : 'Create'}
               </Button>
+
+              {recipeType && (
+                <Button
+                  type="button"
+                  size="sm"
+                  variant="ghost"
+                  className="ml-2"
+                  disabled={deleteIsLoading}
+                  isSubmitting={deleteIsLoading}
+                  onClick={() => {
+                    toast({
+                      title: `Are you sure you want to delete ${recipeType.name}?`,
+                      description: 'This cannot be undone',
+                      duration: 9000,
+                      action: (
+                        <Button
+                          variant="destructive"
+                          isSubmitting={deleteIsLoading}
+                          // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                          onClick={(e) => {
+                            deleteRecipeType({ id: recipeType.id });
+                          }}
+                        >
+                          Delete
+                        </Button>
+                      ),
+                    });
+                  }}
+                >
+                  <X className="text-red-500 hover:text-red-600" />
+                </Button>
+              )}
             </div>
           </Form>
         )}
