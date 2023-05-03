@@ -20,7 +20,8 @@ const RecipesPage = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<FullRecipe | null>(null);
   const [editingRecipe, setEditingRecipe] = useState<FullRecipe | null>(null);
-  const [fullScreen, setFullScreen] = useState(false);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   const [search, setSearch] = useState('');
   const [recipeTypeFilter, setRecipeTypeFilter] = useState<string[] | null>(
@@ -34,18 +35,11 @@ const RecipesPage = () => {
     refetch: refetchRecipes,
   } = api.recipe.getRecipes.useQuery();
 
-  const {
-    data: recipeTypes,
-    // isLoading,
-    // refetch,
-  } = api.recipeType.getRecipeTypes.useQuery();
+  const { data: recipeTypes, isLoading: recipeTypesIsLoading } =
+    api.recipeType.getRecipeTypes.useQuery();
 
   useEffect(() => {
-    if (selectedRecipe) {
-      setSelectedRecipe(
-        recipesData?.find((recipe) => recipe.id === selectedRecipe.id) || null
-      );
-    }
+    setIsExpanded(!!selectedRecipe);
   }, [recipesData, selectedRecipe]);
 
   useEffect(() => {
@@ -91,13 +85,11 @@ const RecipesPage = () => {
 
   return (
     <Layout>
-      <div className="flex">
+      <div className="relative flex">
         <div
           className={clsx(
-            `max-h-screen  flex-grow overflow-y-auto p-10`,
-            fullScreen
-              ? 'hidden w-0 min-w-0 overflow-hidden'
-              : 'min-w-[550px] overflow-y-auto'
+            `max-h-screen flex-grow overflow-y-auto p-10 transition-all duration-300 ease-in-out`,
+            false ? 'w-0 min-w-0 overflow-hidden' : 'w-[550px] overflow-y-auto'
           )}
         >
           <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
@@ -127,6 +119,11 @@ const RecipesPage = () => {
           </div>
 
           <div className="mb-6 flex flex-wrap gap-2">
+            {recipeTypesIsLoading &&
+              Array.from(Array(20).keys()).map((i) => (
+                <Skeleton className="h-6 w-24 rounded-full" key={i} />
+              ))}
+
             {recipeTypes?.map((recipeType) => (
               <div
                 className={clsx(
@@ -158,22 +155,14 @@ const RecipesPage = () => {
           </div>
 
           <div className="">
-            <div
-              className={clsx(
-                // `grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-3`
-                'flex flex-wrap gap-4'
-                // selectedRecipe ? '!grid-cols-2' : ''
-              )}
-            >
-              {isLoading && (
-                <>
-                  <Skeleton className="h-24 min-w-[400px] max-w-[600px] flex-1" />
-                  <Skeleton className="h-24 min-w-[400px] max-w-[600px] flex-1" />
-                  <Skeleton className="h-24 min-w-[400px] max-w-[600px] flex-1" />
-                  <Skeleton className="h-24 min-w-[400px] max-w-[600px] flex-1" />
-                  <Skeleton className="h-24 min-w-[400px] max-w-[600px] flex-1" />
-                </>
-              )}
+            <div className={clsx('flex flex-wrap gap-4')}>
+              {isLoading &&
+                Array.from(Array(20).keys()).map((i) => (
+                  <Skeleton
+                    key={i}
+                    className="h-[150px] min-w-[400px] max-w-[600px] flex-1"
+                  />
+                ))}
 
               {recipes?.map((recipe) => (
                 <RecipeCard
@@ -215,28 +204,41 @@ const RecipesPage = () => {
             </div>
           </div>
         </div>
+
+        {/* Dummy component to help with positioning */}
         <div
           className={cn(
             clsx(
-              `relative h-screen max-h-screen max-w-[700px] overflow-y-auto bg-white shadow-lg transition-all duration-500 ease-in-out`,
-              selectedRecipe || isCreating || editingRecipe
-                ? fullScreen
-                  ? 'w-full min-w-full transition-none'
-                  : 'w-[600px] min-w-[600px]'
+              `h-screen max-h-screen max-w-[700px] transition-all duration-300 ease-in-out`,
+              isExpanded || isCreating || editingRecipe || isFullScreen
+                ? 'w-[600px] min-w-[600px]'
                 : 'w-0 min-w-0'
             )
           )}
+        ></div>
+
+        <div
+          className={cn(
+            clsx(
+              `absolute top-0  h-screen max-h-screen  max-w-[700px] overflow-y-auto bg-white shadow-lg transition-all duration-300 ease-in-out`,
+              isExpanded || isCreating || editingRecipe
+                ? isFullScreen
+                  ? ' right-0  w-full min-w-full'
+                  : ' right-0 w-[600px] min-w-[600px]'
+                : 'right-[-600px] w-[600px] min-w-[600px]'
+            )
+          )}
         >
-          {selectedRecipe && !editingRecipe && (
+          {!editingRecipe && (
             <RecipeDisplay
               recipe={selectedRecipe}
-              isFullscreen={fullScreen}
+              isFullscreen={isFullScreen}
               onClose={() => {
-                setSelectedRecipe(null);
-                setFullScreen(false);
+                setIsExpanded(false);
+                setIsFullScreen(false);
               }}
               onEditClick={() => setEditingRecipe(selectedRecipe)}
-              onFullscreenClick={() => setFullScreen(!fullScreen)}
+              onFullscreenClick={() => setIsFullScreen(!isFullScreen)}
             />
           )}
 
@@ -277,12 +279,12 @@ const RecipeCard = ({
 }) => {
   return (
     <div
-      className="flex max-h-[130px] min-w-[400px] flex-1 cursor-pointer rounded bg-white shadow-sm transition-all ease-in-out hover:scale-[1.02]"
+      className="m flex min-w-[400px] flex-1 cursor-pointer rounded bg-white shadow-sm transition-all ease-in-out hover:scale-[1.02]"
       onClick={onClick}
     >
       <div>
         <img
-          className="h-[130px] w-[130px] min-w-[130px] rounded-l object-cover"
+          className="h-[150px] w-[130px] min-w-[130px] rounded-l object-cover"
           src={recipe.imageUrl!}
           alt={recipe.name}
         />
@@ -315,90 +317,131 @@ const RecipeDisplay = ({
   onEditClick,
   onFullscreenClick,
 }: {
-  recipe: FullRecipe;
+  recipe: FullRecipe | null;
   isFullscreen?: boolean;
   onClose: () => void;
   onEditClick: () => void;
   onFullscreenClick: () => void;
 }) => {
   return (
-    <>
-      <div className="absolute right-0 top-0 p-4">
-        <button
-          className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
-          onClick={() => onFullscreenClick()}
-        >
-          {isFullscreen ? <Minimize></Minimize> : <Expand></Expand>}
-        </button>
-      </div>
-      <div className="absolute left-0 top-0 p-4">
-        <button
-          className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
-          onClick={() => onClose()}
-        >
-          <ArrowLeft></ArrowLeft>
-        </button>
-      </div>
-
-      <img
-        className="h-[400px] w-full object-cover object-center"
-        src={recipe.imageUrl!}
-        alt=""
-      />
-      <div className="flex flex-col p-4 pb-20">
-        <div className="flex items-center justify-between">
-          <h2 className="mb-3 text-2xl font-bold">{recipe.name}</h2>
-          <Button variant={'secondary'} onClick={() => onEditClick()}>
-            Edit
-          </Button>
+    recipe && (
+      <>
+        <div className="absolute right-0 top-0 p-4">
+          <button
+            className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
+            onClick={() => onFullscreenClick()}
+          >
+            {isFullscreen ? <Minimize></Minimize> : <Expand></Expand>}
+          </button>
         </div>
-        <div className="mb-6 flex flex-wrap gap-2">
-          {recipe.recipeTypes.map((recipeType) => (
-            <div
-              className="flex h-6 w-auto items-center justify-center rounded-full bg-slate-200 p-2 text-sm tracking-wide "
-              key={recipeType.id + recipeType.name + recipeType.icon}
-            >
-              {recipeType.icon}{' '}
-              <span className="ml-2 text-xs font-medium ">
-                {recipeType.name}
-              </span>
-            </div>
-          ))}
+        <div className="absolute left-0 top-0 p-4">
+          <button
+            className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
+            onClick={() => onClose()}
+          >
+            <ArrowLeft></ArrowLeft>
+          </button>
         </div>
-        {recipe.instructions && (
-          <>
-            <h3 className="mb-2 text-xl font-bold text-slate-700">
-              Instructions
-            </h3>
-            <p className="whitespace-pre-wrap text-sm">{recipe.instructions}</p>
-          </>
-        )}
 
-        <h3 className="mb-2 mt-6 text-xl font-bold text-slate-700">
-          Ingredients
-        </h3>
-
-        <div>
-          {recipe.ingredients.map((ingredient) => (
-            <div
-              className="flex items-center border-b border-gray-200 px-4 py-2 first-of-type:border-t"
-              key={ingredient.id + ingredient.name}
-            >
-              <div className="mr-4 w-10 text-right ">
-                {/* convert decimal ingredient.quantity to nearest fraction */}
-                {ingredient.quantity && (
-                  <span className="text-sm text-gray-500">
-                    {convertNumberToFractionIfNeeded(ingredient.quantity)}
-                  </span>
-                )}{' '}
+        <div
+          className={clsx(
+            'flex',
+            isFullscreen ? 'flex-row' : 'flex-col'
+            // 'items-center justify-center h-screen max-h-screen transition-all duration-500 ease-in-out'
+          )}
+        >
+          <div className="flex-1">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              className={clsx(
+                ' object-cover object-center',
+                isFullscreen
+                  ? 'h-auto max-h-[500px] w-full'
+                  : 'h-[400px] w-full '
+              )}
+              src={recipe.imageUrl!}
+              alt=""
+            />
+            <div className="mt-4 flex flex-col px-4">
+              <div className="flex items-center justify-between">
+                <h2 className="mb-3 text-2xl font-bold">{recipe.name}</h2>
+                <Button variant={'secondary'} onClick={() => onEditClick()}>
+                  Edit
+                </Button>
               </div>
-              <div className="mr-8 w-10 ">{ingredient.unit}</div>
-              {ingredient.name}
+              <div className="mb-6 flex flex-wrap gap-2">
+                {recipe.recipeTypes.map((recipeType) => (
+                  <div
+                    className="flex h-6 w-auto items-center justify-center rounded-full bg-slate-200 p-2 text-sm tracking-wide "
+                    key={recipeType.id + recipeType.name + recipeType.icon}
+                  >
+                    {recipeType.icon}{' '}
+                    <span className="ml-2 text-xs font-medium ">
+                      {recipeType.name}
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
-          ))}
+
+            {recipe.instructions && (
+              <div className="mb-4 px-4">
+                <h3
+                  className={clsx(
+                    ' font-bold text-slate-700',
+                    isFullscreen ? 'mb-4 text-2xl' : 'mb-2 text-xl'
+                  )}
+                >
+                  Instructions
+                </h3>
+                <p
+                  className={clsx(
+                    'whitespace-pre-wrap',
+                    isFullscreen ? 'text-base' : 'text-sm'
+                  )}
+                >
+                  {recipe.instructions}
+                </p>
+              </div>
+            )}
+          </div>
+          <div className={clsx(isFullscreen ? 'flex-1' : '')}>
+            <div className={clsx(isFullscreen ? 'p-10 pt-20' : 'px-4 pb-20')}>
+              <h3
+                className={clsx(
+                  ' font-bold text-slate-700',
+                  isFullscreen ? 'mb-4 text-2xl' : 'mb-2 text-xl'
+                )}
+              >
+                Ingredients
+              </h3>
+
+              <div>
+                {recipe.ingredients.map((ingredient) => (
+                  <div
+                    className="flex items-end border-b border-gray-200 px-4 py-2 first-of-type:border-t"
+                    key={ingredient.id + ingredient.name}
+                  >
+                    <div className="mr-2 w-10 text-right ">
+                      {/* convert decimal ingredient.quantity to nearest fraction */}
+                      {ingredient.quantity && (
+                        <span className="text-sm ">
+                          {convertNumberToFractionIfNeeded(ingredient.quantity)}
+                        </span>
+                      )}{' '}
+                    </div>
+                    <div className="mr-12 w-10 text-sm text-slate-500">
+                      {ingredient.unit}
+                    </div>
+                    {ingredient.name}
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </>
+      </>
+    )
   );
 };
 

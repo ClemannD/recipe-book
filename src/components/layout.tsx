@@ -21,18 +21,6 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
         ></link>
       </Head>
 
-      {/* <div className="flex min-h-screen flex-col">
-        <div className="flex h-16 w-full flex-row items-center justify-between bg-white px-4 shadow-sm">
-          <div className="flex items-center">
-            <h1 className="text-2xl font-bold">🥘📖 Recipe Book</h1>
-          </div>
-          <div className="flex items-center">
-            <UserButton />
-          </div>
-        </div>
-        <div className="flex-grow">{props.children}</div>
-      </div> */}
-
       <div className="flex">
         <div className="flex h-screen w-[14rem] min-w-[14rem] flex-col bg-white shadow-lg">
           <div className="flex flex-col items-center justify-center py-6">
