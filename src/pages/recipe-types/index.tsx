@@ -39,11 +39,11 @@ const RecipeTypePage: React.FC = () => {
           <div className="flex flex-wrap gap-4">
             {isLoading && (
               <>
-                <Skeleton className="h-20 min-w-[375px] max-w-[750px] flex-1" />
-                <Skeleton className="h-20 min-w-[375px] max-w-[750px] flex-1" />
-                <Skeleton className="h-20 min-w-[375px] max-w-[750px] flex-1" />
-                <Skeleton className="h-20 min-w-[375px] max-w-[750px] flex-1" />
-                <Skeleton className="h-20 min-w-[375px] max-w-[750px] flex-1" />
+                <Skeleton className="h-20 min-w-[375px] flex-1" />
+                <Skeleton className="h-20 min-w-[375px] flex-1" />
+                <Skeleton className="h-20 min-w-[375px] flex-1" />
+                <Skeleton className="h-20 min-w-[375px] flex-1" />
+                <Skeleton className="h-20 min-w-[375px] flex-1" />
               </>
             )}
 
@@ -64,10 +64,8 @@ const RecipeTypePage: React.FC = () => {
             />
 
             {/* Hack because I want flex wrap but with all elements to maintain their size */}
-            <div className="h-1 min-w-[375px] max-w-[750px] flex-1"></div>
-            <div className="h-1 min-w-[375px] max-w-[750px] flex-1"></div>
-            <div className="h-1 min-w-[375px] max-w-[750px] flex-1"></div>
-            <div className="h-1 min-w-[375px] max-w-[750px] flex-1"></div>
+            <div className="h-20 min-w-[375px]  max-w-[600px] flex-1"></div>
+            <div className="h-20 min-w-[375px] max-w-[600px] flex-1"></div>
           </div>
         </div>
       </div>
@@ -98,7 +96,7 @@ const RecipeTypeBox = ({
     <div
       ref={recipeBoxRef}
       className={clsx(
-        'flex h-20 min-w-[375px] max-w-[750px] flex-1 items-center rounded bg-white p-4 shadow-sm',
+        ' min-w-[375px] flex-1 rounded bg-white shadow-sm',
         recipeType &&
           !isEditing &&
           'cursor-pointer transition-all ease-in-out hover:scale-[1.02]'
@@ -107,25 +105,27 @@ const RecipeTypeBox = ({
         setIsEditing(true);
       }}
     >
-      {isEditing || !recipeType ? (
-        <RecipeTypeForm
-          recipeType={recipeType}
-          onSubmitted={onSubmitted}
-          onPopoverOpened={() => {
-            setIsPopoverOpen(true);
-          }}
-          onPopoverClosed={() => {
-            setIsPopoverOpen(false);
-          }}
-        />
-      ) : (
-        <>
-          <div className="mr-4 flex h-14 w-14 items-center justify-center rounded-full bg-slate-200 p-2 text-3xl">
-            {recipeType.icon}
-          </div>
-          <h3 className="text-xl font-bold">{recipeType.name}</h3>
-        </>
-      )}
+      <div className="flex items-center p-3">
+        {isEditing || !recipeType ? (
+          <RecipeTypeForm
+            recipeType={recipeType}
+            onSubmitted={onSubmitted}
+            onPopoverOpened={() => {
+              setIsPopoverOpen(true);
+            }}
+            onPopoverClosed={() => {
+              setIsPopoverOpen(false);
+            }}
+          />
+        ) : (
+          <>
+            <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 p-2 text-3xl">
+              {recipeType.icon}
+            </div>
+            <h3 className="text-xl font-bold">{recipeType.name}</h3>
+          </>
+        )}
+      </div>
     </div>
   );
 };
@@ -216,7 +216,7 @@ const RecipeTypeForm = ({
   }, [isPopoverOpen, onPopoverClosed, onPopoverOpened]);
 
   return (
-    <div className="relative w-full">
+    <div className=" w-full">
       <Formik
         initialValues={{
           name: recipeType?.name ?? '',
@@ -245,7 +245,7 @@ const RecipeTypeForm = ({
               >
                 <PopoverTrigger className="mr-4 ">
                   <div
-                    className="flex h-14 w-14 items-center justify-center rounded-full bg-slate-200 p-2 text-3xl transition-all ease-in-out hover:scale-105"
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 p-2 text-3xl transition-all ease-in-out hover:scale-105"
                     onClick={(e) => {
                       setIsPopoverOpen(!isPopoverOpen);
                       e.stopPropagation();
