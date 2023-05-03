@@ -1,6 +1,12 @@
 import { type Ingredient, type Recipe, type RecipeType } from '@prisma/client';
 import clsx from 'clsx';
-import { ArrowRight } from 'lucide-react';
+import {
+  ArrowLeft,
+  ArrowRight,
+  Expand,
+  Maximize,
+  Minimize,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Layout from '../../components/layout';
 import RecipeForm from '../../components/recipe-form';
@@ -9,6 +15,7 @@ import { PlainInput } from '../../components/ui/input-plain';
 import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../components/ui/toast/use-toast';
 import { api } from '../../utils/api';
+import { cn } from '../../utils/cn';
 
 export type FullRecipe = Recipe & {
   recipeTypes: RecipeType[];
@@ -19,6 +26,7 @@ const RecipesPage = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [selectedRecipe, setSelectedRecipe] = useState<FullRecipe | null>(null);
   const [editingRecipe, setEditingRecipe] = useState<FullRecipe | null>(null);
+  const [fullScreen, setFullScreen] = useState(false);
 
   const [search, setSearch] = useState('');
   const [recipeTypeFilter, setRecipeTypeFilter] = useState<string[] | null>(
@@ -90,7 +98,14 @@ const RecipesPage = () => {
   return (
     <Layout>
       <div className="flex">
-        <div className="max-h-screen min-w-[550px] flex-grow overflow-y-auto p-10 ">
+        <div
+          className={clsx(
+            `max-h-screen  flex-grow overflow-y-auto p-10`,
+            fullScreen
+              ? 'hidden w-0 min-w-0 overflow-hidden'
+              : 'min-w-[550px] overflow-y-auto'
+          )}
+        >
           <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
             <div>
               <h1 className="text-2xl font-bold">Recipes</h1>
@@ -117,12 +132,6 @@ const RecipesPage = () => {
             </div>
           </div>
 
-          {/* <div
-            className={clsx(
-              ' w-full overflow-hidden rounded bg-white shadow-sm transition-all duration-300 ease-in-out',
-              showFilters ? 'mb-6 h-36' : 'h-0'
-            )}
-          > */}
           <div className="mb-6 flex flex-wrap gap-2">
             {recipeTypes?.map((recipeType) => (
               <div
@@ -153,7 +162,6 @@ const RecipesPage = () => {
               </div>
             ))}
           </div>
-          {/* </div> */}
 
           <div className="">
             <div
@@ -214,18 +222,27 @@ const RecipesPage = () => {
           </div>
         </div>
         <div
-          className={clsx(
-            `relative h-screen max-h-screen max-w-[700px] overflow-y-auto bg-white shadow-lg transition-all duration-500 ease-in-out`,
-            selectedRecipe || isCreating || editingRecipe
-              ? 'w-[600px] min-w-[600px]'
-              : 'w-0 min-w-0'
+          className={cn(
+            clsx(
+              `relative h-screen max-h-screen max-w-[700px] overflow-y-auto bg-white shadow-lg transition-all duration-500 ease-in-out`,
+              selectedRecipe || isCreating || editingRecipe
+                ? fullScreen
+                  ? 'w-full min-w-full transition-none'
+                  : 'w-[600px] min-w-[600px]'
+                : 'w-0 min-w-0'
+            )
           )}
         >
           {selectedRecipe && !editingRecipe && (
             <RecipeDisplay
               recipe={selectedRecipe}
-              onClose={() => setSelectedRecipe(null)}
+              isFullscreen={fullScreen}
+              onClose={() => {
+                setSelectedRecipe(null);
+                setFullScreen(false);
+              }}
               onEditClick={() => setEditingRecipe(selectedRecipe)}
+              onFullscreenClick={() => setFullScreen(!fullScreen)}
             />
           )}
 
@@ -299,23 +316,36 @@ const RecipeCard = ({
 
 const RecipeDisplay = ({
   recipe,
+  isFullscreen,
   onClose,
   onEditClick,
+  onFullscreenClick,
 }: {
   recipe: FullRecipe;
+  isFullscreen?: boolean;
   onClose: () => void;
   onEditClick: () => void;
+  onFullscreenClick: () => void;
 }) => {
   return (
     <>
       <div className="absolute right-0 top-0 p-4">
         <button
           className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
-          onClick={() => onClose()}
+          onClick={() => onFullscreenClick()}
         >
-          <ArrowRight></ArrowRight>
+          {isFullscreen ? <Minimize></Minimize> : <Expand></Expand>}
         </button>
       </div>
+      <div className="absolute left-0 top-0 p-4">
+        <button
+          className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
+          onClick={() => onClose()}
+        >
+          <ArrowLeft></ArrowLeft>
+        </button>
+      </div>
+
       <img
         className="h-[400px] w-full object-cover object-center"
         src={recipe.imageUrl!}
@@ -360,9 +390,15 @@ const RecipeDisplay = ({
               className="flex items-center border-b border-gray-200 px-4 py-2 first-of-type:border-t"
               key={ingredient.id + ingredient.name}
             >
-              <div className="w-20">
-                {ingredient.quantity} {ingredient.unit}
+              <div className="mr-4 w-10 text-right ">
+                {/* convert decimal ingredient.quantity to nearest fraction */}
+                {ingredient.quantity && (
+                  <span className="text-sm text-gray-500">
+                    {convertNumberToFractionIfNeeded(ingredient.quantity)}
+                  </span>
+                )}{' '}
               </div>
+              <div className="mr-8 w-10 ">{ingredient.unit}</div>
               {ingredient.name}
             </div>
           ))}
@@ -370,4 +406,45 @@ const RecipeDisplay = ({
       </div>
     </>
   );
+};
+
+// display a decimal as a fraction
+// 1.5 should show as 1 1/2
+// 1 should show as 1
+const convertNumberToFractionIfNeeded = (decimal: number) => {
+  const wholeNumber = Math.floor(decimal);
+  const remainder = decimal - wholeNumber;
+  const fraction = convertDecimalToFraction(remainder);
+
+  return fraction
+    ? wholeNumber
+      ? `${wholeNumber} ${fraction}`
+      : fraction
+    : wholeNumber;
+};
+
+const convertDecimalToFraction = (decimal: number) => {
+  // if not a decimal, return
+  if (decimal % 1 === 0) {
+    return decimal;
+  }
+
+  const tolerance = 1.0e-6;
+  let h1 = 1;
+  let h2 = 0;
+  let k1 = 0;
+  let k2 = 1;
+  let b = decimal;
+  do {
+    const a = Math.floor(b);
+    let aux = h1;
+    h1 = a * h1 + h2;
+    h2 = aux;
+    aux = k1;
+    k1 = a * k1 + k2;
+    k2 = aux;
+    b = 1 / (b - a);
+  } while (Math.abs(decimal - h1 / k1) > decimal * tolerance);
+
+  return `${h1}/${k1}`;
 };
