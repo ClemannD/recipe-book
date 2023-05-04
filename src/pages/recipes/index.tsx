@@ -1,6 +1,6 @@
 import { type Ingredient, type Recipe, type RecipeType } from '@prisma/client';
 import clsx from 'clsx';
-import { ArrowLeft, Expand, Minimize } from 'lucide-react';
+import { ArrowLeft, Expand, Minimize, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Layout from '../../components/layout';
 import RecipeForm from '../../components/recipe-form';
@@ -369,7 +369,7 @@ const RecipeDisplay = ({
             className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
             onClick={() => onClose()}
           >
-            <ArrowLeft></ArrowLeft>
+            <X></X>
           </button>
         </div>
 
@@ -460,7 +460,7 @@ const RecipeDisplay = ({
                         </span>
                       )}{' '}
                     </div>
-                    <div className="mr-12 w-10 text-sm text-slate-500">
+                    <div className="mr-8 w-10 text-sm text-slate-500">
                       {ingredient.unit}
                     </div>
                     {ingredient.name}

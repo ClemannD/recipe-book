@@ -10,6 +10,7 @@ import type { Ingredient, Recipe, RecipeType } from '@prisma/client';
 import { ArrowRight } from 'lucide-react';
 import { useToast } from './ui/toast/use-toast';
 import clsx from 'clsx';
+import { useState } from 'react';
 
 const RecipeForm = ({
   recipe,
@@ -24,6 +25,8 @@ const RecipeForm = ({
   onSuccess: () => Promise<void>;
 }) => {
   const { toast, dismiss } = useToast();
+  const [isDuplicating, setIsDuplicating] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const {
     data: recipeTypes,
@@ -51,7 +54,8 @@ const RecipeForm = ({
     api.recipe.createRecipe.useMutation({
       onSuccess: async () => {
         await onSuccess();
-
+        setIsDuplicating(false);
+        setIsCreating(false);
         toast({
           title: 'Recipe created',
         });
@@ -131,6 +135,7 @@ const RecipeForm = ({
               ...values,
             });
           } else {
+            setIsCreating(true);
             await createRecipe(values);
           }
         }}
@@ -224,40 +229,58 @@ const RecipeForm = ({
               className="mt-8 "
               type="submit"
               disabled={Object.keys(errors).length > 0}
-              isSubmitting={isCreatingRecipe || isUpdatingRecipe}
+              isSubmitting={isCreating}
             >
               {recipe ? 'Update' : 'Create'} Recipe
             </Button>
 
             {/* delete recipe button that has a toast to confirm we actually want to delete */}
             {recipe && (
-              <Button
-                className="mt-4 "
-                variant="destructive"
-                isSubmitting={isDeletingRecipe}
-                onClick={() => {
-                  toast({
-                    title: `Are you sure you want to delete this Recipe?`,
-                    description: 'This action cannot be undone.',
-                    duration: 10000,
+              <div className="mt-4 flex gap-4">
+                <Button
+                  className="flex-1"
+                  variant="secondary"
+                  disabled={Object.keys(errors).length > 0}
+                  isSubmitting={isDuplicating}
+                  // eslint-disable-next-line @typescript-eslint/no-misused-promises
+                  onClick={async () => {
+                    setIsDuplicating(true);
+                    await createRecipe({
+                      ...values,
+                      name: `Copy of ${values.name}`,
+                    });
+                  }}
+                >
+                  Duplicate Recipe
+                </Button>
+                <Button
+                  className="flex-1"
+                  variant="destructive"
+                  isSubmitting={isDeletingRecipe}
+                  onClick={() => {
+                    toast({
+                      title: `Are you sure you want to delete this Recipe?`,
+                      description: 'This action cannot be undone.',
+                      duration: 10000,
 
-                    action: (
-                      <Button
-                        variant="destructive"
-                        onClick={() => {
-                          deleteRecipe({ id: recipe.id });
-                          dismiss();
-                        }}
-                      >
-                        Discard
-                      </Button>
-                    ),
-                  });
-                  return;
-                }}
-              >
-                Delete Recipe
-              </Button>
+                      action: (
+                        <Button
+                          variant="destructive"
+                          onClick={() => {
+                            deleteRecipe({ id: recipe.id });
+                            dismiss();
+                          }}
+                        >
+                          Discard
+                        </Button>
+                      ),
+                    });
+                    return;
+                  }}
+                >
+                  Delete Recipe
+                </Button>
+              </div>
             )}
           </Form>
         )}
