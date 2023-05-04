@@ -23,10 +23,12 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
 
       <div className="flex">
         <div className="flex h-screen w-[14rem] min-w-[14rem] flex-col bg-white shadow-lg">
-          <div className="flex flex-col items-center justify-center py-6">
-            <p className="mb-4 text-5xl">🥘 📖</p>
-            <h1 className="text-3xl font-bold">Recipe Book</h1>
-          </div>
+          <Link href="/">
+            <div className="flex flex-col items-center justify-center py-6">
+              <p className="mb-4 text-5xl">🥘 📖</p>
+              <h1 className="text-3xl font-bold">Recipe Book</h1>
+            </div>
+          </Link>
           <div className="flex h-20 items-center justify-center">
             {user ? (
               <>
@@ -38,7 +40,6 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
           </div>
 
           <div className="flex flex-col items-center justify-center gap-y-3 p-6">
-            <NavItem href="/">Home</NavItem>
             <NavItem href="/recipes">Recipes</NavItem>
             <NavItem href="/recipe-types">Recipe Types</NavItem>
             <NavItem href="/meal-plans">Meal Plans</NavItem>
