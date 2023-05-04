@@ -41,7 +41,7 @@ const Home: NextPage = () => {
   ];
   return (
     <div className="flex h-screen w-screen flex-col items-center bg-slate-200 lg:flex-row">
-      <div className="flex-1 border-r border-r-slate-400">
+      <div className="flex-1 border-r lg:border-r-slate-400">
         <div className="flex flex-col items-center justify-center py-6">
           <p className="mb-4 text-6xl">🥘 📖</p>
           <h1 className="text-6xl font-bold">Recipe Book</h1>
@@ -72,7 +72,7 @@ const Home: NextPage = () => {
       </div>
       <div className="flex-1">
         <div className="flex flex-col items-center justify-center py-6">
-          <div className="flex w-full max-w-[500px] flex-col items-center justify-center rounded bg-white px-8 py-12 text-center shadow">
+          <div className="flex w-full max-w-[500px] flex-col items-center justify-center rounded bg-white px-4 py-12 text-center shadow lg:px-8">
             <div className="border-b border-b-slate-300 pb-10">
               <h2 className="text-xl font-bold">
                 Browse Recipes created and shared by other users
@@ -82,7 +82,7 @@ const Home: NextPage = () => {
               </p>
 
               <Link href="/recipes" passHref>
-                <Button className="w-96">Browse Recipes</Button>
+                <Button className="max-w-96 w-full">Browse Recipes</Button>
               </Link>
             </div>
 
@@ -97,7 +97,7 @@ const Home: NextPage = () => {
               {!user ? (
                 <>
                   <Link href="/signup" passHref>
-                    <Button className="w-96">Sign Up</Button>
+                    <Button className="max-w-96 w-full">Sign Up</Button>
                   </Link>
                   <p className="mt-6">
                     Already have an account?{' '}
@@ -112,7 +112,7 @@ const Home: NextPage = () => {
                 </>
               ) : (
                 <Link href="/recipes" passHref>
-                  <Button className="w-96">
+                  <Button className="max-w-96 w-full">
                     You are already signed in. Go to Recipes
                   </Button>
                 </Link>
