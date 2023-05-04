@@ -44,7 +44,7 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
             <NavItem href="/meal-plans">Meal Plans</NavItem>
           </div>
         </div>
-        <div className="max-h-screen flex-grow overflow-y-auto">
+        <div className="max-h-screen flex-grow overflow-y-auto overflow-x-hidden">
           {props.children}
         </div>
       </div>
