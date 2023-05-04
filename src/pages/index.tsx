@@ -141,7 +141,7 @@ const RecipeCard = ({
       <div>
         <img
           className="h-[150px] w-[130px] min-w-[130px] rounded-l object-cover"
-          src={recipe.imageUrl!}
+          src={recipe.imageUrl}
           alt={recipe.name}
         />
       </div>
