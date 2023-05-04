@@ -1,6 +1,6 @@
 import { type Ingredient, type Recipe, type RecipeType } from '@prisma/client';
 import clsx from 'clsx';
-import { ArrowLeft, Expand, Minimize, X } from 'lucide-react';
+import { Expand, Minimize, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import Layout from '../../components/layout';
 import RecipeForm from '../../components/recipe-form';

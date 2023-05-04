@@ -4,7 +4,7 @@ import { Button } from '../components/ui/button';
 import { useUser } from '@clerk/nextjs';
 
 const Home: NextPage = () => {
-  const user = useUser();
+  const { isSignedIn } = useUser();
 
   const recipes = [
     {
@@ -94,7 +94,7 @@ const Home: NextPage = () => {
                 And create your own meal plans
               </p>
 
-              {!user ? (
+              {!isSignedIn ? (
                 <>
                   <Link href="/signup" passHref>
                     <Button className="max-w-96 w-full">Sign Up</Button>

@@ -1,7 +1,7 @@
 import { UserButton, useUser } from '@clerk/nextjs';
 import Head from 'next/head';
 import Link from 'next/link';
-import { Skeleton } from './ui/skeleton';
+import { Button } from './ui/button';
 
 const Layout = (props: { children: React.ReactNode; title?: string }) => {
   const user = useUser();
@@ -30,12 +30,14 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
             </div>
           </Link>
           <div className="flex h-20 items-center justify-center">
-            {user ? (
+            {user.isSignedIn ? (
               <>
                 <UserButton /> <div className="ml-3">{user.user?.fullName}</div>
               </>
             ) : (
-              <Skeleton className="h-10 w-40" />
+              <Link href="/signin" passHref>
+                <Button className="max-w-96 w-full">Sign In/Up</Button>
+              </Link>
             )}
           </div>
 
