@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { createTRPCRouter, authenticatedProcedure } from '../trpc';
+import {
+  createTRPCRouter,
+  authenticatedProcedure,
+  publicProcedure,
+} from '../trpc';
 import { TRPCError } from '@trpc/server';
 
 export const recipeRouter = createTRPCRouter({
@@ -60,6 +64,22 @@ export const recipeRouter = createTRPCRouter({
       include: {
         ingredients: true,
         recipeTypes: true,
+        createdBy: true,
+      },
+    });
+  }),
+
+  getPublicRecipes: publicProcedure.query(({ ctx }) => {
+    console.log(`🔎 Getting public recipes...`);
+
+    return ctx.prisma.recipe.findMany({
+      where: {
+        isPublic: true,
+      },
+      include: {
+        ingredients: true,
+        recipeTypes: true,
+        createdBy: true,
       },
     });
   }),
@@ -70,6 +90,7 @@ export const recipeRouter = createTRPCRouter({
         name: z.string().min(1),
         instructions: z.string().optional(),
         imageUrl: z.string().optional(),
+        isPublic: z.boolean().optional(),
         recipeTypeIds: z.array(z.string()).optional(),
         ingredients: z.array(
           z.object({
@@ -101,6 +122,7 @@ export const recipeRouter = createTRPCRouter({
           },
           name: input.name,
           instructions: input.instructions ?? '',
+          isPublic: input.isPublic ?? false,
           imageUrl: input.imageUrl,
           ingredients: {
             create: input.ingredients,
@@ -128,6 +150,7 @@ export const recipeRouter = createTRPCRouter({
         name: z.string().min(1),
         instructions: z.string().min(1),
         imageUrl: z.string().min(1),
+        isPublic: z.boolean().optional(),
         recipeTypeIds: z.array(z.string()).optional(),
         ingredients: z.array(
           z.object({
@@ -159,6 +182,7 @@ export const recipeRouter = createTRPCRouter({
           name: input.name,
           instructions: input.instructions,
           imageUrl: input.imageUrl,
+          isPublic: input.isPublic ?? false,
           ingredients: {
             deleteMany: {
               recipeId: input.id,

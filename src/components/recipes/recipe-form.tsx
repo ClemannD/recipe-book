@@ -1,16 +1,17 @@
 import { FieldArray, Form, Formik } from 'formik';
-import { Button } from './ui/button';
-import IngredientInput from './forms/ingredient-input';
-import Input from './forms/input';
-import Label from './forms/label';
+import { Button } from '../ui/button';
+import IngredientInput from '../forms/ingredient-input';
+import Input from '../forms/input';
+import Label from '../forms/label';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { api } from '../utils/api';
+import { api } from '../../utils/api';
 import type { Ingredient, Recipe, RecipeType } from '@prisma/client';
 import { ArrowRight } from 'lucide-react';
-import { useToast } from './ui/toast/use-toast';
+import { useToast } from '../ui/toast/use-toast';
 import clsx from 'clsx';
 import { useState } from 'react';
+import { Switch } from '../ui/switch';
 
 const RecipeForm = ({
   recipe,
@@ -37,8 +38,9 @@ const RecipeForm = ({
   const recipeFormSchema = z.object({
     name: z.string().min(1),
     instructions: z.string().optional(),
-    recipeTypes: z.array(z.string().min(1)).optional(),
     imageUrl: z.string().optional(),
+    isPublic: z.boolean().optional(),
+    recipeTypes: z.array(z.string().min(1)).optional(),
     ingredients: z.array(
       z
         .object({
@@ -66,6 +68,7 @@ const RecipeForm = ({
     api.recipe.updateRecipe.useMutation({
       onSuccess: async () => {
         await onSuccess();
+        setIsCreating(false);
 
         toast({
           title: 'Recipe updated',
@@ -101,6 +104,7 @@ const RecipeForm = ({
         initialValues={{
           name: recipe?.name ?? '',
           instructions: recipe?.instructions ?? '',
+          isPublic: recipe?.isPublic ?? false,
           imageUrl: recipe?.imageUrl ?? '',
           recipeTypeIds:
             recipe?.recipeTypes.map((recipeType) => recipeType.id) ??
@@ -126,10 +130,8 @@ const RecipeForm = ({
         }}
         validationSchema={toFormikValidationSchema(recipeFormSchema)}
         onSubmit={async (values) => {
-          console.log(values);
           if (recipe) {
-            console.log('updating recipe');
-
+            setIsCreating(true);
             await updateRecipe({
               id: recipe.id,
               ...values,
@@ -225,6 +227,20 @@ const RecipeForm = ({
                 </div>
               )}
             </FieldArray>
+
+            <Label
+              className="mt-8"
+              label="Public Recipe"
+              subLabel="Marking this as public will let anybody see it"
+            ></Label>
+            <Switch
+              checked={values.isPublic}
+              onCheckedChange={(checked) => {
+                setFieldValue('isPublic', checked);
+              }}
+              name="isPublic"
+            />
+
             <Button
               className="mt-8 "
               type="submit"

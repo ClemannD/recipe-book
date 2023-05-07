@@ -16,6 +16,8 @@ model User {
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 
+    fullName String?
+
     Household   Household?   @relation(fields: [householdId], references: [id])
     householdId String?
     RecipeType  RecipeType[]

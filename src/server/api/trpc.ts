@@ -26,18 +26,28 @@ type CreateContextOptions = Record<string, never>;
  *
  * @see https://trpc.io/docs/context
  */
-export const createTRPCContext = (opts: CreateNextContextOptions) => {
+export const createTRPCContext = async (opts: CreateNextContextOptions) => {
   const { req } = opts;
 
   const authSession = getAuth(req);
+
   console.log('Context initialized with userId:', authSession.userId);
 
+  const user = authSession.userId
+    ? await clerkClient.users.getUser(authSession.userId)
+    : null;
+
+  console.log('user', user);
+
+  console.log('authSession.user', authSession.user);
   return {
     prisma,
     userId: authSession.userId,
-    householdId: (authSession.user?.privateMetadata.householdId ?? null) as
-      | string
-      | null,
+    userFullName:
+      user?.firstName && user.lastName
+        ? `${user.firstName} ${user.lastName}`
+        : null,
+    householdId: (user?.privateMetadata.householdId ?? null) as string | null,
   };
 };
 
@@ -110,6 +120,20 @@ const enforceUserIdAuthenticated = t.middleware(async ({ ctx, next }) => {
     await prisma.user.create({
       data: {
         id: ctx.userId,
+        fullName: ctx.userFullName,
+      },
+    });
+  } else if (!user.fullName || user.fullName !== ctx.userFullName) {
+    console.log(
+      `Updating user ${ctx.userId} with full name ${ctx.userFullName || 'null'}`
+    );
+
+    await prisma.user.update({
+      where: {
+        id: ctx.userId,
+      },
+      data: {
+        fullName: ctx.userFullName,
       },
     });
   }
