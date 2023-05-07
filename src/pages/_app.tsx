@@ -30,12 +30,14 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <ClerkProvider {...pageProps}>
       {isPublicPage ? (
-        <Component {...pageProps} />
+        <>
+          <Component {...pageProps} />
+          <Toaster />
+        </>
       ) : (
         <>
           <SignedIn>
             <Component {...pageProps} />
-            <Toaster />
           </SignedIn>
           <SignedOut>
             <RedirectToSignIn />

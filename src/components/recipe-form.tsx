@@ -145,7 +145,7 @@ const RecipeForm = ({
             <Input label="Name" name="name" />
             <Input
               label="Image URL"
-              subLabel='You can find any image on the internet and right click it to get the url using "Copy Image Address"'
+              subLabel='You can find any image on the internet and right click it to get the url using "Copy Image Address". (Image Upload Coming Soon!)'
               name="imageUrl"
             />
             <Input textArea rows={8} label="Instructions" name="instructions" />
@@ -234,7 +234,6 @@ const RecipeForm = ({
               {recipe ? 'Update' : 'Create'} Recipe
             </Button>
 
-            {/* delete recipe button that has a toast to confirm we actually want to delete */}
             {recipe && (
               <div className="mt-4 flex gap-4">
                 <Button

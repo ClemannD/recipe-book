@@ -64,6 +64,7 @@ model Recipe {
     instructions String       @db.Text
     imageUrl     String?      @db.MediumText
     ingredients  Ingredient[]
+    isPublic     Boolean      @default(false)
 
     household   Household? @relation(fields: [householdId], references: [id])
     householdId String?
