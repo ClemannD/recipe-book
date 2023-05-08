@@ -25,16 +25,16 @@ const SharedRecipesPage = () => {
   const { data: recipesData, isLoading } =
     api.recipe.getPublicRecipes.useQuery();
 
-  /**
-   * Updates the selected recipe when the recipes data changes (e.g. when a recipe is created/updated)
-   */
-  useEffect(() => {
-    setIsExpanded(!!selectedRecipe);
+  //   /**
+  //    * Updates the selected recipe when the recipes data changes (e.g. when a recipe is created/updated)
+  //    */
+  //   useEffect(() => {
+  //     setIsExpanded(!!selectedRecipe);
 
-    setSelectedRecipe(
-      recipesData?.find((recipe) => recipe.id === selectedRecipe?.id) ?? null
-    );
-  }, [recipesData, selectedRecipe]);
+  //     setSelectedRecipe(
+  //       recipesData?.find((recipe) => recipe.id === selectedRecipe?.id) ?? null
+  //     );
+  //   }, [recipesData, selectedRecipe]);
 
   useEffect(() => {
     if (router.query.recipe && recipesData) {
@@ -76,18 +76,18 @@ const SharedRecipesPage = () => {
       isFullScreen={isFullScreen}
       leftChildren={
         <>
-          <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+          <div className="mb-4 flex flex-col items-start justify-between gap-6 pt-16 lg:mb-10 lg:flex-row lg:items-end lg:pt-0">
             <div>
               <h1 className="text-2xl font-bold">Shared Recipes</h1>
               <h2 className="mt-1 text-gray-600">
                 Recipes created and shared by other users
               </h2>
             </div>
-            <div className="flex flex-grow justify-end gap-4">
+            <div className="flex w-full flex-grow flex-col justify-end gap-4 lg:w-auto lg:flex-row">
               <PlainInput
                 placeholder="🔎  Search, by recipe name, ingredient, or recipe type"
                 value={search}
-                className="w-96"
+                className="lg:w-96 "
                 onChange={(e) => {
                   setSearch(e.target.value);
                 }}

@@ -21,27 +21,27 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
         ></link>
       </Head>
 
-      <div className="flex">
-        <div className="flex h-screen w-[14rem] min-w-[14rem] flex-col bg-white shadow-lg">
+      <div className="flex flex-col lg:flex-row">
+        <div className="fixed z-20 flex h-16 w-full items-center justify-between bg-white px-2 py-3 shadow-lg lg:static lg:h-screen lg:w-[14rem] lg:min-w-[14rem] lg:flex-col lg:justify-start lg:py-0">
           <Link href="/">
-            <div className="flex flex-col items-center justify-center py-6">
-              <p className="mb-4 text-5xl">🥘 📖</p>
-              <h1 className="text-3xl font-bold">Recipe Book</h1>
+            <div className="flex items-center justify-center lg:flex-col lg:py-6">
+              <p className="mr-2 text-xl lg:mb-4 lg:mr-0 lg:text-5xl">🥘 📖</p>
+              <h1 className="text-lg font-bold lg:text-3xl">Recipe Book</h1>
             </div>
           </Link>
-          <div className="flex h-20 items-center justify-center">
+          <div className="flex items-center justify-center lg:h-20">
             {user.isSignedIn ? (
               <>
                 <UserButton /> <div className="ml-3">{user.user?.fullName}</div>
               </>
             ) : (
-              <Link href="/signin" passHref>
+              <Link href="/sign-in" passHref>
                 <Button className="max-w-96 w-full">Sign In/Up</Button>
               </Link>
             )}
           </div>
 
-          <div className="flex flex-col items-center justify-center gap-y-3 p-6">
+          <div className="hidden flex-col  items-center justify-center gap-y-3 p-6 lg:flex">
             <NavItem href="/shared-recipes">Shared Recipes</NavItem>
             {user.isSignedIn && (
               <>
@@ -52,7 +52,8 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
             )}
           </div>
         </div>
-        <div className="max-h-screen flex-grow overflow-y-auto overflow-x-hidden">
+
+        <div className="max-h-screen flex-grow overflow-x-hidden lg:overflow-y-auto">
           {props.children}
         </div>
       </div>

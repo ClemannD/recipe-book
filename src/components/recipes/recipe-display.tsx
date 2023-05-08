@@ -24,7 +24,7 @@ const RecipeDisplay = ({
       <>
         <div className="absolute right-0 top-0 p-4">
           <button
-            className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
+            className="hidden rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200 lg:block"
             onClick={() => onFullscreenClick()}
           >
             {isFullscreen ? <Minimize></Minimize> : <Expand></Expand>}
