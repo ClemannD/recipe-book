@@ -107,16 +107,16 @@ const RecipesPage = () => {
       isFullScreen={isFullScreen}
       leftChildren={
         <>
-          <div className="mb-10 flex flex-col flex-wrap items-start justify-between gap-6 md:flex-row md:items-end">
+          <div className="mb-10 flex flex-col flex-wrap items-start justify-between gap-6 pt-16 md:flex-row md:items-end lg:pt-0">
             <div>
               <h1 className="text-2xl font-bold">Recipes</h1>
               <h2 className="mt-1 text-gray-600">Your collection of recipes</h2>
             </div>
-            <div className="flex-wrapflex-grow flex justify-end gap-4">
+            <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
               <PlainInput
                 placeholder="🔎 Search"
                 value={search}
-                className="w-96"
+                className="lg:w-96"
                 onChange={(e) => {
                   setSearch(e.target.value);
                 }}
@@ -138,6 +138,8 @@ const RecipesPage = () => {
                             setIsCreating(true);
                             setSelectedRecipe(null);
                             setEditingRecipe(null);
+                            setIsExpanded(true);
+
                             dismiss();
                           }}
                         >
@@ -151,6 +153,7 @@ const RecipesPage = () => {
                   setIsCreating(true);
                   setEditingRecipe(null);
                   setSelectedRecipe(null);
+                  setIsExpanded(true);
                 }}
               >
                 Create
@@ -223,6 +226,8 @@ const RecipesPage = () => {
                               setEditingRecipe(null);
                               setIsCreating(false);
                               setSelectedRecipe(recipe);
+                              setIsExpanded(true);
+
                               dismiss();
                             }}
                           >

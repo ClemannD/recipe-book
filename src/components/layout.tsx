@@ -32,7 +32,10 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
           <div className="flex items-center justify-center lg:h-20">
             {user.isSignedIn ? (
               <>
-                <UserButton /> <div className="ml-3">{user.user?.fullName}</div>
+                <UserButton />{' '}
+                <div className="ml-3 hidden lg:block">
+                  {user.user?.fullName}
+                </div>
               </>
             ) : (
               <Link href="/sign-in" passHref>

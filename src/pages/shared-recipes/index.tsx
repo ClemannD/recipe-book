@@ -93,9 +93,9 @@ const SharedRecipesPage = () => {
                 }}
               />
 
-              <Link href="/recipes?create=true">
-                <Button>Create</Button>
-              </Link>
+              {/* <Link className="w-full" href="/recipes?create=true">
+                <Button className="w-full">Create</Button>
+              </Link> */}
             </div>
           </div>
 
