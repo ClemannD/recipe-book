@@ -43,9 +43,13 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
 
           <div className="flex flex-col items-center justify-center gap-y-3 p-6">
             <NavItem href="/shared-recipes">Shared Recipes</NavItem>
-            <NavItem href="/recipes">Your Recipes</NavItem>
-            <NavItem href="/meal-plans">Meal Plans</NavItem>
-            <NavItem href="/recipe-types">Recipe Types</NavItem>
+            {user.isSignedIn && (
+              <>
+                <NavItem href="/recipes">Your Recipes</NavItem>
+                <NavItem href="/meal-plans">Meal Plans</NavItem>
+                <NavItem href="/recipe-types">Recipe Types</NavItem>
+              </>
+            )}
           </div>
         </div>
         <div className="max-h-screen flex-grow overflow-y-auto overflow-x-hidden">

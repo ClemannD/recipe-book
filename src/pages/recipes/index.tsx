@@ -1,20 +1,20 @@
 import clsx from 'clsx';
 import { useEffect, useState } from 'react';
-import Layout from '../../components/layout';
 import RecipeCard from '../../components/recipes/recipe-card';
 import RecipeDisplay from '../../components/recipes/recipe-display';
 import RecipeForm from '../../components/recipes/recipe-form';
+import RecipesPageLayout from '../../components/recipes/recipes-page';
 import { Button } from '../../components/ui/button';
 import { PlainInput } from '../../components/ui/input-plain';
 import { Skeleton } from '../../components/ui/skeleton';
 import { useToast } from '../../components/ui/toast/use-toast';
 import { type FullRecipe } from '../../models/model';
 import { api } from '../../utils/api';
-import { cn } from '../../utils/cn';
-import RecipesPageLayout from '../../components/recipes/recipes-page';
+import { useRouter } from 'next/router';
 
 const RecipesPage = () => {
   const { toast, dismiss } = useToast();
+  const router = useRouter();
 
   // Window control states
   const [isCreating, setIsCreating] = useState(false);
@@ -42,12 +42,24 @@ const RecipesPage = () => {
   const { data: recipeTypes, isLoading: recipeTypesIsLoading } =
     api.recipeType.getRecipeTypes.useQuery();
 
+  useEffect(() => {
+    if (!!router.query.create) {
+      setIsCreating(true);
+      setIsExpanded(true);
+    } else if (router.query.recipe && recipesData) {
+      setIsExpanded(true);
+      console.log('router.query.recipe', router.query.recipe);
+      setSelectedRecipe(
+        recipesData?.find((recipe) => recipe.id === router.query.recipe) ?? null
+      );
+    }
+  }, [recipesData, router.query.create, router.query.recipe]);
+
   /**
    * Updates the selected recipe when the recipes data changes (e.g. when a recipe is created/updated)
    */
   useEffect(() => {
-    setIsExpanded(!!selectedRecipe);
-
+    // setIsExpanded(!!selectedRecipe);
     setSelectedRecipe(
       recipesData?.find((recipe) => recipe.id === selectedRecipe?.id) ?? null
     );
@@ -262,7 +274,10 @@ const RecipesPage = () => {
 
           {isCreating && !editingRecipe && (
             <RecipeForm
-              onClose={() => setIsCreating(false)}
+              onClose={() => {
+                setIsExpanded(false);
+                setIsCreating(false);
+              }}
               onSuccess={async () => {
                 setIsCreating(false);
                 await refetchRecipes();

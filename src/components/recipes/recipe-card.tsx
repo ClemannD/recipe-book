@@ -2,9 +2,11 @@ import { type FullRecipe } from '../../models/model';
 
 const RecipeCard = ({
   recipe,
+  isOnPublicPage = false,
   onClick,
 }: {
   recipe: FullRecipe;
+  isOnPublicPage?: boolean;
   onClick: () => void;
 }) => {
   return (
@@ -22,7 +24,7 @@ const RecipeCard = ({
       <div className="flex w-full flex-col p-3">
         <div className="flex w-full justify-between">
           <h3 className="mb-2 text-lg font-bold">{recipe.name}</h3>
-          {recipe.isPublic && (
+          {recipe.isPublic && !isOnPublicPage && (
             <div className="ml-2 mt-1 flex h-5 w-5 items-center justify-center rounded bg-slate-800  text-xs font-medium text-white">
               P
             </div>

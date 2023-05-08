@@ -81,7 +81,7 @@ const Home: NextPage = () => {
                 No need to sign in or create an account
               </p>
 
-              <Link href="/recipes" passHref>
+              <Link href="/shared-recipes" passHref>
                 <Button className="max-w-96 w-full">Browse Recipes</Button>
               </Link>
             </div>

@@ -1,20 +1,22 @@
-import { Expand, Minimize, X } from 'lucide-react';
-import { FullRecipe } from '../../models/model';
 import clsx from 'clsx';
-import { Button } from '../ui/button';
+import { Expand, Minimize, X } from 'lucide-react';
+import { type FullRecipe } from '../../models/model';
 import { roundToCleanFraction } from '../../utils/round-fraction';
+import { Button } from '../ui/button';
 
 const RecipeDisplay = ({
   recipe,
   isFullscreen,
+  isOnPublicPage = false,
   onClose,
-  onEditClick,
+  onEditClick = () => {},
   onFullscreenClick,
 }: {
   recipe: FullRecipe | null;
   isFullscreen?: boolean;
+  isOnPublicPage?: boolean;
   onClose: () => void;
-  onEditClick: () => void;
+  onEditClick?: () => void;
   onFullscreenClick: () => void;
 }) => {
   return (
@@ -66,16 +68,18 @@ const RecipeDisplay = ({
                   </p>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  {recipe.isPublic && (
-                    <div className="rounded bg-slate-800 px-2 py-1 text-xs font-medium text-white">
-                      Public
-                    </div>
-                  )}
-                  <Button variant={'secondary'} onClick={() => onEditClick()}>
-                    Edit
-                  </Button>
-                </div>
+                {!isOnPublicPage && (
+                  <div className="flex items-center gap-4">
+                    {recipe.isPublic && (
+                      <div className="rounded bg-slate-800 px-2 py-1 text-xs font-medium text-white">
+                        Public
+                      </div>
+                    )}
+                    <Button variant={'secondary'} onClick={() => onEditClick()}>
+                      Edit
+                    </Button>
+                  </div>
+                )}
               </div>
 
               <div></div>
