@@ -83,7 +83,7 @@ const SharedRecipesPage = () => {
             </div>
             <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
               <PlainInput
-                placeholder="🔎  Search, by recipe name, ingredient, or recipe type"
+                placeholder="🔎  Search by recipe name, ingredient, or recipe type"
                 value={search}
                 className="lg:w-96 "
                 onChange={(e) => {

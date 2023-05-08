@@ -96,7 +96,7 @@ const Home: NextPage = () => {
 
               {!isSignedIn ? (
                 <>
-                  <Link href="/signup" passHref>
+                  <Link href="/sign-up" passHref>
                     <Button className="max-w-96 w-full">Sign Up</Button>
                   </Link>
                   <p className="mt-6">

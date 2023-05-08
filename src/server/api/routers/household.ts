@@ -36,6 +36,98 @@ export const householdRouter = createTRPCRouter({
         },
       });
 
+      const defaultRecipeTypes = [
+        {
+          name: 'Breakfast',
+          icon: '🍳',
+        },
+        {
+          name: 'Beef',
+          icon: '🥩',
+        },
+        {
+          name: 'Chicken',
+          icon: '🍗',
+        },
+        {
+          name: 'Pork',
+          icon: '🐷',
+        },
+        {
+          name: 'Fish',
+          icon: '🐟',
+        },
+        {
+          name: 'Veggies',
+          icon: '🥦',
+        },
+        {
+          name: 'Dessert',
+          icon: '🍨',
+        },
+        {
+          name: 'Potato',
+          icon: '🥔',
+        },
+        {
+          name: 'Pasta',
+          icon: '🍝',
+        },
+        {
+          name: 'Soup',
+          icon: '🍲',
+        },
+        {
+          name: 'Salad',
+          icon: '🥗',
+        },
+        {
+          name: 'Sandwich',
+          icon: '🥪',
+        },
+        {
+          name: 'Sauce',
+          icon: '🥣',
+        },
+        {
+          name: 'Shrimp',
+          icon: '🍤',
+        },
+        {
+          name: 'Turkey',
+          icon: '🦃',
+        },
+        {
+          name: 'Rice',
+          icon: '🍚',
+        },
+        {
+          name: 'Asian',
+          icon: '🍱',
+        },
+        {
+          name: 'Mexican',
+          icon: '🌮',
+        },
+        {
+          name: 'Italian',
+          icon: '🍕',
+        },
+        {
+          name: 'Cheesy',
+          icon: '🧀',
+        },
+      ];
+
+      // Create default recipeTypes for the household
+      await ctx.prisma.recipeType.createMany({
+        data: defaultRecipeTypes.map((recipeType) => ({
+          ...recipeType,
+          householdId: household.id,
+          userId: ctx.userId,
+        })),
+      });
+
       console.log(`✅ Created household ${household.id}`);
 
       return household;

@@ -11,6 +11,7 @@ import { useToast } from '../../components/ui/toast/use-toast';
 import { type FullRecipe } from '../../models/model';
 import { api } from '../../utils/api';
 import { useRouter } from 'next/router';
+import { set } from 'zod';
 
 const RecipesPage = () => {
   const { toast, dismiss } = useToast();
@@ -111,7 +112,7 @@ const RecipesPage = () => {
             </div>
             <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
               <PlainInput
-                placeholder="🔎 Search"
+                placeholder="🔎  Search by recipe name, ingredient, or recipe type"
                 value={search}
                 className="lg:w-96"
                 onChange={(e) => {
@@ -204,6 +205,19 @@ const RecipesPage = () => {
                   />
                 ))}
 
+              {recipesToShow?.length === 0 && (
+                <div className="flex w-full items-center justify-center gap-4 py-8">
+                  <div className="rounded bg-white p-6 text-center shadow">
+                    <h1 className="mb-2 text-2xl font-bold">
+                      No recipes found
+                    </h1>
+                    <h2 className="text-gray-600">
+                      Try changing your search or filter, or create a new recipe
+                    </h2>
+                  </div>
+                </div>
+              )}
+
               {recipesToShow?.map((recipe) => (
                 <RecipeCard
                   key={recipe.id + recipe.name}
@@ -287,6 +301,7 @@ const RecipesPage = () => {
               }}
               onSuccess={async () => {
                 setIsCreating(false);
+                setIsExpanded(false);
                 await refetchRecipes();
                 setSelectedRecipe(
                   recipesData?.find(

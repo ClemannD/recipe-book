@@ -36,6 +36,7 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
                 <div className="ml-3 hidden lg:block">
                   {user.user?.fullName}
                 </div>
+                <HouseholdDialog />
               </>
             ) : (
               <Link href="/sign-in" passHref>
@@ -76,3 +77,84 @@ const NavItem = (props: { href: string; children: React.ReactNode }) => {
 };
 
 export default Layout;
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog';
+import { Form, Formik } from 'formik';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { z } from 'zod';
+import { api } from '../utils/api';
+import Input from './forms/input';
+import { useEffect, useState } from 'react';
+
+export function HouseholdDialog() {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const {
+    data: household,
+    isFetched,
+    refetch,
+  } = api.household.getCurrentUserHousehold.useQuery();
+
+  const { mutate: createHousehold, isLoading: isCreatingHousehold } =
+    api.household.createHousehold.useMutation({
+      onSuccess: async () => {
+        await refetch();
+      },
+    });
+
+  useEffect(() => {
+    if (isFetched) {
+      setIsOpen(!household);
+    }
+  }, [household, isFetched]);
+
+  const householdFormSchema = z.object({
+    householdName: z.string().min(1),
+  });
+
+  return (
+    <Dialog open={isOpen}>
+      <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Create a Household</DialogTitle>
+          <DialogDescription>
+            A household is a group of people who share recipes and meal plans.
+            Recipes made under a household are private to the household by
+            default, but can be set to be shared publicly.
+            <br />
+            <br />
+            Once you create a household, you can invite others to join (This
+            feature is coming soon).
+          </DialogDescription>
+        </DialogHeader>
+
+        <Formik
+          initialValues={{
+            householdName: '',
+          }}
+          validationSchema={toFormikValidationSchema(householdFormSchema)}
+          onSubmit={(values) => {
+            createHousehold(values);
+          }}
+        >
+          <Form>
+            <Input label="🏡 Household Name" name="householdName"></Input>
+
+            <DialogFooter>
+              <Button type="submit" isSubmitting={isCreatingHousehold}>
+                Create
+              </Button>
+            </DialogFooter>
+          </Form>
+        </Formik>
+      </DialogContent>
+    </Dialog>
+  );
+}

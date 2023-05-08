@@ -64,8 +64,8 @@ const RecipeTypePage: React.FC = () => {
             />
 
             {/* Hack because I want flex wrap but with all elements to maintain their size */}
-            <div className="h-20 min-w-[375px]  max-w-[600px] flex-1"></div>
-            <div className="h-20 min-w-[375px] max-w-[600px] flex-1"></div>
+            <div className="h-1 min-w-[375px]  max-w-[600px] flex-1"></div>
+            <div className="h-1 min-w-[375px] max-w-[600px] flex-1"></div>
           </div>
         </div>
       </div>

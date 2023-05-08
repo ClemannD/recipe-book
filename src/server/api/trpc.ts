@@ -37,9 +37,6 @@ export const createTRPCContext = async (opts: CreateNextContextOptions) => {
     ? await clerkClient.users.getUser(authSession.userId)
     : null;
 
-  console.log('user', user);
-
-  console.log('authSession.user', authSession.user);
   return {
     prisma,
     userId: authSession.userId,
