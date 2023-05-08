@@ -10,6 +10,7 @@ import '~/styles/globals.css';
 import { api } from '~/utils/api';
 import { Toaster } from '../components/ui/toast/toaster';
 import Head from 'next/head';
+import { Analytics } from '@vercel/analytics/react';
 
 const publicPages = [
   '/sign-in/[[...index]]',
@@ -30,6 +31,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   // Otherwise, use Clerk to require authentication
   return (
     <>
+      <Analytics />
       <Head>
         <meta
           name="viewport"
