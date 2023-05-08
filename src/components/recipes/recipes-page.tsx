@@ -37,7 +37,7 @@ const RecipesPageLayout = ({
         <div
           className={cn(
             clsx(
-              `fixed top-0 z-50 h-screen max-h-screen max-w-[700px] bg-white shadow-lg transition-all duration-300 ease-in-out lg:absolute lg:overflow-y-auto`,
+              `fixed top-0 z-50 h-screen max-h-screen max-w-[700px] overflow-y-auto bg-white shadow-lg transition-all duration-300 ease-in-out lg:absolute`,
               isExpanded
                 ? isFullScreen
                   ? 'right-0 w-full min-w-full'
