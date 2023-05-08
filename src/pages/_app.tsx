@@ -9,6 +9,7 @@ import { useRouter } from 'next/router';
 import '~/styles/globals.css';
 import { api } from '~/utils/api';
 import { Toaster } from '../components/ui/toast/toaster';
+import Head from 'next/head';
 
 const publicPages = [
   '/sign-in/[[...index]]',
@@ -28,24 +29,32 @@ function MyApp({ Component, pageProps }: AppProps) {
   // If the current route is listed as public, render it directly
   // Otherwise, use Clerk to require authentication
   return (
-    <ClerkProvider {...pageProps}>
-      {isPublicPage ? (
-        <>
-          <Component {...pageProps} />
-          <Toaster />
-        </>
-      ) : (
-        <>
-          <SignedIn>
-            <Toaster />
+    <>
+      <Head>
+        <meta
+          name="viewport"
+          content="width=device-width, initial-scale=1, maximum-scale=1"
+        ></meta>
+      </Head>
+      <ClerkProvider {...pageProps}>
+        {isPublicPage ? (
+          <>
             <Component {...pageProps} />
-          </SignedIn>
-          <SignedOut>
-            <RedirectToSignIn />
-          </SignedOut>
-        </>
-      )}
-    </ClerkProvider>
+            <Toaster />
+          </>
+        ) : (
+          <>
+            <SignedIn>
+              <Toaster />
+              <Component {...pageProps} />
+            </SignedIn>
+            <SignedOut>
+              <RedirectToSignIn />
+            </SignedOut>
+          </>
+        )}
+      </ClerkProvider>
+    </>
   );
 }
 
