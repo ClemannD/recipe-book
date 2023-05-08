@@ -76,14 +76,14 @@ const SharedRecipesPage = () => {
       isFullScreen={isFullScreen}
       leftChildren={
         <>
-          <div className="mb-4 flex flex-col items-start justify-between gap-6 pt-16 lg:mb-10 lg:flex-row lg:items-end lg:pt-0">
+          <div className="mb-4 flex flex-col flex-wrap items-start justify-between gap-6 pt-16 lg:mb-10 lg:flex-row lg:items-end lg:pt-0">
             <div>
               <h1 className="text-2xl font-bold">Shared Recipes</h1>
               <h2 className="mt-1 text-gray-600">
                 Recipes created and shared by other users
               </h2>
             </div>
-            <div className="flex w-full flex-grow flex-col justify-end gap-4 lg:w-auto lg:flex-row">
+            <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
               <PlainInput
                 placeholder="🔎  Search, by recipe name, ingredient, or recipe type"
                 value={search}

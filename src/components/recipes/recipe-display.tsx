@@ -145,7 +145,7 @@ const RecipeDisplay = ({
                         </span>
                       )}{' '}
                     </div>
-                    <div className="mr-8 w-10 text-sm text-slate-500">
+                    <div className="mr-8 w-14 text-sm text-slate-500">
                       {ingredient.unit}
                     </div>
                     {ingredient.name}

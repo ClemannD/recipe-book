@@ -41,7 +41,7 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
             )}
           </div>
 
-          <div className="hidden flex-col  items-center justify-center gap-y-3 p-6 lg:flex">
+          <div className="hidden flex-col  items-center justify-center gap-y-3 py-6 lg:flex">
             <NavItem href="/shared-recipes">Shared Recipes</NavItem>
             {user.isSignedIn && (
               <>
@@ -65,7 +65,7 @@ const NavItem = (props: { href: string; children: React.ReactNode }) => {
   return (
     <Link
       href={props.href}
-      className="flex h-10 w-full items-center justify-center rounded text-lg font-medium text-slate-900 transition-colors ease-in-out hover:bg-slate-200"
+      className="flex h-10 w-full items-center justify-center rounded px-4 text-lg font-medium text-slate-900 transition-colors ease-in-out hover:bg-slate-200"
     >
       {props.children}
     </Link>

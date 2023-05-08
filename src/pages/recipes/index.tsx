@@ -107,12 +107,12 @@ const RecipesPage = () => {
       isFullScreen={isFullScreen}
       leftChildren={
         <>
-          <div className="mb-10 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+          <div className="mb-10 flex flex-col flex-wrap items-start justify-between gap-6 md:flex-row md:items-end">
             <div>
               <h1 className="text-2xl font-bold">Recipes</h1>
               <h2 className="mt-1 text-gray-600">Your collection of recipes</h2>
             </div>
-            <div className="flex flex-grow justify-end gap-4">
+            <div className="flex-wrapflex-grow flex justify-end gap-4">
               <PlainInput
                 placeholder="🔎 Search"
                 value={search}
