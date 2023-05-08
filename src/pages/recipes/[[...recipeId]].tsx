@@ -20,6 +20,7 @@ const RecipesPage = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [firstLoadComplete, setFirstLoadComplete] = useState(false);
 
   // Recipe states
   const [recipesToShow, setRecipesToShow] = useState<FullRecipe[] | null>(null);
@@ -49,13 +50,15 @@ const RecipesPage = () => {
     } else if (
       router.query.recipeId &&
       router.query.recipeId[0] &&
-      recipesData
+      recipesData &&
+      !firstLoadComplete
     ) {
       setIsExpanded(true);
       setSelectedRecipe(
         recipesData.find((recipe) => recipe.id === router.query.recipeId![0]) ??
           null
       );
+      setFirstLoadComplete(true);
     }
   }, [recipesData, router.query]);
 

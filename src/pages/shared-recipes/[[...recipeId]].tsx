@@ -14,6 +14,7 @@ const SharedRecipesPage = () => {
 
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
+  const [firstLoadComplete, setFirstLoadComplete] = useState(false);
 
   const [recipesToShow, setRecipesToShow] = useState<FullRecipe[] | null>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<FullRecipe | null>(null);
@@ -27,12 +28,18 @@ const SharedRecipesPage = () => {
    * If the user navigates to a recipe page, expand the recipe display
    */
   useEffect(() => {
-    if (router.query.recipeId && router.query.recipeId[0] && recipesData) {
+    if (
+      router.query.recipeId &&
+      router.query.recipeId[0] &&
+      recipesData &&
+      !firstLoadComplete
+    ) {
       setIsExpanded(true);
       setSelectedRecipe(
         recipesData.find((recipe) => recipe.id === router.query.recipeId![0]) ??
           null
       );
+      setFirstLoadComplete(true);
     }
   }, [recipesData, router.query]);
 
