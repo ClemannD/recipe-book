@@ -11,7 +11,6 @@ import { useToast } from '../../components/ui/toast/use-toast';
 import { type FullRecipe } from '../../models/model';
 import { api } from '../../utils/api';
 import { useRouter } from 'next/router';
-import { set } from 'zod';
 
 const RecipesPage = () => {
   const { toast, dismiss } = useToast();
@@ -114,7 +113,7 @@ const RecipesPage = () => {
               <PlainInput
                 placeholder="🔎  Search by recipe name, ingredient, or recipe type"
                 value={search}
-                className="lg:w-96"
+                className="lg:w-[400px]"
                 onChange={(e) => {
                   setSearch(e.target.value);
                 }}
@@ -271,6 +270,7 @@ const RecipesPage = () => {
               onClose={() => {
                 setIsExpanded(false);
                 setIsFullScreen(false);
+                void router.push('/recipes');
               }}
               onEditClick={() => setEditingRecipe(selectedRecipe)}
               onFullscreenClick={() => setIsFullScreen(!isFullScreen)}

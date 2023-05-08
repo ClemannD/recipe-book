@@ -60,7 +60,10 @@ const SharedRecipesPage = () => {
               ) ||
               recipe.recipeTypes.some((recipeType) =>
                 recipeType.name.toLowerCase().includes(search.toLowerCase())
-              )
+              ) ||
+              ((recipe.createdBy.fullName ?? '') as string)
+                .toLowerCase()
+                .includes(search.toLowerCase())
           ) || null;
       }
 
@@ -83,9 +86,9 @@ const SharedRecipesPage = () => {
             </div>
             <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
               <PlainInput
-                placeholder="🔎  Search by recipe name, ingredient, or recipe type"
+                placeholder="🔎  Search by recipe name, ingredient, type, or creator"
                 value={search}
-                className="lg:w-96 "
+                className="lg:w-[500px] "
                 onChange={(e) => {
                   setSearch(e.target.value);
                 }}
@@ -134,6 +137,7 @@ const SharedRecipesPage = () => {
           onClose={() => {
             setIsExpanded(false);
             setIsFullScreen(false);
+            void router.push('/shared-recipes');
           }}
           onFullscreenClick={() => setIsFullScreen(!isFullScreen)}
         />
