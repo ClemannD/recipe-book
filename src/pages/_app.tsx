@@ -17,7 +17,7 @@ const publicPages = [
   '/sign-up/[[...index]]',
   '/',
   '/shared-recipes',
-  '/shared-recipes/[[...index]]',
+  '/shared-recipes/[[...recipeId]]',
 ];
 
 function MyApp({ Component, pageProps }: AppProps) {

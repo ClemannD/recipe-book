@@ -1,15 +1,13 @@
 import clsx from 'clsx';
-import Link from 'next/link';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
 import RecipeCard from '../../components/recipes/recipe-card';
 import RecipeDisplay from '../../components/recipes/recipe-display';
 import RecipesPageLayout from '../../components/recipes/recipes-page';
-import { Button } from '../../components/ui/button';
 import { PlainInput } from '../../components/ui/input-plain';
 import { Skeleton } from '../../components/ui/skeleton';
 import { type FullRecipe } from '../../models/model';
 import { api } from '../../utils/api';
-import { useRouter } from 'next/router';
 
 const SharedRecipesPage = () => {
   const router = useRouter();
@@ -25,25 +23,18 @@ const SharedRecipesPage = () => {
   const { data: recipesData, isLoading } =
     api.recipe.getPublicRecipes.useQuery();
 
-  //   /**
-  //    * Updates the selected recipe when the recipes data changes (e.g. when a recipe is created/updated)
-  //    */
-  //   useEffect(() => {
-  //     setIsExpanded(!!selectedRecipe);
-
-  //     setSelectedRecipe(
-  //       recipesData?.find((recipe) => recipe.id === selectedRecipe?.id) ?? null
-  //     );
-  //   }, [recipesData, selectedRecipe]);
-
+  /**
+   * If the user navigates to a recipe page, expand the recipe display
+   */
   useEffect(() => {
-    if (router.query.recipe && recipesData) {
+    if (router.query.recipeId && router.query.recipeId[0] && recipesData) {
       setIsExpanded(true);
       setSelectedRecipe(
-        recipesData?.find((recipe) => recipe.id === router.query.recipe) ?? null
+        recipesData.find((recipe) => recipe.id === router.query.recipeId![0]) ??
+          null
       );
     }
-  }, [recipesData, router.query.create, router.query.recipe]);
+  }, [recipesData, router.query]);
 
   /**
    * Filter the recipes to show based on the search and filter states

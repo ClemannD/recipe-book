@@ -46,24 +46,18 @@ const RecipesPage = () => {
     if (!!router.query.create) {
       setIsCreating(true);
       setIsExpanded(true);
-    } else if (router.query.recipe && recipesData) {
+    } else if (
+      router.query.recipeId &&
+      router.query.recipeId[0] &&
+      recipesData
+    ) {
       setIsExpanded(true);
-      console.log('router.query.recipe', router.query.recipe);
       setSelectedRecipe(
-        recipesData?.find((recipe) => recipe.id === router.query.recipe) ?? null
+        recipesData.find((recipe) => recipe.id === router.query.recipeId![0]) ??
+          null
       );
     }
-  }, [recipesData, router.query.create, router.query.recipe]);
-
-  /**
-   * Updates the selected recipe when the recipes data changes (e.g. when a recipe is created/updated)
-   */
-  useEffect(() => {
-    // setIsExpanded(!!selectedRecipe);
-    setSelectedRecipe(
-      recipesData?.find((recipe) => recipe.id === selectedRecipe?.id) ?? null
-    );
-  }, [recipesData, selectedRecipe]);
+  }, [recipesData, router.query]);
 
   /**
    * Filter the recipes to show based on the search and filter states
@@ -273,6 +267,11 @@ const RecipesPage = () => {
               onSuccess={async () => {
                 setEditingRecipe(null);
                 await refetchRecipes();
+                setSelectedRecipe(
+                  recipesData?.find(
+                    (recipe) => recipe.id === selectedRecipe?.id
+                  ) ?? null
+                );
               }}
             />
           )}
@@ -286,6 +285,11 @@ const RecipesPage = () => {
               onSuccess={async () => {
                 setIsCreating(false);
                 await refetchRecipes();
+                setSelectedRecipe(
+                  recipesData?.find(
+                    (recipe) => recipe.id === selectedRecipe?.id
+                  ) ?? null
+                );
               }}
             />
           )}

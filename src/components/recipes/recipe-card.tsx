@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import { type FullRecipe } from '../../models/model';
 
 const RecipeCard = ({
@@ -9,10 +10,19 @@ const RecipeCard = ({
   isOnPublicPage?: boolean;
   onClick: () => void;
 }) => {
+  const router = useRouter();
   return (
     <div
       className="flex flex-1 cursor-pointer rounded bg-white shadow-sm transition-all ease-in-out hover:scale-[1.02] max-[330px]:flex-col lg:min-w-[400px]"
-      onClick={onClick}
+      onClick={() => {
+        if (isOnPublicPage) {
+          void router.replace(`/shared-recipes/${recipe.id}`);
+        } else {
+          void router.push(`/recipes/${recipe.id}`);
+        }
+
+        onClick();
+      }}
     >
       <div>
         <img
