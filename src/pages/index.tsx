@@ -102,7 +102,7 @@ const Home: NextPage = () => {
                   <p className="mt-6">
                     Already have an account?{' '}
                     <Link
-                      href="/login"
+                      href="/sign-in"
                       passHref
                       className="underline hover:scale-110"
                     >
