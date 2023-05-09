@@ -61,7 +61,8 @@ const SharedRecipesPage = () => {
               recipe.recipeTypes.some((recipeType) =>
                 recipeType.name.toLowerCase().includes(search.toLowerCase())
               ) ||
-              ((recipe.createdBy.fullName ?? '') as string)
+              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/no-unsafe-call
+              (recipe.createdBy.fullName ?? '')
                 .toLowerCase()
                 .includes(search.toLowerCase())
           ) || null;
