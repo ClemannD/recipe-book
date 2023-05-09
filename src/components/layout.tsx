@@ -5,6 +5,13 @@ import { Button } from './ui/button';
 
 const Layout = (props: { children: React.ReactNode; title?: string }) => {
   const user = useUser();
+  const router = useRouter();
+
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [router.pathname]);
 
   return (
     <>
@@ -22,30 +29,60 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
       </Head>
 
       <div className="flex flex-col lg:flex-row">
-        <div className="fixed z-20 flex h-16 w-full items-center justify-between bg-white px-2 py-3 shadow-lg lg:static lg:h-screen lg:w-[14rem] lg:min-w-[14rem] lg:flex-col lg:justify-start lg:py-0">
-          <Link href="/">
-            <div className="flex items-center justify-center lg:flex-col lg:py-6">
-              <p className="mr-2 text-xl lg:mb-4 lg:mr-0 lg:text-5xl">🥘 📖</p>
-              <h1 className="text-lg font-bold lg:text-3xl">Recipe Book</h1>
+        <div
+          className={clsx(
+            'fixed z-20 w-full flex-col justify-between overflow-hidden bg-white px-2 py-0 shadow-lg  transition-all duration-500 ease-in-out lg:static lg:w-[14rem] lg:min-w-[14rem] lg:flex-col lg:justify-start',
+            isMenuOpen ? 'h-screen' : 'h-16 lg:h-screen'
+          )}
+        >
+          <div className="flex justify-between">
+            <Link href="/">
+              <div className="flex h-16 items-center justify-center lg:h-auto lg:flex-col lg:py-6">
+                <p className="mr-2 text-xl lg:mb-4 lg:mr-0 lg:text-5xl">
+                  🥘 📖
+                </p>
+                <h1 className="text-lg font-bold lg:text-3xl">Recipe Book</h1>
+              </div>
+            </Link>
+
+            <div className="flex h-16 items-center justify-center lg:h-20">
+              {user.isSignedIn ? (
+                <>
+                  <div className="hidden lg:block">
+                    <UserButton />{' '}
+                    <div className="ml-3 ">{user.user?.fullName}</div>
+                  </div>
+                  <div
+                    className="lg:hidden"
+                    onClick={() => {
+                      setIsMenuOpen(!isMenuOpen);
+                    }}
+                  >
+                    {isMenuOpen ? (
+                      <XIcon className="h-6 w-6" />
+                    ) : (
+                      <MenuIcon className="h-6 w-6" />
+                    )}
+                  </div>
+                  <HouseholdDialog />
+                </>
+              ) : (
+                <Link href="/sign-in" passHref>
+                  <Button className="max-w-96 w-full">Sign In/Up</Button>
+                </Link>
+              )}
             </div>
-          </Link>
-          <div className="flex items-center justify-center lg:h-20">
-            {user.isSignedIn ? (
-              <>
-                <UserButton />{' '}
-                <div className="ml-3 hidden lg:block">
-                  {user.user?.fullName}
-                </div>
-                <HouseholdDialog />
-              </>
-            ) : (
-              <Link href="/sign-in" passHref>
-                <Button className="max-w-96 w-full">Sign In/Up</Button>
-              </Link>
-            )}
           </div>
 
-          <div className="hidden flex-col  items-center justify-center gap-y-3 py-6 lg:flex">
+          <div
+            className={clsx(
+              'flex-col  items-center justify-center gap-y-3 py-6 ',
+              isMenuOpen ? 'flex' : 'hidden lg:flex'
+            )}
+          >
+            <div className="mb-4 flex items-center lg:hidden">
+              <UserButton /> <div className="ml-3 ">{user.user?.fullName}</div>
+            </div>
             <NavItem href="/shared-recipes">Shared Recipes</NavItem>
             {user.isSignedIn && (
               <>
@@ -92,6 +129,9 @@ import { z } from 'zod';
 import { api } from '../utils/api';
 import Input from './forms/input';
 import { useEffect, useState } from 'react';
+import { MenuIcon, XIcon } from 'lucide-react';
+import clsx from 'clsx';
+import { useRouter } from 'next/router';
 
 export function HouseholdDialog() {
   const [isOpen, setIsOpen] = useState(false);

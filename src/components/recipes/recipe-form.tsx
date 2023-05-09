@@ -122,7 +122,7 @@ const RecipeForm = ({
     });
 
   return (
-    <div className="p-6">
+    <div className="p-4 lg:p-6">
       <div className="absolute right-0 top-0 p-4">
         <button
           className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"

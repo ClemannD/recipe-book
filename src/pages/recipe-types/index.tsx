@@ -28,7 +28,7 @@ const RecipeTypePage: React.FC = () => {
 
   return (
     <Layout>
-      <div className="p-10">
+      <div className="p-4 pt-20 lg:pt-0">
         <h1 className="text-2xl font-bold">Recipe Types</h1>
         <h2 className="mt-1  text-gray-600">
           Recipe Types are used to categorize your recipes
@@ -96,7 +96,7 @@ const RecipeTypeBox = ({
     <div
       ref={recipeBoxRef}
       className={clsx(
-        ' min-w-[375px] flex-1 rounded bg-white shadow-sm',
+        'min-w-full flex-1 rounded bg-white shadow-sm md:min-w-[375px]',
         recipeType &&
           !isEditing &&
           'cursor-pointer transition-all ease-in-out hover:scale-[1.02]'
