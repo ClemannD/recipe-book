@@ -121,7 +121,7 @@ const RecipeDisplay = ({
             )}
           </div>
           <div className={clsx(isFullscreen ? 'flex-1' : '')}>
-            <div className={clsx(isFullscreen ? 'p-10 pt-20' : 'px-4 pb-20')}>
+            <div className={clsx(isFullscreen ? 'p-10 pt-20' : 'px-4 pb-24')}>
               <h3
                 className={clsx(
                   ' font-bold text-slate-700',

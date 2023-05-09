@@ -94,7 +94,7 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
           </div>
         </div>
 
-        <div className="max-h-screen flex-grow overflow-x-hidden lg:overflow-y-auto">
+        <div className="max-h-screen flex-grow overflow-x-hidden pb-20 lg:overflow-y-auto">
           {props.children}
         </div>
       </div>
