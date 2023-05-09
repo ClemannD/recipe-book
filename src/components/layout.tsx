@@ -35,7 +35,7 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
             isMenuOpen ? 'h-screen' : 'h-16 lg:h-screen'
           )}
         >
-          <div className="flex justify-between">
+          <div className="flex  justify-between lg:flex-col">
             <Link href="/">
               <div className="flex h-16 items-center justify-center lg:h-auto lg:flex-col lg:py-6">
                 <p className="mr-2 text-xl lg:mb-4 lg:mr-0 lg:text-5xl">
@@ -48,7 +48,7 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
             <div className="flex h-16 items-center justify-center lg:h-20">
               {user.isSignedIn ? (
                 <>
-                  <div className="hidden lg:block">
+                  <div className="hidden lg:flex lg:items-center">
                     <UserButton />{' '}
                     <div className="ml-3 ">{user.user?.fullName}</div>
                   </div>
