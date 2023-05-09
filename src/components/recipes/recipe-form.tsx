@@ -17,6 +17,7 @@ const RecipeForm = ({
   recipe,
   onClose,
   onSuccess,
+  onDelete,
 }: {
   recipe?: Recipe & {
     ingredients: Ingredient[];
@@ -24,6 +25,7 @@ const RecipeForm = ({
   };
   onClose: () => void;
   onSuccess: () => Promise<void>;
+  onDelete?: () => Promise<void>;
 }) => {
   const { toast, dismiss } = useToast();
   const [isDuplicating, setIsDuplicating] = useState(false);
@@ -62,6 +64,16 @@ const RecipeForm = ({
           title: 'Recipe created',
         });
       },
+      onError: (error) => {
+        setIsCreating(false);
+
+        console.error(error);
+
+        toast({
+          title: 'Error creating recipe',
+          description: 'Please try again later.',
+        });
+      },
     });
 
   const { mutateAsync: updateRecipe, isLoading: isUpdatingRecipe } =
@@ -74,15 +86,37 @@ const RecipeForm = ({
           title: 'Recipe updated',
         });
       },
+      onError: (error) => {
+        setIsCreating(false);
+        console.error(error);
+
+        toast({
+          title: 'Error updating recipe',
+          description: 'Please try again later.',
+        });
+      },
     });
 
   const { mutate: deleteRecipe, isLoading: isDeletingRecipe } =
     api.recipe.deleteRecipe.useMutation({
       onSuccess: async () => {
-        await onSuccess();
+        if (!onDelete) {
+          return;
+        }
+
+        await onDelete();
 
         toast({
           title: 'Recipe deleted',
+        });
+      },
+      onError: (error) => {
+        setIsCreating(false);
+        console.error(error);
+
+        toast({
+          title: 'Error deleting recipe',
+          description: 'Please try again later.',
         });
       },
     });
@@ -286,7 +320,7 @@ const RecipeForm = ({
                             dismiss();
                           }}
                         >
-                          Discard
+                          Delete
                         </Button>
                       ),
                     });

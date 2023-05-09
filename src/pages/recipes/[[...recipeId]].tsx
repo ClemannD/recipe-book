@@ -290,6 +290,12 @@ const RecipesPage = () => {
                   ) ?? null
                 );
               }}
+              onDelete={async () => {
+                setEditingRecipe(null);
+                await refetchRecipes();
+                setSelectedRecipe(null);
+                setIsExpanded(false);
+              }}
             />
           )}
 
