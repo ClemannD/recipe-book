@@ -6,6 +6,8 @@ body {
   /* @apply bg-gradient-to-b from-sky-100 to-[#f5f5f5]; */
   @apply bg-slate-200;
 
+  overflow: hidden;
+
   overscroll-behavior: none;
 }
 
