@@ -53,11 +53,16 @@ const RecipesPage = () => {
       recipesData &&
       !firstLoadComplete
     ) {
-      setIsExpanded(true);
-      setSelectedRecipe(
+      const foundRecipe =
         recipesData.find((recipe) => recipe.id === router.query.recipeId![0]) ??
-          null
-      );
+        null;
+
+      if (foundRecipe) {
+        setIsExpanded(true);
+        setSelectedRecipe(foundRecipe);
+      } else {
+        void router.push('/recipes');
+      }
       setFirstLoadComplete(true);
     }
   }, [recipesData, router.query]);
