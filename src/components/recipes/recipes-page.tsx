@@ -18,7 +18,7 @@ const RecipesPageLayout = ({
       <div className="relative flex">
         <div
           className={clsx(
-            `w-screen flex-grow p-4 transition-all duration-300 ease-in-out lg:max-h-screen lg:w-[550px] lg:overflow-y-auto lg:p-10`
+            `w-screen flex-grow p-4 pb-12 transition-all duration-300 ease-in-out lg:max-h-screen lg:w-[550px] lg:overflow-y-auto lg:p-10`
           )}
         >
           {leftChildren}

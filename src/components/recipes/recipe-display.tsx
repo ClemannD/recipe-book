@@ -22,7 +22,7 @@ const RecipeDisplay = ({
   return (
     recipe && (
       <>
-        <div className="absolute right-0 top-0 p-4">
+        <div className="absolute right-0 top-0 p-4 pb-12">
           <button
             className="hidden rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200 lg:block"
             onClick={() => onFullscreenClick()}
