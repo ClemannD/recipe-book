@@ -17,6 +17,7 @@ const Home: NextPage = () => {
         { name: 'Cheesy', icon: '🧀' },
         { name: 'Pasta', icon: '🍝' },
       ],
+      path: '/shared-recipes/clh71s13200ckl308two5su77',
     },
     {
       name: 'Ground Beef Stuffed Peppers',
@@ -27,16 +28,18 @@ const Home: NextPage = () => {
         { name: 'Rice', icon: '🍚' },
         { name: 'Beef', icon: '🥩' },
       ],
+      path: '/shared-recipes/clh70sunj0082l308cd1eqhqs',
     },
     {
-      name: 'Shrimp Salad',
+      name: 'Mediterranean Salad',
       imageUrl:
-        'https://www.primaverakitchen.com/wp-content/uploads/2018/08/Super-Fresh-Shrimp-Tomato-Salad-Primavera-Kitchen-5.jpg',
+        'https://www.simplejoy.com/wp-content/uploads/2022/01/mediterranean-salad-1365x2048.jpg',
       recipeTypes: [
         { name: 'Veggie', icon: '🥦' },
-        { name: 'Shrimp', icon: '🍤' },
+        { name: 'Mediterranean', icon: '🧆' },
         { name: 'Salad', icon: '🥗' },
       ],
+      path: '/shared-recipes/clh5n4yc0009qmp0898go0mkt',
     },
   ];
   return (
@@ -135,34 +138,37 @@ const RecipeCard = ({
     name: string;
     imageUrl: string;
     recipeTypes: { name: string; icon: string }[];
+    path: string;
   };
 }) => {
   return (
-    <div className="m flex w-full  max-w-[400px] flex-1  rounded bg-white shadow-sm transition-all ease-in-out hover:scale-[1.02]">
-      <div>
-        <img
-          className="h-[150px] w-[130px] min-w-[130px] rounded-l object-cover"
-          src={recipe.imageUrl}
-          alt={recipe.name}
-        />
-      </div>
-      <div className="flex flex-col p-3">
-        <h3 className="mb-2 text-lg font-bold">{recipe.name}</h3>
+    <Link href={recipe.path}>
+      <div className="m flex w-full  max-w-[400px] flex-1  rounded bg-white shadow-sm transition-all ease-in-out hover:scale-[1.02]">
+        <div>
+          <img
+            className="h-[150px] w-[130px] min-w-[130px] rounded-l object-cover"
+            src={recipe.imageUrl}
+            alt={recipe.name}
+          />
+        </div>
+        <div className="flex flex-col p-3">
+          <h3 className="mb-2 text-lg font-bold">{recipe.name}</h3>
 
-        <div className="flex flex-wrap gap-2">
-          {recipe.recipeTypes.map((recipeType) => (
-            <div
-              className="flex h-6 w-auto items-center justify-center rounded-full bg-slate-200 p-2 text-xs tracking-wide "
-              key={recipeType.name}
-            >
-              {recipeType.icon}{' '}
-              <span className="ml-2 text-xs font-medium ">
-                {recipeType.name}
-              </span>
-            </div>
-          ))}
+          <div className="flex flex-wrap gap-2">
+            {recipe.recipeTypes.map((recipeType) => (
+              <div
+                className="flex h-6 w-auto items-center justify-center rounded-full bg-slate-200 p-2 text-xs tracking-wide "
+                key={recipeType.name}
+              >
+                {recipeType.icon}{' '}
+                <span className="ml-2 text-xs font-medium ">
+                  {recipeType.name}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
