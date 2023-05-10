@@ -7,7 +7,7 @@ import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { api } from '../../utils/api';
 import type { Ingredient, Recipe, RecipeType } from '@prisma/client';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, X } from 'lucide-react';
 import { useToast } from '../ui/toast/use-toast';
 import clsx from 'clsx';
 import { useState } from 'react';
@@ -128,7 +128,7 @@ const RecipeForm = ({
           className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
           onClick={() => onClose()}
         >
-          <ArrowRight></ArrowRight>
+          <X></X>
         </button>
       </div>
       <h2 className="mb-6 text-3xl font-bold">
