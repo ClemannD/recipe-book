@@ -43,13 +43,10 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="A simple app for storing and sharing recipes"
         ></meta>
         <meta property="og:type" content="website"></meta>
-        <meta
-          property="og:url"
-          content="https://recipe-book.clemann.app/"
-        ></meta>
+        <meta property="og:url" content="https://recipes.clemann.app/"></meta>
         <meta
           property="og:image"
-          content="https://recipe-book.clemann.app/recipe-book-cover.png"
+          content="https://recipes.clemann.app/recipe-book-cover.png"
         ></meta>
       </Head>
       <ClerkProvider {...pageProps}>
