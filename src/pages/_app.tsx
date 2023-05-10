@@ -37,6 +37,20 @@ function MyApp({ Component, pageProps }: AppProps) {
           name="viewport"
           content="width=device-width, initial-scale=1, maximum-scale=1"
         ></meta>
+        <meta property="og:title" content="Recipe Book"></meta>
+        <meta
+          property="og:description"
+          content="A simple app for storing and sharing recipes"
+        ></meta>
+        <meta property="og:type" content="website"></meta>
+        <meta
+          property="og:url"
+          content="https://recipe-book.clemann.app/"
+        ></meta>
+        <meta
+          property="og:image"
+          content="https://recipe-book.clemann.app/recipe-book-cover.png"
+        ></meta>
       </Head>
       <ClerkProvider {...pageProps}>
         {isPublicPage ? (
