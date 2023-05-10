@@ -131,6 +131,7 @@ const RecipesPage = () => {
 
                       action: (
                         <Button
+                          variant={'destructive'}
                           onClick={() => {
                             setIsCreating(true);
                             setSelectedRecipe(null);
@@ -232,6 +233,7 @@ const RecipesPage = () => {
 
                         action: (
                           <Button
+                            variant={'destructive'}
                             onClick={() => {
                               setEditingRecipe(null);
                               setIsCreating(false);
@@ -280,7 +282,33 @@ const RecipesPage = () => {
           {editingRecipe && !isCreating && (
             <RecipeForm
               recipe={editingRecipe}
-              onClose={() => setEditingRecipe(null)}
+              onClose={() => {
+                if (editingRecipe) {
+                  toast({
+                    title: `You are currently editing a recipe`,
+                    description: 'Are you sure you want to close?',
+                    duration: 5000,
+
+                    action: (
+                      <Button
+                        variant={'destructive'}
+                        onClick={() => {
+                          setEditingRecipe(null);
+                          setIsCreating(false);
+                          setSelectedRecipe(null);
+                          setIsExpanded(false);
+
+                          dismiss();
+                        }}
+                      >
+                        Discard
+                      </Button>
+                    ),
+                  });
+                  return;
+                }
+                setEditingRecipe(null);
+              }}
               onSuccess={async () => {
                 setEditingRecipe(null);
                 await refetchRecipes();
@@ -302,6 +330,30 @@ const RecipesPage = () => {
           {isCreating && !editingRecipe && (
             <RecipeForm
               onClose={() => {
+                if (isCreating) {
+                  toast({
+                    title: `You are currently creating a recipe`,
+                    description: 'Are you sure you want to close?',
+                    duration: 5000,
+
+                    action: (
+                      <Button
+                        variant={'destructive'}
+                        onClick={() => {
+                          setEditingRecipe(null);
+                          setIsCreating(false);
+                          setSelectedRecipe(null);
+                          setIsExpanded(false);
+
+                          dismiss();
+                        }}
+                      >
+                        Discard
+                      </Button>
+                    ),
+                  });
+                  return;
+                }
                 setIsExpanded(false);
                 setIsCreating(false);
               }}
