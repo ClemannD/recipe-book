@@ -42,7 +42,7 @@ const Home: NextPage = () => {
   return (
     <div className="flex h-screen w-screen flex-col items-center bg-slate-200 lg:flex-row">
       <div className="flex-1 border-r lg:border-r-slate-400">
-        <div className="flex flex-col items-center justify-center py-6">
+        <div className="flex flex-col items-center justify-center py-6 pt-12 lg:pt-6">
           <p className="mb-4 text-6xl">🥘 📖</p>
           <h1 className="text-6xl font-bold">Recipe Book</h1>
 
@@ -51,13 +51,13 @@ const Home: NextPage = () => {
           </p>
         </div>
 
-        <div className="flex flex-col items-center justify-center gap-y-3 p-6">
+        <div className="hidden flex-col items-center justify-center gap-y-3 p-6 lg:flex">
           {recipes.map((recipe) => (
             <RecipeCard recipe={recipe} key={recipe.name} />
           ))}
         </div>
 
-        <div className="flex flex-col items-center justify-center py-6">
+        <div className="hidden flex-col items-center justify-center py-6 lg:flex">
           <p>
             Built by{' '}
             <a
@@ -70,6 +70,7 @@ const Home: NextPage = () => {
           </p>
         </div>
       </div>
+
       <div className="flex-1">
         <div className="flex flex-col items-center justify-center py-6">
           <div className="flex w-full max-w-[500px] flex-col items-center justify-center rounded bg-white px-4 py-12 text-center shadow lg:px-8">
