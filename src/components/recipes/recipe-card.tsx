@@ -4,10 +4,12 @@ import { type FullRecipe } from '../../models/model';
 const RecipeCard = ({
   recipe,
   isOnPublicPage = false,
+  navigateOnClick = true,
   onClick,
 }: {
   recipe: FullRecipe;
   isOnPublicPage?: boolean;
+  navigateOnClick?: boolean;
   onClick: () => void;
 }) => {
   const router = useRouter();
@@ -15,10 +17,12 @@ const RecipeCard = ({
     <div
       className="flex min-h-[100px] min-w-[300px] flex-1 cursor-pointer rounded bg-white shadow-sm transition-all ease-in-out hover:scale-[1.02] max-[430px]:flex-col lg:max-h-[150px] lg:min-h-[150px] lg:min-w-[400px]"
       onClick={() => {
-        if (isOnPublicPage) {
-          void router.replace(`/shared-recipes/${recipe.id}`);
-        } else {
-          void router.push(`/recipes/${recipe.id}`);
+        if (navigateOnClick) {
+          if (isOnPublicPage) {
+            void router.replace(`/shared-recipes/${recipe.id}`);
+          } else {
+            void router.push(`/recipes/${recipe.id}`);
+          }
         }
 
         onClick();
