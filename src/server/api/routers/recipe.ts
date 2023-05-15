@@ -57,6 +57,7 @@ export const recipeRouter = createTRPCRouter({
       }...`
     );
 
+    // Sort alphabetically by name
     return ctx.prisma.recipe.findMany({
       where: {
         householdId: ctx.householdId,
@@ -65,6 +66,9 @@ export const recipeRouter = createTRPCRouter({
         ingredients: true,
         recipeTypes: true,
         createdBy: true,
+      },
+      orderBy: {
+        name: 'asc',
       },
     });
   }),
@@ -80,6 +84,9 @@ export const recipeRouter = createTRPCRouter({
         ingredients: true,
         recipeTypes: true,
         createdBy: true,
+      },
+      orderBy: {
+        name: 'asc',
       },
     });
   }),

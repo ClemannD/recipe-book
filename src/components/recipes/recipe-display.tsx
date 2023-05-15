@@ -55,7 +55,7 @@ const RecipeDisplay = ({
                   ? 'h-auto max-h-[500px] w-full'
                   : 'h-[400px] w-full '
               )}
-              src={recipe.imageUrl!}
+              src={recipe.imageUrl ?? '/empty-bowl.jpg'}
               alt=""
             />
             <div className="mt-4 flex flex-col px-4">

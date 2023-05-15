@@ -22,7 +22,6 @@ model User {
     householdId String?
     RecipeType  RecipeType[]
     Recipe      Recipe[]
-    MealPlan    MealPlan[]
 }
 
 model Household {
@@ -96,19 +95,16 @@ model Meal {
 
     mealPlan   MealPlan? @relation(fields: [mealPlanId], references: [id])
     mealPlanId String?
-    userId     String
 }
 
 model MealPlan {
     id        String   @id @default(cuid())
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
-    createdBy User     @relation(fields: [userId], references: [id])
 
     name  String
     meals Meal[]
 
     household   Household? @relation(fields: [householdId], references: [id])
     householdId String?
-    userId      String
 }
