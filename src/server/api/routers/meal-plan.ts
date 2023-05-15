@@ -64,6 +64,8 @@ export const mealPlanRouter = createTRPCRouter({
             recipes: {
               include: {
                 recipeTypes: true,
+                ingredients: true,
+                createdBy: true,
               },
             },
           },
@@ -110,6 +112,83 @@ export const mealPlanRouter = createTRPCRouter({
                 connect: meal.recipeIds.map((recipeId) => ({
                   id: recipeId,
                 })),
+              },
+            })),
+          },
+        },
+        include: {
+          meals: {
+            include: {
+              recipes: {
+                include: {
+                  recipeTypes: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      return mealPlan;
+    }),
+
+  updateMealPlan: authenticatedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        meals: z.array(
+          z.object({
+            id: z.string().optional(),
+            recipeIds: z.array(z.string()),
+          })
+        ),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      if (!ctx.householdId) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'You must be in a household to create a recipe',
+        });
+      }
+      console.log(
+        `🔎 Updating meal plan for user ${ctx.userId} and householdId ${
+          ctx.householdId ?? ''
+        } with input ${JSON.stringify(input, null, 2)}...`
+      );
+      const mealPlan = await ctx.prisma.mealPlan.update({
+        where: {
+          id: input.id,
+        },
+        data: {
+          name: input.name,
+          meals: {
+            deleteMany: {
+              mealPlanId: input.id,
+              NOT: input.meals
+                .filter((meal) => meal.id)
+                .map((meal) => ({
+                  id: meal.id,
+                })),
+            },
+            upsert: input.meals.map((meal) => ({
+              where: {
+                id: meal.id ?? '',
+              },
+              create: {
+                recipes: {
+                  connect: meal.recipeIds.map((recipeId) => ({
+                    id: recipeId,
+                  })),
+                },
+              },
+              update: {
+                recipes: {
+                  set: [],
+                  connect: meal.recipeIds.map((recipeId) => ({
+                    id: recipeId,
+                  })),
+                },
               },
             })),
           },

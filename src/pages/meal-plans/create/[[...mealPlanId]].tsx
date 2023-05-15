@@ -1,15 +1,15 @@
 import clsx from 'clsx';
 import { CheckCircle, PlusCircle, X, XCircle } from 'lucide-react';
+import { useRouter } from 'next/router';
 import { useEffect, useState } from 'react';
+import Label from '../../../components/forms/label';
 import RecipesPageLayout from '../../../components/recipes/recipes-page';
 import { Button } from '../../../components/ui/button';
-import { FullRecipe } from '../../../models/model';
-import { api } from '../../../utils/api';
 import { PlainInput } from '../../../components/ui/input-plain';
-import Label from '../../../components/forms/label';
 import { Switch } from '../../../components/ui/switch';
 import { useToast } from '../../../components/ui/toast/use-toast';
-import { useRouter } from 'next/router';
+import { FullRecipe } from '../../../models/model';
+import { api } from '../../../utils/api';
 
 interface MealFormMeal {
   id: string;
@@ -27,11 +27,29 @@ const CreateMealPlanPage = () => {
   const router = useRouter();
 
   // const [isFullScreen, setIsFullScreen] = useState(false);
+  const [hasFetched, setHasFetched] = useState(false);
+  const [editingMealPlanId, setEditingMealPlanId] = useState<string | null>(
+    null
+  );
   const [selectedMealIndex, setSelectedMealIndex] = useState<number | null>(
     null
   );
 
   // Data fetching
+  const {
+    data: mealPlanData,
+    isLoading: isMealPlanLoading,
+    refetch,
+  } = api.mealPlan.getMealPlan.useQuery(
+    { id: editingMealPlanId! },
+    {
+      enabled: !!editingMealPlanId && !hasFetched,
+      onSuccess: () => {
+        setHasFetched(true);
+      },
+    }
+  );
+
   const {
     data: recipesData,
     // isLoading,
@@ -59,6 +77,39 @@ const CreateMealPlanPage = () => {
         });
       },
     });
+
+  const { mutate: updateMealPlan, isLoading: isUpdatingMealPlan } =
+    api.mealPlan.updateMealPlan.useMutation({
+      onSuccess: () => {
+        toast({
+          title: '✅ Meal Plan Updated',
+          description: 'Your meal plan has been updated successfully.',
+        });
+
+        void router.push('/meal-plans');
+      },
+      onError: (error: any) => {
+        console.error(error);
+
+        toast({
+          title: 'Error updating Meal Plan',
+          description: 'Please try again later.',
+        });
+      },
+    });
+
+  useEffect(() => {
+    if (!!router.query.mealPlanId?.[0]) {
+      setEditingMealPlanId(router.query.mealPlanId[0]);
+    }
+  }, [router.query.mealPlanId]);
+
+  // If there is a meal plan id in the url, we are editing an existing meal plan
+  useEffect(() => {
+    if (mealPlanData) {
+      setMealPlan(mealPlanData as unknown as MealPlan);
+    }
+  }, [mealPlanData]);
 
   // Form state
   const [mealPlan, setMealPlan] = useState<MealPlan>({
@@ -125,6 +176,18 @@ const CreateMealPlanPage = () => {
   };
 
   const saveMealPlan = () => {
+    if (editingMealPlanId) {
+      updateMealPlan({
+        id: editingMealPlanId,
+        name: mealPlan.name,
+        meals: mealPlan.meals.map((meal) => ({
+          id: meal.id,
+          recipeIds: meal.recipes.map((recipe) => recipe.id),
+        })),
+      });
+      return;
+    }
+
     createMealPlan({
       name: mealPlan.name,
       meals: mealPlan.meals.map((meal) => ({
