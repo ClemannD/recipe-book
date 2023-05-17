@@ -76,54 +76,53 @@ const MealPlanDisplay = ({
   const router = useRouter();
 
   return (
-    <div className="w-full border-b border-b-2 border-b-slate-300 pb-10">
+    <div className="w-full border-b-2 border-b-slate-300 pb-10">
       <div className="mb-4 flex justify-between gap-4">
         <h2 className="text-xl font-bold">{mealPlan.name}</h2>
         <div className="flex gap-4">
           <Link href={`/meal-plans/create/${mealPlan.id}`}>
-            <Button variant="secondary">Edit</Button>
+            <Button variant="outline">Edit</Button>
           </Link>
         </div>
       </div>
 
       <div className="flex flex-wrap gap-4">
         {mealPlan.meals.map((meal, index) => (
-          <div
-            key={meal.id}
-            className="flex min-h-[140px] min-w-full flex-1 flex-col rounded bg-white shadow lg:min-w-[450px]"
-          >
-            <div className="flex items-center justify-between border-b p-3">
-              <h3 className="text-lg font-bold">Meal {index + 1}</h3>
-            </div>
+          <div key={meal.id} className=" min-w-full flex-1  lg:min-w-[450px]">
+            <div className="flex min-h-[133px] flex-col rounded bg-white  shadow">
+              <div className="flex items-center justify-between border-b p-3">
+                <h3 className="text-lg font-bold">Meal {index + 1}</h3>
+              </div>
 
-            <div className="flex flex-grow flex-col">
-              {meal.recipes.map((recipe) => (
-                <div
-                  key={recipe.id}
-                  className="overflow-clip border-b last-of-type:rounded-bl last-of-type:border-none"
-                  onClick={() => {
-                    onRecipeClicked(recipe);
-                  }}
-                >
-                  <MealRecipeItem recipe={recipe} />
-                </div>
-              ))}
-
-              {
-                //If there are no recipes in this meal, show a message
-                meal.recipes.length === 0 && (
-                  <div className="flex flex-grow items-center justify-center">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        void router.push(`/meal-plans/create/${mealPlan.id}`);
-                      }}
-                    >
-                      Click to add recipes for this meal
-                    </Button>
+              <div className="flex flex-grow flex-col">
+                {meal.recipes.map((recipe) => (
+                  <div
+                    key={recipe.id}
+                    className="overflow-clip border-b last-of-type:rounded-bl last-of-type:border-none"
+                    onClick={() => {
+                      onRecipeClicked(recipe);
+                    }}
+                  >
+                    <MealRecipeItem recipe={recipe} />
                   </div>
-                )
-              }
+                ))}
+
+                {
+                  //If there are no recipes in this meal, show a message
+                  meal.recipes.length === 0 && (
+                    <div className="flex flex-grow items-center justify-center">
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          void router.push(`/meal-plans/create/${mealPlan.id}`);
+                        }}
+                      >
+                        Click to add recipes for this meal
+                      </Button>
+                    </div>
+                  )
+                }
+              </div>
             </div>
           </div>
         ))}

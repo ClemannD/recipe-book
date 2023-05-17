@@ -10,6 +10,7 @@ import { Switch } from '../../../components/ui/switch';
 import { useToast } from '../../../components/ui/toast/use-toast';
 import { FullRecipe } from '../../../models/model';
 import { api } from '../../../utils/api';
+import { Skeleton } from '../../../components/ui/skeleton';
 
 interface MealFormMeal {
   id: string;
@@ -26,8 +27,8 @@ const CreateMealPlanPage = () => {
   const { toast, dismiss } = useToast();
   const router = useRouter();
 
-  // const [isFullScreen, setIsFullScreen] = useState(false);
   const [hasFetched, setHasFetched] = useState(false);
+  const [initialized, setInitialized] = useState(false);
   const [editingMealPlanId, setEditingMealPlanId] = useState<string | null>(
     null
   );
@@ -102,6 +103,7 @@ const CreateMealPlanPage = () => {
     if (!!router.query.mealPlanId?.[0]) {
       setEditingMealPlanId(router.query.mealPlanId[0]);
     }
+    setInitialized(true);
   }, [router.query.mealPlanId]);
 
   // If there is a meal plan id in the url, we are editing an existing meal plan
@@ -204,18 +206,25 @@ const CreateMealPlanPage = () => {
         <>
           <div className="mb-10 flex flex-col flex-wrap items-start justify-between gap-6 pt-16 md:flex-row md:items-end lg:pt-0">
             <div>
-              <h1 className="text-2xl font-bold">Create a Meal Plan</h1>
+              <h1 className="text-2xl font-bold">
+                {mealPlanData ? 'Update' : 'Create'} Meal Plan
+              </h1>
               <h2 className="mt-1 text-gray-600">
-                Plan your meals for the week
+                A Meal Plan is a collection of meals, and each meal can have 1
+                or more recipes
               </h2>
             </div>
             <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
-              <Button onClick={saveMealPlan} isSubmitting={isCreatingMealPlan}>
+              <Button
+                onClick={saveMealPlan}
+                size="lg"
+                isSubmitting={isCreatingMealPlan || isUpdatingMealPlan}
+              >
                 Save Meal Plan
               </Button>
 
               <Button
-                variant="destructive"
+                variant="destructive-outline"
                 onClick={() => {
                   toast({
                     title: 'Are you sure you want to cancel?',
@@ -241,40 +250,50 @@ const CreateMealPlanPage = () => {
           </div>
 
           <div className="flex flex-wrap gap-4">
-            <MealPlanForm
-              mealPlan={mealPlan}
-              onMealPlanNameChanged={(name: string) => {
-                setMealPlan((previousMealPlan) => ({
-                  ...previousMealPlan,
-                  name,
-                }));
-              }}
-              onAddMealClicked={addMeal}
-              onRemoveMealClicked={removeMeal}
-              onAddRecipeToMealClicked={(mealIndex: number) => {
-                setSelectedMealIndex(mealIndex);
-              }}
-              onRemoveRecipeFromMealClicked={(
-                mealIndex: number,
-                recipeId: string
-              ) => {
-                setMealPlan((previousMealPlan) => ({
-                  ...previousMealPlan,
-                  meals: previousMealPlan.meals.map((meal, index) => {
-                    if (index !== mealIndex) {
-                      return meal;
-                    }
+            {(isMealPlanLoading && !!editingMealPlanId) || !initialized ? (
+              <>
+                <Skeleton className="flex min-h-[140px] min-w-full flex-1 lg:min-w-[450px]" />
+                <Skeleton className="flex min-h-[140px] min-w-full flex-1 lg:min-w-[450px]" />
+                <Skeleton className="flex min-h-[140px] min-w-full flex-1 lg:min-w-[450px]" />
+                <Skeleton className="flex min-h-[140px] min-w-full flex-1 lg:min-w-[450px]" />
+                <Skeleton className="flex min-h-[140px] min-w-full flex-1 lg:min-w-[450px]" />
+              </>
+            ) : (
+              <MealPlanForm
+                mealPlan={mealPlan}
+                onMealPlanNameChanged={(name: string) => {
+                  setMealPlan((previousMealPlan) => ({
+                    ...previousMealPlan,
+                    name,
+                  }));
+                }}
+                onAddMealClicked={addMeal}
+                onRemoveMealClicked={removeMeal}
+                onAddRecipeToMealClicked={(mealIndex: number) => {
+                  setSelectedMealIndex(mealIndex);
+                }}
+                onRemoveRecipeFromMealClicked={(
+                  mealIndex: number,
+                  recipeId: string
+                ) => {
+                  setMealPlan((previousMealPlan) => ({
+                    ...previousMealPlan,
+                    meals: previousMealPlan.meals.map((meal, index) => {
+                      if (index !== mealIndex) {
+                        return meal;
+                      }
 
-                    return {
-                      ...meal,
-                      recipes: meal.recipes.filter(
-                        (mealRecipe) => mealRecipe.id !== recipeId
-                      ),
-                    };
-                  }),
-                }));
-              }}
-            />
+                      return {
+                        ...meal,
+                        recipes: meal.recipes.filter(
+                          (mealRecipe) => mealRecipe.id !== recipeId
+                        ),
+                      };
+                    }),
+                  }));
+                }}
+              />
+            )}
           </div>
         </>
       }
@@ -693,7 +712,7 @@ const MealRecipeItem = ({
         onClick={onClick}
         className={clsx(
           'flex cursor-pointer items-center justify-center  p-3 ',
-          isHovering ? 'flex' : 'hidden'
+          isHovering ? 'flex' : 'flex lg:hidden'
         )}
       >
         <Button size="icon" variant="ghost" className="text-red-300">
