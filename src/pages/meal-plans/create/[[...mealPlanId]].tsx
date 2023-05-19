@@ -217,7 +217,6 @@ const CreateMealPlanPage = () => {
             <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
               <Button
                 onClick={saveMealPlan}
-                size="lg"
                 isSubmitting={isCreatingMealPlan || isUpdatingMealPlan}
               >
                 Save Meal Plan
