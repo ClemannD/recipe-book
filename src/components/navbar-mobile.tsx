@@ -109,9 +109,7 @@ const UserNavItem = () => {
   const { user } = useUser();
   return (
     <div
-      className={clsx(
-        'fixed bottom-0 z-[51] flex h-20 w-full items-center justify-center border-t'
-      )}
+      className={clsx('flex h-20 w-full items-center justify-center border-t')}
     >
       <UserButton />
       <div className="ml-3 ">{user?.fullName}</div>
