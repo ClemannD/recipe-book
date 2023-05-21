@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import { cn } from '../../utils/cn';
 import Layout from '../layout';
 import { useEffect, useState } from 'react';
+import { useWindowSize } from '../../utils/hooks/useWindowSize';
 
 const RecipesPageLayout = ({
   isExpanded,
@@ -14,8 +15,10 @@ const RecipesPageLayout = ({
   leftChildren: React.ReactNode;
   rightChildren: React.ReactNode;
 }) => {
+  const windowSize = useWindowSize();
+
   useEffect(() => {
-    if (isExpanded) {
+    if (isExpanded && windowSize.width && windowSize.width < 1024) {
       document.body.className = 'noscroll';
     } else {
       document.body.className = '';
@@ -27,17 +30,27 @@ const RecipesPageLayout = ({
       <div className="relative flex">
         <div
           className={clsx(
-            ` w-screen flex-grow p-4 pb-12 transition-all duration-300 ease-in-out lg:w-[550px] lg:p-10`,
-            isExpanded ? 'overflow-hidden' : ''
+            ` w-screen flex-grow p-4 pb-12 transition-all duration-300 ease-in-out lg:w-[550px] lg:p-10`
+            // isExpanded ? 'overflow-hidden' : ''
           )}
         >
           {leftChildren}
         </div>
 
+        {/* Dummy component to help with positioning */}
         <div
           className={cn(
             clsx(
-              `fixed top-0 z-50 h-screen  max-w-[700px] overflow-y-auto  bg-white transition-all duration-300 ease-in-out lg:absolute`,
+              `h-screen max-h-screen max-w-[700px] transition-all duration-300 ease-in-out`,
+              isExpanded ? 'w-[600px] min-w-[600px]' : 'w-0 min-w-0'
+            )
+          )}
+        ></div>
+
+        <div
+          className={cn(
+            clsx(
+              `fixed top-0 z-50 h-screen  max-w-[700px] overflow-y-auto  bg-white transition-all duration-300 ease-in-out`,
               isExpanded
                 ? isFullScreen
                   ? 'right-0 w-full min-w-full'
