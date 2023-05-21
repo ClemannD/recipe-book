@@ -2,6 +2,8 @@ import Head from 'next/head';
 import { Button } from './ui/button';
 
 const Layout = (props: { children: React.ReactNode; title?: string }) => {
+  const { desktopNavbarExpanded } = useNavbarState();
+
   return (
     <>
       <Head>
@@ -17,11 +19,20 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
         ></link>
       </Head>
 
-      <div className="flex flex-col lg:flex-row">
-        <Navbar />
+      <div className="">
+        <div className="fixed z-50">
+          <Navbar />
+        </div>
         <NavbarMobile />
 
-        <div className="flex-grow overflow-x-hidden">{props.children}</div>
+        <div
+          className={clsx(
+            'width-screen overflow-x-hidden transition-all duration-100 ease-in-out',
+            desktopNavbarExpanded ? 'lg:pl-56' : 'lg:pl-20'
+          )}
+        >
+          {props.children}
+        </div>
       </div>
     </>
   );
@@ -45,6 +56,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog';
+import { useNavbarState } from '../utils/context/navbarState.context';
+import clsx from 'clsx';
 
 export function HouseholdDialog() {
   const [isOpen, setIsOpen] = useState(false);

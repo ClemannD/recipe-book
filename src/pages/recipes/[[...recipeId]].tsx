@@ -208,71 +208,67 @@ const RecipesPage = () => {
             ))}
           </div>
 
-          <div className="">
-            <div className={clsx('flex flex-wrap gap-4')}>
-              {isLoading &&
-                Array.from(Array(20).keys()).map((i) => (
-                  <Skeleton
-                    key={i}
-                    className="h-[150px] min-w-[400px] max-w-[600px] flex-1"
-                  />
-                ))}
-
-              {recipesToShow?.length === 0 && (
-                <div className="flex w-full items-center justify-center gap-4 py-8">
-                  <div className="rounded border bg-white p-6 text-center">
-                    <h1 className="mb-2 text-2xl font-bold">
-                      No recipes found
-                    </h1>
-                    <h2 className="text-gray-600">
-                      Try changing your search or filter, or create a new recipe
-                    </h2>
-                  </div>
-                </div>
-              )}
-
-              {recipesToShow?.map((recipe) => (
-                <RecipeCard
-                  key={recipe.id + recipe.name}
-                  recipe={recipe}
-                  onClick={() => {
-                    if (editingRecipe || isCreating) {
-                      toast({
-                        title: `You are currently ${
-                          isCreating ? 'creating' : 'editing'
-                        } a recipe`,
-                        description: 'Are you sure you want to switch recipes?',
-                        duration: 5000,
-
-                        action: (
-                          <Button
-                            variant={'destructive'}
-                            onClick={() => {
-                              setEditingRecipe(null);
-                              setIsCreating(false);
-                              setSelectedRecipe(recipe);
-                              setIsExpanded(true);
-
-                              dismiss();
-                            }}
-                          >
-                            Discard
-                          </Button>
-                        ),
-                      });
-                      return;
-                    }
-
-                    setSelectedRecipe(recipe);
-                    setIsExpanded(true);
-                  }}
+          <div className={clsx('flex flex-wrap gap-4')}>
+            {isLoading &&
+              Array.from(Array(20).keys()).map((i) => (
+                <Skeleton
+                  key={i}
+                  className="h-[150px] min-w-[400px] max-w-[600px] flex-1"
                 />
               ))}
-              {/* Hack because I want flex wrap but with all elements to maintain their size */}
-              <div className="h-1 min-w-[400px] max-w-[600px] flex-1"></div>
-              <div className="h-1 min-w-[400px] max-w-[600px] flex-1"></div>
-              <div className="h-1 min-w-[400px] max-w-[600px] flex-1"></div>
-            </div>
+
+            {recipesToShow?.length === 0 && (
+              <div className="flex w-full items-center justify-center gap-4 py-8">
+                <div className="rounded border bg-white p-6 text-center">
+                  <h1 className="mb-2 text-2xl font-bold">No recipes found</h1>
+                  <h2 className="text-gray-600">
+                    Try changing your search or filter, or create a new recipe
+                  </h2>
+                </div>
+              </div>
+            )}
+
+            {recipesToShow?.map((recipe) => (
+              <RecipeCard
+                key={recipe.id + recipe.name}
+                recipe={recipe}
+                onClick={() => {
+                  if (editingRecipe || isCreating) {
+                    toast({
+                      title: `You are currently ${
+                        isCreating ? 'creating' : 'editing'
+                      } a recipe`,
+                      description: 'Are you sure you want to switch recipes?',
+                      duration: 5000,
+
+                      action: (
+                        <Button
+                          variant={'destructive'}
+                          onClick={() => {
+                            setEditingRecipe(null);
+                            setIsCreating(false);
+                            setSelectedRecipe(recipe);
+                            setIsExpanded(true);
+
+                            dismiss();
+                          }}
+                        >
+                          Discard
+                        </Button>
+                      ),
+                    });
+                    return;
+                  }
+
+                  setSelectedRecipe(recipe);
+                  setIsExpanded(true);
+                }}
+              />
+            ))}
+            {/* Hack because I want flex wrap but with all elements to maintain their size */}
+            <div className="h-1 min-w-[300px] max-w-[600px] flex-1"></div>
+            <div className="h-1 min-w-[300px] max-w-[600px] flex-1"></div>
+            <div className="h-1 min-w-[300px] max-w-[600px] flex-1"></div>
           </div>
         </>
       }

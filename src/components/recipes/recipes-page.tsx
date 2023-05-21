@@ -18,10 +18,10 @@ const RecipesPageLayout = ({
       <div className="relative flex">
         <div
           className={clsx(
-            `max-h-screen w-screen flex-grow p-4 pb-12 transition-all duration-300 ease-in-out lg:w-[550px] lg:p-10`,
-            isExpanded
-              ? 'overflow-hidden lg:overflow-y-auto'
-              : 'overflow-y-auto'
+            `max-h-screen w-screen flex-grow p-4 pb-12 transition-all duration-300 ease-in-out lg:w-[550px] lg:p-10`
+            // isExpanded
+            //   ? 'overflow-hidden lg:overflow-y-auto'
+            //   : 'overflow-y-auto'
           )}
         >
           {leftChildren}
