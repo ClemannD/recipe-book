@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import { cn } from '../../utils/cn';
 import Layout from '../layout';
+import { useEffect, useState } from 'react';
 
 const RecipesPageLayout = ({
   isExpanded,
@@ -13,6 +14,35 @@ const RecipesPageLayout = ({
   leftChildren: React.ReactNode;
   rightChildren: React.ReactNode;
 }) => {
+  const [scrollY, setScrollY] = useState(0);
+
+  // This works, but maybe bad performance? Will need to see
+  const handleScroll = () => {
+    if (window.scrollY !== 0) {
+      setScrollY(window.scrollY);
+    }
+  };
+
+  useEffect(() => {
+    handleScroll();
+
+    window.addEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (isExpanded) {
+      document.body.className = 'noscroll';
+    } else {
+      document.body.className = '';
+      window.scrollTo(0, scrollY);
+    }
+  }, [handleScroll, isExpanded, scrollY]);
+
   return (
     <Layout>
       <div className="relative flex">

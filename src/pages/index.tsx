@@ -2,6 +2,7 @@ import { type NextPage } from 'next';
 import Link from 'next/link';
 import { Button } from '../components/ui/button';
 import { useUser } from '@clerk/nextjs';
+import { useEffect, useState } from 'react';
 
 const Home: NextPage = () => {
   const { isSignedIn } = useUser();
