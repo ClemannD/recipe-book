@@ -16,7 +16,7 @@ export const recipeTypeRouter = createTRPCRouter({
   createRecipeType: authenticatedProcedure
     .input(
       z.object({
-        name: z.string().min(1),
+        name: z.string().min(1).max(30),
         icon: z.string().emoji(),
         color: z.string().optional(),
       })
@@ -60,7 +60,7 @@ export const recipeTypeRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        name: z.string().min(1).optional(),
+        name: z.string().min(1).max(30).optional(),
         icon: z.string().emoji().optional(),
         color: z.string().optional(),
       })

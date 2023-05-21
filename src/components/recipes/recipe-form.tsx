@@ -1,17 +1,17 @@
+import type { Ingredient, Recipe, RecipeType } from '@prisma/client';
+import clsx from 'clsx';
 import { FieldArray, Form, Formik } from 'formik';
-import { Button } from '../ui/button';
-import IngredientInput from '../forms/ingredient-input';
-import Input from '../forms/input';
-import Label from '../forms/label';
+import { X } from 'lucide-react';
+import { useState } from 'react';
 import { z } from 'zod';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { api } from '../../utils/api';
-import type { Ingredient, Recipe, RecipeType } from '@prisma/client';
-import { ArrowRight, X } from 'lucide-react';
-import { useToast } from '../ui/toast/use-toast';
-import clsx from 'clsx';
-import { useState } from 'react';
+import IngredientInput from '../forms/ingredient-input';
+import Input from '../forms/input';
+import Label from '../forms/label';
+import { Button } from '../ui/button';
 import { Switch } from '../ui/switch';
+import { useToast } from '../ui/toast/use-toast';
 
 const RecipeForm = ({
   recipe,
@@ -83,7 +83,7 @@ const RecipeForm = ({
         setIsCreating(false);
 
         toast({
-          title: 'Recipe updated',
+          title: '✅ Recipe updated',
         });
       },
       onError: (error) => {
@@ -122,7 +122,7 @@ const RecipeForm = ({
     });
 
   return (
-    <div className="p-4 lg:p-6">
+    <div className="p-4 pb-24 lg:p-6">
       <div className="absolute right-0 top-0 p-4">
         <button
           className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"

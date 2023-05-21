@@ -23,7 +23,7 @@ const RecipesPageLayout = ({
     } else {
       document.body.className = '';
     }
-  }, [isExpanded]);
+  }, [isExpanded, windowSize.width]);
 
   return (
     <Layout>
@@ -41,7 +41,7 @@ const RecipesPageLayout = ({
         <div
           className={cn(
             clsx(
-              `h-screen max-h-screen max-w-[700px] transition-all duration-300 ease-in-out`,
+              `hidden h-screen max-h-screen max-w-[700px] transition-all duration-300 ease-in-out lg:block`,
               isExpanded ? 'w-[600px] min-w-[600px]' : 'w-0 min-w-0'
             )
           )}

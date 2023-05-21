@@ -179,7 +179,7 @@ const RecipesPage = () => {
             </div>
           </div>
 
-          <div className="mb-6 flex flex-wrap gap-2">
+          <div className="mb-6 flex flex-wrap gap-1">
             {recipeTypesIsLoading &&
               Array.from(Array(20).keys()).map((i) => (
                 <Skeleton className="h-6 w-24 rounded-full" key={i} />
@@ -215,7 +215,7 @@ const RecipesPage = () => {
             ))}
           </div>
 
-          <div className={clsx('flex flex-wrap gap-4')}>
+          <div className={clsx('flex flex-wrap gap-2 lg:gap-4')}>
             {isLoading &&
               Array.from(Array(20).keys()).map((i) => (
                 <Skeleton
