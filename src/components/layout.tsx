@@ -21,9 +21,7 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
         <Navbar />
         <NavbarMobile />
 
-        <div className="max-h-screen flex-grow overflow-x-hidden lg:overflow-y-auto">
-          {props.children}
-        </div>
+        <div className="flex-grow overflow-x-hidden">{props.children}</div>
       </div>
     </>
   );

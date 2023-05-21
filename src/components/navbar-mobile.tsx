@@ -94,7 +94,7 @@ const NavItem = ({
     <Link
       href={href}
       className={clsx(
-        'flex items-center text-slate-900 transition-colors ease-in-out hover:bg-slate-100',
+        'flex items-center text-slate-900',
         'h-16 w-full px-6',
         asPath === href && 'bg-slate-100 font-medium'
       )}
@@ -109,7 +109,9 @@ const UserNavItem = () => {
   const { user } = useUser();
   return (
     <div
-      className={clsx('flex h-20 w-full items-center justify-center border-t')}
+      className={clsx(
+        'fixed bottom-0 z-[51] flex h-20 w-full items-center justify-center border-t'
+      )}
     >
       <UserButton />
       <div className="ml-3 ">{user?.fullName}</div>

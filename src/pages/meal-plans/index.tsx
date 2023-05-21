@@ -22,7 +22,7 @@ const MealPlansPage = () => {
       isFullScreen={isFullScreen}
       leftChildren={
         <>
-          <div className="mb-10 flex flex-col flex-wrap items-start justify-between gap-6 pt-16 md:flex-row md:items-end lg:pt-0">
+          <div className="mb-10 flex flex-col flex-wrap items-start justify-between gap-6 md:flex-row md:items-end">
             <div>
               <h1 className="text-2xl font-bold">Your Meal Plans</h1>
               <h2 className="mt-1 text-gray-600">

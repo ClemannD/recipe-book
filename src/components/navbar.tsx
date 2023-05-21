@@ -82,7 +82,7 @@ const Navbar = () => {
 export default Navbar;
 
 const UserNavItem = ({ isExpanded }: { isExpanded: boolean }) => {
-  const { user } = useUser();
+  const { user, isSignedIn } = useUser();
   return (
     <div
       className={clsx(
@@ -90,8 +90,19 @@ const UserNavItem = ({ isExpanded }: { isExpanded: boolean }) => {
         isExpanded ? 'min-w-[224px]' : ''
       )}
     >
-      <UserButton />
-      {isExpanded && <div className="ml-3 ">{user?.fullName}</div>}
+      {isSignedIn ? (
+        <>
+          <UserButton />
+          {isExpanded && <div className="ml-3 ">{user?.fullName}</div>}
+        </>
+      ) : (
+        <Link
+          href="/sign-in"
+          className="flex h-full w-full items-center justify-center transition-colors ease-in-out hover:bg-slate-100"
+        >
+          Sign In or Sign Up
+        </Link>
+      )}
     </div>
   );
 };
