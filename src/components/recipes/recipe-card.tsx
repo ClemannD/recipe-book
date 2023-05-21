@@ -15,7 +15,7 @@ const RecipeCard = ({
   const router = useRouter();
   return (
     <div
-      className="flex min-h-[100px] min-w-[300px] flex-1 cursor-pointer rounded bg-white shadow-sm transition-all ease-in-out hover:scale-[1.02] max-[430px]:flex-col lg:max-h-[150px] lg:min-h-[150px] lg:min-w-[400px]"
+      className="flex min-h-[100px] min-w-[300px] flex-1 cursor-pointer rounded border bg-white transition-all ease-in-out hover:scale-[1.02] max-[430px]:flex-col lg:max-h-[150px] lg:min-h-[150px] lg:min-w-[400px]"
       onClick={() => {
         if (navigateOnClick) {
           if (isOnPublicPage) {

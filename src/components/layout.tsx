@@ -1,18 +1,7 @@
-import { UserButton, useUser } from '@clerk/nextjs';
 import Head from 'next/head';
-import Link from 'next/link';
 import { Button } from './ui/button';
 
 const Layout = (props: { children: React.ReactNode; title?: string }) => {
-  const user = useUser();
-  const router = useRouter();
-
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  useEffect(() => {
-    setIsMenuOpen(false);
-  }, [router.pathname]);
-
   return (
     <>
       <Head>
@@ -29,70 +18,8 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
       </Head>
 
       <div className="flex flex-col lg:flex-row">
-        <div
-          className={clsx(
-            'fixed z-20 w-full flex-col justify-between overflow-hidden bg-white px-2 py-0 shadow-lg  transition-all duration-500 ease-in-out lg:static lg:w-[14rem] lg:min-w-[14rem] lg:flex-col lg:justify-start',
-            isMenuOpen ? 'h-screen' : 'h-16 lg:h-screen'
-          )}
-        >
-          <div className="flex  justify-between lg:flex-col">
-            <Link href="/">
-              <div className="flex h-16 items-center justify-center lg:h-auto lg:flex-col lg:py-6">
-                <p className="mr-2 text-xl lg:mb-4 lg:mr-0 lg:text-5xl">
-                  🥘 📖
-                </p>
-                <h1 className="text-lg font-bold lg:text-3xl">Recipe Book</h1>
-              </div>
-            </Link>
-
-            <div className="flex h-16 items-center justify-center lg:h-20">
-              {user.isSignedIn ? (
-                <>
-                  <div className="hidden lg:flex lg:items-center">
-                    <UserButton />{' '}
-                    <div className="ml-3 ">{user.user?.fullName}</div>
-                  </div>
-                  <div
-                    className="lg:hidden"
-                    onClick={() => {
-                      setIsMenuOpen(!isMenuOpen);
-                    }}
-                  >
-                    {isMenuOpen ? (
-                      <XIcon className="h-6 w-6" />
-                    ) : (
-                      <MenuIcon className="h-6 w-6" />
-                    )}
-                  </div>
-                  <HouseholdDialog />
-                </>
-              ) : (
-                <Link href="/sign-in" passHref>
-                  <Button className="max-w-96 w-full">Sign In/Up</Button>
-                </Link>
-              )}
-            </div>
-          </div>
-
-          <div
-            className={clsx(
-              'flex-col  items-center justify-center gap-y-3 py-6 ',
-              isMenuOpen ? 'flex' : 'hidden lg:flex'
-            )}
-          >
-            <div className="mb-4 flex items-center lg:hidden">
-              <UserButton /> <div className="ml-3 ">{user.user?.fullName}</div>
-            </div>
-            <NavItem href="/shared-recipes">Shared Recipes</NavItem>
-            {user.isSignedIn && (
-              <>
-                <NavItem href="/recipes">Your Recipes</NavItem>
-                <NavItem href="/meal-plans">Meal Plans</NavItem>
-                <NavItem href="/recipe-types">Recipe Types</NavItem>
-              </>
-            )}
-          </div>
-        </div>
+        <Navbar />
+        <NavbarMobile />
 
         <div className="max-h-screen flex-grow overflow-x-hidden lg:overflow-y-auto">
           {props.children}
@@ -102,19 +29,16 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
   );
 };
 
-const NavItem = (props: { href: string; children: React.ReactNode }) => {
-  return (
-    <Link
-      href={props.href}
-      className="flex h-10 w-full items-center justify-center rounded px-4 text-lg font-medium text-slate-900 transition-colors ease-in-out hover:bg-slate-200"
-    >
-      {props.children}
-    </Link>
-  );
-};
-
 export default Layout;
 
+import { Form, Formik } from 'formik';
+import { useEffect, useState } from 'react';
+import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { api } from '../utils/api';
+import Input from './forms/input';
+import Navbar from './navbar';
+import NavbarMobile from './navbar-mobile';
 import {
   Dialog,
   DialogContent,
@@ -123,15 +47,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from './ui/dialog';
-import { Form, Formik } from 'formik';
-import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { z } from 'zod';
-import { api } from '../utils/api';
-import Input from './forms/input';
-import { useEffect, useState } from 'react';
-import { MenuIcon, XIcon } from 'lucide-react';
-import clsx from 'clsx';
-import { useRouter } from 'next/router';
 
 export function HouseholdDialog() {
   const [isOpen, setIsOpen] = useState(false);

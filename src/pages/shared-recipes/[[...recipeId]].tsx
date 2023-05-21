@@ -92,7 +92,7 @@ const SharedRecipesPage = () => {
       isFullScreen={isFullScreen}
       leftChildren={
         <>
-          <div className="mb-4 flex flex-col flex-wrap items-start justify-between gap-6 pt-16 lg:mb-10 lg:flex-row lg:items-end lg:pt-0">
+          <div className="mb-4 flex flex-col flex-wrap items-start justify-between gap-6 lg:mb-10 lg:flex-row lg:items-end lg:pt-0">
             <div>
               <h1 className="text-2xl font-bold">Shared Recipes</h1>
               <h2 className="mt-1 text-gray-600">

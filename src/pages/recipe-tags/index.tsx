@@ -19,53 +19,54 @@ import { api } from '../../utils/api';
 import useOnClickOutside from '../../utils/hooks/useClickOutside';
 import { X } from 'lucide-react';
 
-const RecipeTypePage: React.FC = () => {
+const RecipeTagPage: React.FC = () => {
   const {
-    data: recipeTypes,
+    data: recipeTags,
     isLoading,
     refetch,
   } = api.recipeType.getRecipeTypes.useQuery();
 
   return (
     <Layout>
-      <div className="p-4 pt-20 lg:pt-0">
-        <h1 className="text-2xl font-bold">Recipe Types</h1>
-        <h2 className="mt-1  text-gray-600">
-          Recipe Types are used to categorize your recipes
-        </h2>
+      <div className="flex">
+        <div className="p-4 lg:p-10">
+          <h1 className="text-2xl font-bold">Recipe Tags</h1>
+          <h2 className="mt-1  text-gray-600">
+            Recipe Tags are used to categorize your recipes
+          </h2>
 
-        <div className="mt-10">
-          {/* <div className="grid grid-cols-1 gap-4 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 2xl:grid-cols-4"> */}
-          <div className="flex flex-wrap gap-4">
-            {isLoading && (
-              <>
-                <Skeleton className="h-20 min-w-[375px] flex-1" />
-                <Skeleton className="h-20 min-w-[375px] flex-1" />
-                <Skeleton className="h-20 min-w-[375px] flex-1" />
-                <Skeleton className="h-20 min-w-[375px] flex-1" />
-                <Skeleton className="h-20 min-w-[375px] flex-1" />
-              </>
-            )}
+          <div className="mt-10">
+            <div className="flex flex-wrap gap-4">
+              {isLoading && (
+                <>
+                  <Skeleton className="h-20 flex-1 lg:lg:min-w-[375px]" />
+                  <Skeleton className="h-20 flex-1 lg:min-w-[375px]" />
+                  <Skeleton className="h-20 flex-1 lg:min-w-[375px]" />
+                  <Skeleton className="h-20 flex-1 lg:min-w-[375px]" />
+                  <Skeleton className="h-20 flex-1 lg:min-w-[375px]" />
+                </>
+              )}
 
-            {recipeTypes?.map((recipeType) => (
-              <RecipeTypeBox
-                key={recipeType.id + recipeType.name + recipeType.icon}
-                recipeType={recipeType}
+              {recipeTags?.map((recipeTag) => (
+                <RecipeTagBox
+                  key={recipeTag.id + recipeTag.name + recipeTag.icon}
+                  recipeTag={recipeTag}
+                  onSubmitted={async () => {
+                    await refetch();
+                  }}
+                />
+              ))}
+
+              <RecipeTagBox
                 onSubmitted={async () => {
                   await refetch();
                 }}
               />
-            ))}
 
-            <RecipeTypeBox
-              onSubmitted={async () => {
-                await refetch();
-              }}
-            />
-
-            {/* Hack because I want flex wrap but with all elements to maintain their size */}
-            <div className="h-1 min-w-[375px]  max-w-[600px] flex-1"></div>
-            <div className="h-1 min-w-[375px] max-w-[600px] flex-1"></div>
+              {/* Hack because I want flex wrap but with all elements to maintain their size */}
+              <div className="h-1 max-w-[600px] flex-1 lg:min-w-[375px]"></div>
+              <div className="h-1 max-w-[600px] flex-1 lg:min-w-[375px]"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -73,13 +74,13 @@ const RecipeTypePage: React.FC = () => {
   );
 };
 
-export default RecipeTypePage;
+export default RecipeTagPage;
 
-const RecipeTypeBox = ({
-  recipeType,
+const RecipeTagBox = ({
+  recipeTag,
   onSubmitted,
 }: {
-  recipeType?: RecipeType;
+  recipeTag?: RecipeType;
   onSubmitted: () => Promise<void>;
 }) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -96,8 +97,8 @@ const RecipeTypeBox = ({
     <div
       ref={recipeBoxRef}
       className={clsx(
-        'min-w-full flex-1 rounded bg-white shadow-sm md:min-w-[375px]',
-        recipeType &&
+        'min-w-full flex-1 rounded border bg-white lg:min-w-[375px]',
+        recipeTag &&
           !isEditing &&
           'cursor-pointer transition-all ease-in-out hover:scale-[1.02]'
       )}
@@ -106,9 +107,9 @@ const RecipeTypeBox = ({
       }}
     >
       <div className="flex items-center p-3">
-        {isEditing || !recipeType ? (
-          <RecipeTypeForm
-            recipeType={recipeType}
+        {isEditing || !recipeTag ? (
+          <RecipeTagForm
+            recipeTag={recipeTag}
             onSubmitted={onSubmitted}
             onPopoverOpened={() => {
               setIsPopoverOpen(true);
@@ -120,9 +121,9 @@ const RecipeTypeBox = ({
         ) : (
           <>
             <div className="mr-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 p-2 text-3xl">
-              {recipeType.icon}
+              {recipeTag.icon}
             </div>
-            <h3 className="text-xl font-bold">{recipeType.name}</h3>
+            <h3 className="text-xl font-bold">{recipeTag.name}</h3>
           </>
         )}
       </div>
@@ -137,14 +138,14 @@ const Picker = dynamic(
   { ssr: false }
 );
 
-const RecipeTypeForm = ({
-  recipeType,
+const RecipeTagForm = ({
+  recipeTag,
   onSubmitted,
 
   onPopoverOpened,
   onPopoverClosed,
 }: {
-  recipeType?: RecipeType;
+  recipeTag?: RecipeType;
   onSubmitted: () => Promise<void>;
   onPopoverOpened?: () => void;
   onPopoverClosed?: () => void;
@@ -156,12 +157,12 @@ const RecipeTypeForm = ({
     setIsPopoverOpen(false);
   });
 
-  const recipeTypeSchema = z.object({
+  const recipeTagSchema = z.object({
     name: z.string().nonempty(),
     icon: z.string().nonempty(),
   });
 
-  const { mutateAsync: createRecipeType, isLoading: createIsLoading } =
+  const { mutateAsync: createRecipeTag, isLoading: createIsLoading } =
     api.recipeType.createRecipeType.useMutation({
       onSuccess: async () => {
         await onSubmitted();
@@ -172,7 +173,7 @@ const RecipeTypeForm = ({
       },
     });
 
-  const { mutateAsync: updateRecipeType, isLoading: updateIsLoading } =
+  const { mutateAsync: updateRecipeTag, isLoading: updateIsLoading } =
     api.recipeType.updateRecipeType.useMutation({
       onSuccess: async () => {
         await onSubmitted();
@@ -184,7 +185,7 @@ const RecipeTypeForm = ({
     });
 
   const [deleteIsLoading, setDeleteIsLoading] = useState(false);
-  const { mutate: deleteRecipeType } =
+  const { mutate: deleteRecipeTag } =
     api.recipeType.deleteRecipeType.useMutation({
       onMutate: () => {
         console.log('onMutate');
@@ -219,17 +220,17 @@ const RecipeTypeForm = ({
     <div className=" w-full">
       <Formik
         initialValues={{
-          name: recipeType?.name ?? '',
-          icon: recipeType?.icon ?? '🥘',
+          name: recipeTag?.name ?? '',
+          icon: recipeTag?.icon ?? '🥘',
         }}
-        validationSchema={toFormikValidationSchema(recipeTypeSchema)}
+        validationSchema={toFormikValidationSchema(recipeTagSchema)}
         onSubmit={async (values, { resetForm }) => {
           console.log('values', values);
-          if (!recipeType) {
-            await createRecipeType(values);
+          if (!recipeTag) {
+            await createRecipeTag(values);
             resetForm();
           } else {
-            await updateRecipeType({ ...values, id: recipeType?.id });
+            await updateRecipeTag({ ...values, id: recipeTag?.id });
             resetForm();
           }
 
@@ -287,10 +288,10 @@ const RecipeTypeForm = ({
                   e.stopPropagation();
                 }}
               >
-                {recipeType ? 'Update' : 'Create'}
+                {recipeTag ? 'Update' : 'Create'}
               </Button>
 
-              {recipeType && (
+              {recipeTag && (
                 <Button
                   type="button"
                   size="sm"
@@ -300,7 +301,7 @@ const RecipeTypeForm = ({
                   isSubmitting={deleteIsLoading}
                   onClick={() => {
                     toast({
-                      title: `Are you sure you want to delete ${recipeType.name}?`,
+                      title: `Are you sure you want to delete ${recipeTag.name}?`,
                       description: 'This cannot be undone',
                       duration: 9000,
                       action: (
@@ -309,7 +310,7 @@ const RecipeTypeForm = ({
                           isSubmitting={deleteIsLoading}
                           // eslint-disable-next-line @typescript-eslint/no-misused-promises
                           onClick={(e) => {
-                            deleteRecipeType({ id: recipeType.id });
+                            deleteRecipeTag({ id: recipeTag.id });
                           }}
                         >
                           Delete

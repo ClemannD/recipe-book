@@ -11,6 +11,7 @@ import { api } from '~/utils/api';
 import { Toaster } from '../components/ui/toast/toaster';
 import Head from 'next/head';
 import { Analytics } from '@vercel/analytics/react';
+import { NavbarStateProvider } from '../utils/context/navbarState.context';
 
 const publicPages = [
   '/sign-in/[[...index]]',
@@ -49,24 +50,26 @@ function MyApp({ Component, pageProps }: AppProps) {
           content="https://recipes.clemann.app/recipe-book-cover.png"
         ></meta>
       </Head>
-      <ClerkProvider {...pageProps}>
-        {isPublicPage ? (
-          <>
-            <Component {...pageProps} />
-            <Toaster />
-          </>
-        ) : (
-          <>
-            <SignedIn>
-              <Toaster />
+      <NavbarStateProvider>
+        <ClerkProvider {...pageProps}>
+          {isPublicPage ? (
+            <>
               <Component {...pageProps} />
-            </SignedIn>
-            <SignedOut>
-              <RedirectToSignIn />
-            </SignedOut>
-          </>
-        )}
-      </ClerkProvider>
+              <Toaster />
+            </>
+          ) : (
+            <>
+              <SignedIn>
+                <Toaster />
+                <Component {...pageProps} />
+              </SignedIn>
+              <SignedOut>
+                <RedirectToSignIn />
+              </SignedOut>
+            </>
+          )}
+        </ClerkProvider>
+      </NavbarStateProvider>
     </>
   );
 }

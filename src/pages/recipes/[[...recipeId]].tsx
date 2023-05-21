@@ -117,7 +117,7 @@ const RecipesPage = () => {
       isFullScreen={isFullScreen}
       leftChildren={
         <>
-          <div className="mb-10 flex flex-col flex-wrap items-start justify-between gap-6 pt-16 md:flex-row md:items-end lg:pt-0">
+          <div className="mb-10 flex flex-col flex-wrap items-start justify-between gap-6  md:flex-row md:items-end">
             <div>
               <h1 className="text-2xl font-bold">Recipes</h1>
               <h2 className="mt-1 text-gray-600">Your collection of recipes</h2>
@@ -184,7 +184,7 @@ const RecipesPage = () => {
                   'flex h-6 w-auto cursor-pointer items-center justify-center rounded-full  p-2 text-sm tracking-wide transition-all ease-in-out hover:scale-105',
                   recipeTypeFilter?.includes(recipeType.id)
                     ? 'bg-slate-900 text-white'
-                    : 'bg-white'
+                    : 'border bg-white'
                 )}
                 key={recipeType.id + recipeType.name + recipeType.icon}
                 onClick={() => {
@@ -220,7 +220,7 @@ const RecipesPage = () => {
 
               {recipesToShow?.length === 0 && (
                 <div className="flex w-full items-center justify-center gap-4 py-8">
-                  <div className="rounded bg-white p-6 text-center shadow">
+                  <div className="rounded border bg-white p-6 text-center">
                     <h1 className="mb-2 text-2xl font-bold">
                       No recipes found
                     </h1>

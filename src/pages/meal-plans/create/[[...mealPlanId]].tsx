@@ -530,7 +530,7 @@ const MealPlanForm = ({
       {mealPlan.meals.map((meal, index) => (
         <div
           key={index}
-          className="flex min-h-[140px] min-w-full flex-1 flex-col rounded bg-white shadow lg:min-w-[450px]"
+          className="flex min-h-[140px] min-w-full flex-1 flex-col rounded border bg-white lg:min-w-[450px]"
         >
           <div className="flex items-center justify-between border-b p-3">
             <h3 className="text-lg font-bold">Meal {index + 1}</h3>
@@ -588,7 +588,7 @@ const MealPlanForm = ({
         </div>
       ))}
 
-      <div className="flex h-[140px] min-w-full flex-1 items-center justify-center rounded bg-white shadow  lg:lg:min-w-[450px]">
+      <div className="flex h-[140px] min-w-full flex-1 items-center justify-center rounded border bg-white  lg:lg:min-w-[450px]">
         <Button
           disabled={mealPlan.meals.length === 7}
           variant="outline"

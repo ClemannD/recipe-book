@@ -76,7 +76,7 @@ const MealPlanDisplay = ({
   const router = useRouter();
 
   return (
-    <div className="w-full border-b-2 border-b-slate-300 pb-10">
+    <div className="w-full border-b  pb-10">
       <div className="mb-4 flex justify-between gap-4">
         <h2 className="text-xl font-bold">{mealPlan.name}</h2>
         <div className="flex gap-4">
@@ -89,7 +89,7 @@ const MealPlanDisplay = ({
       <div className="flex flex-wrap gap-4">
         {mealPlan.meals.map((meal, index) => (
           <div key={meal.id} className=" min-w-full flex-1  lg:min-w-[450px]">
-            <div className="flex min-h-[133px] flex-col rounded bg-white  shadow">
+            <div className="flex min-h-[133px] flex-col rounded border  bg-white">
               <div className="flex items-center justify-between border-b p-3">
                 <h3 className="text-lg font-bold">Meal {index + 1}</h3>
               </div>

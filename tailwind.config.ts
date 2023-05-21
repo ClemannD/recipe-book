@@ -12,6 +12,9 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        merri: ['Merriweather', 'serif'],
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',
