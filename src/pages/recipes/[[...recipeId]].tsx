@@ -11,6 +11,7 @@ import { useToast } from '../../components/ui/toast/use-toast';
 import { type FullRecipe } from '../../models/model';
 import { api } from '../../utils/api';
 import { useRouter } from 'next/router';
+import { PlusCircle } from 'lucide-react';
 
 const RecipesPage = () => {
   const { toast, dismiss } = useToast();
@@ -103,13 +104,39 @@ const RecipesPage = () => {
     }
   }, [recipesData, search, recipeTypeFilter]);
 
-  useEffect(() => {
-    if (isExpanded) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = 'auto';
+  const createRecipeClickHandler = () => {
+    if (editingRecipe) {
+      toast({
+        title: `You are currently ${
+          isCreating ? 'creating' : 'editing'
+        } a recipe`,
+        description: 'Are you sure you want to switch recipes?',
+        duration: 5000,
+
+        action: (
+          <Button
+            variant={'destructive'}
+            onClick={() => {
+              setIsCreating(true);
+              setSelectedRecipe(null);
+              setEditingRecipe(null);
+              setIsExpanded(true);
+
+              dismiss();
+            }}
+          >
+            Discard
+          </Button>
+        ),
+      });
+      return;
     }
-  }, [isExpanded]);
+
+    setIsCreating(true);
+    setEditingRecipe(null);
+    setSelectedRecipe(null);
+    setIsExpanded(true);
+  };
 
   return (
     <RecipesPageLayout
@@ -117,10 +144,21 @@ const RecipesPage = () => {
       isFullScreen={isFullScreen}
       leftChildren={
         <>
-          <div className="mb-10 flex flex-col flex-wrap items-start justify-between gap-6  md:flex-row md:items-end">
-            <div>
-              <h1 className="text-2xl font-bold">Recipes</h1>
-              <h2 className="mt-1 text-gray-600">Your collection of recipes</h2>
+          <div className="mb-4 flex flex-col flex-wrap items-start justify-between gap-6 md:flex-row md:items-end lg:mb-10">
+            <div className="flex w-full items-center justify-between lg:w-auto">
+              <div>
+                <h1 className="text-2xl font-bold">Recipes</h1>
+                <h2 className="mt-1 text-gray-600">
+                  Your collection of recipes
+                </h2>
+              </div>
+              <Button
+                className="lg:hidden"
+                variant="outline"
+                onClick={createRecipeClickHandler}
+              >
+                <PlusCircle />
+              </Button>
             </div>
             <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
               <PlainInput
@@ -133,39 +171,8 @@ const RecipesPage = () => {
               />
 
               <Button
-                onClick={() => {
-                  if (editingRecipe) {
-                    toast({
-                      title: `You are currently ${
-                        isCreating ? 'creating' : 'editing'
-                      } a recipe`,
-                      description: 'Are you sure you want to switch recipes?',
-                      duration: 5000,
-
-                      action: (
-                        <Button
-                          variant={'destructive'}
-                          onClick={() => {
-                            setIsCreating(true);
-                            setSelectedRecipe(null);
-                            setEditingRecipe(null);
-                            setIsExpanded(true);
-
-                            dismiss();
-                          }}
-                        >
-                          Discard
-                        </Button>
-                      ),
-                    });
-                    return;
-                  }
-
-                  setIsCreating(true);
-                  setEditingRecipe(null);
-                  setSelectedRecipe(null);
-                  setIsExpanded(true);
-                }}
+                className="hidden lg:block"
+                onClick={createRecipeClickHandler}
               >
                 Create
               </Button>
