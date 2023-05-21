@@ -14,34 +14,13 @@ const RecipesPageLayout = ({
   leftChildren: React.ReactNode;
   rightChildren: React.ReactNode;
 }) => {
-  const [scrollY, setScrollY] = useState(0);
-
-  // This works, but maybe bad performance? Will need to see
-  const handleScroll = () => {
-    if (window.scrollY !== 0) {
-      setScrollY(window.scrollY);
-    }
-  };
-
-  useEffect(() => {
-    handleScroll();
-
-    window.addEventListener('scroll', handleScroll);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-    };
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   useEffect(() => {
     if (isExpanded) {
       document.body.className = 'noscroll';
     } else {
       document.body.className = '';
-      window.scrollTo(0, scrollY);
     }
-  }, [handleScroll, isExpanded, scrollY]);
+  }, [isExpanded]);
 
   return (
     <Layout>
@@ -54,16 +33,6 @@ const RecipesPageLayout = ({
         >
           {leftChildren}
         </div>
-
-        {/* Dummy component to help with positioning */}
-        {/* <div
-          className={cn(
-            clsx(
-              `h-screen max-h-screen max-w-[700px] transition-all duration-300 ease-in-out`,
-              isExpanded ? 'w-[600px] min-w-[600px]' : 'w-0 min-w-0'
-            )
-          )}
-        ></div> */}
 
         <div
           className={cn(
