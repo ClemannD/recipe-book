@@ -29,7 +29,7 @@ const RecipeCard = ({
       }}
     >
       <img
-        className="h-auto w-[130px] min-w-[130px] rounded-l object-cover max-[430px]:h-[125px] max-[430px]:w-full"
+        className="h-auto w-[130px] min-w-[130px] object-cover max-[430px]:h-[125px] max-[430px]:w-full max-[430px]:rounded-t min-[430px]:rounded-l"
         src={recipe.imageUrl ?? '/empty-bowl.jpg'}
         alt={recipe.name}
       />

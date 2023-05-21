@@ -57,7 +57,7 @@ const NavItems = () => {
   const user = useUser();
 
   return (
-    <div className={clsx('flex-1 border-t')}>
+    <div className={clsx('border-t')}>
       <NavItem href="/shared-recipes" name="Shared Recipes" icon={<Globe2 />} />
 
       {user.isSignedIn && (
@@ -109,7 +109,9 @@ const UserNavItem = () => {
   const { user } = useUser();
   return (
     <div
-      className={clsx('flex h-20 w-full items-center justify-center border-t')}
+      className={clsx(
+        'flex h-20 w-full items-center justify-center border-b border-t'
+      )}
     >
       <UserButton />
       <div className="ml-3 ">{user?.fullName}</div>
