@@ -4,6 +4,7 @@ import { type NextPage } from 'next';
 import Link from 'next/link';
 import { Button } from '../components/ui/button';
 import { defaultRecipeImageUrl } from '../constants';
+import { Globe2 } from 'lucide-react';
 
 const Home: NextPage = () => {
   const { isSignedIn } = useUser();
@@ -11,43 +12,60 @@ const Home: NextPage = () => {
   return (
     <div className="min-h-screen w-screen bg-slate-50">
       <div className="w-full border-b bg-white">
-        <div className="container flex h-20 items-center">
+        <div className="container flex h-20 items-center justify-between">
           <h1 className="font-merri text-3xl font-bold">
             🥘 📖 <span className="ml-3">Recipe Book</span>
           </h1>
+
+          <div className="flex gap-10">
+            <Link href="/shared-recipes" passHref>
+              <Button variant="ghost">
+                <Globe2 className="mr-2" /> Shared Recipes
+              </Button>
+            </Link>
+            <Link href="/sign-in" passHref>
+              <Button>Sign In / Sign up</Button>
+            </Link>
+          </div>
         </div>
       </div>
 
-      <div className="container flex py-72">
-        <div className="">
+      <div className="container flex justify-between py-20">
+        <div className="py-20">
           <p className="font-bold">
             The easiest way to organize, save, and share recipes
           </p>
           <br />
           <p className="">With Recipe Book, you can:</p>
           <br />
-          <ul className="w-96 list-disc pl-5">
+          <ul className="max-w-lg list-disc pl-5">
             <li>
               Find recipes from a variety of sources, including cookbooks,
               websites, and even your own personal collection.
             </li>
+            <br />
             <li>
               Save recipes that you love so you can easily find them again
               later.
             </li>
+            <br />
             <li>
               Share recipes with your household so everyone can see what&apos;s
               for dinner.
             </li>
+            <br />
             <li>
               Recipe Book is the perfect way to stay organized in the kitchen
               and make mealtime more enjoyable for everyone.
             </li>
           </ul>
         </div>
-
-        <div className="rounded-lg shadow-lg">
-          <img src="https://recipes.clemann.app/recipes-page.png" alt="" />
+        <div className="pl-8">
+          <img
+            src="https://recipes.clemann.app/recipes-page.png"
+            className="h-36 w-full rounded-lg shadow-lg"
+            alt=""
+          />
         </div>
       </div>
     </div>
