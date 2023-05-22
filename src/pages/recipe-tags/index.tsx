@@ -30,7 +30,7 @@ const RecipeTagPage: React.FC = () => {
     <Layout>
       <div className="flex">
         <div className="p-4 lg:p-10">
-          <h1 className="text-2xl font-bold">Recipe Tags</h1>
+          <h1 className="font-merri text-2xl font-bold">Recipe Tags</h1>
           <h2 className="mt-1  text-gray-600">
             Recipe Tags are used to categorize your recipes
           </h2>

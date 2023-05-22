@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import clsx from 'clsx';
 import { CheckCircle, PlusCircle, X, XCircle } from 'lucide-react';
 import { useRouter } from 'next/router';
@@ -11,6 +12,7 @@ import { useToast } from '../../../components/ui/toast/use-toast';
 import { FullRecipe } from '../../../models/model';
 import { api } from '../../../utils/api';
 import { Skeleton } from '../../../components/ui/skeleton';
+import { defaultRecipeImageUrl } from '../../../constants';
 
 interface MealFormMeal {
   id: string;
@@ -626,7 +628,9 @@ const SelectRecipeItem = ({
     >
       <img
         className="h-auto w-[100px] min-w-[100px]  object-cover"
-        src={recipe.imageUrl ?? '/empty-bowl.jpg'}
+        src={
+          recipe.imageUrl !== '' ? recipe.imageUrl ?? '' : defaultRecipeImageUrl
+        }
         alt={recipe.name}
       />
       <div className="flex w-full flex-col p-2">
@@ -687,7 +691,9 @@ const MealRecipeItem = ({
     >
       <img
         className="h-auto w-[100px] min-w-[100px]  object-cover"
-        src={recipe.imageUrl ?? '/empty-bowl.jpg'}
+        src={
+          recipe.imageUrl !== '' ? recipe.imageUrl ?? '' : defaultRecipeImageUrl
+        }
         alt={recipe.name}
       />
       <div className="flex w-full flex-col p-2">

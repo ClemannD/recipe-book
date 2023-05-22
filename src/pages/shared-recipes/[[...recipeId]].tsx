@@ -86,29 +86,25 @@ const SharedRecipesPage = () => {
         <>
           <div className="mb-4 flex flex-col flex-wrap items-start justify-between gap-6 lg:mb-10 lg:flex-row lg:items-end lg:pt-0">
             <div>
-              <h1 className="text-2xl font-bold">Shared Recipes</h1>
+              <h1 className="font-merri text-2xl font-bold">Shared Recipes</h1>
               <h2 className="mt-1 text-gray-600">
                 Recipes created and shared by other users
               </h2>
             </div>
             <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
               <PlainInput
-                placeholder="🔎  Search by recipe name, ingredient, type, or creator"
+                placeholder="🔎  Search by recipe name, ingredient, tag, or creator"
                 value={search}
                 className="lg:w-[500px] "
                 onChange={(e) => {
                   setSearch(e.target.value);
                 }}
               />
-
-              {/* <Link className="w-full" href="/recipes?create=true">
-                <Button className="w-full">Create</Button>
-              </Link> */}
             </div>
           </div>
 
           <div className="">
-            <div className={clsx('flex flex-wrap gap-4')}>
+            <div className="flex flex-wrap gap-2 lg:gap-3">
               {isLoading &&
                 Array.from(Array(20).keys()).map((i) => (
                   <Skeleton

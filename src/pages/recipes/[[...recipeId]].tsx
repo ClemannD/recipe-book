@@ -37,11 +37,11 @@ const RecipesPage = () => {
   // Data fetching
   const {
     data: recipesData,
-    isLoading,
+    isLoading: recipesAreLoading,
     refetch: refetchRecipes,
   } = api.recipe.getRecipes.useQuery();
 
-  const { data: recipeTypes, isLoading: recipeTypesIsLoading } =
+  const { data: recipeTags, isLoading: recipeTagsAreLoading } =
     api.recipeType.getRecipeTypes.useQuery();
 
   useEffect(() => {
@@ -147,7 +147,7 @@ const RecipesPage = () => {
           <div className="mb-4 flex flex-col flex-wrap items-start justify-between gap-6 md:flex-row md:items-end lg:mb-10">
             <div className="flex w-full items-center justify-between lg:w-auto">
               <div>
-                <h1 className="text-2xl font-bold">Recipes</h1>
+                <h1 className="font-merri text-2xl font-bold">Recipes</h1>
                 <h2 className="mt-1 text-gray-600">
                   Your collection of recipes
                 </h2>
@@ -160,6 +160,7 @@ const RecipesPage = () => {
                 <PlusCircle />
               </Button>
             </div>
+
             <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
               <PlainInput
                 placeholder="🔎  Search by recipe name, ingredient, or recipe type"
@@ -180,15 +181,15 @@ const RecipesPage = () => {
           </div>
 
           <div className="mb-6 flex flex-wrap gap-1">
-            {recipeTypesIsLoading &&
+            {recipeTagsAreLoading &&
               Array.from(Array(20).keys()).map((i) => (
                 <Skeleton className="h-6 w-24 rounded-full" key={i} />
               ))}
 
-            {recipeTypes?.map((recipeType) => (
+            {recipeTags?.map((recipeType) => (
               <div
                 className={clsx(
-                  'flex h-6 w-auto cursor-pointer items-center justify-center rounded-full  p-2 text-sm tracking-wide transition-all ease-in-out hover:scale-105',
+                  'flex h-6 w-auto cursor-pointer items-center justify-center rounded-full p-2 text-sm tracking-wide transition-all ease-in-out hover:scale-105',
                   recipeTypeFilter?.includes(recipeType.id)
                     ? 'bg-slate-900 text-white'
                     : 'border bg-white'
@@ -215,12 +216,12 @@ const RecipesPage = () => {
             ))}
           </div>
 
-          <div className={clsx('flex flex-wrap gap-2 lg:gap-4')}>
-            {isLoading &&
+          <div className="flex flex-wrap gap-2 lg:gap-3">
+            {recipesAreLoading &&
               Array.from(Array(20).keys()).map((i) => (
                 <Skeleton
                   key={i}
-                  className="h-[150px] min-w-[400px] max-w-[600px] flex-1"
+                  className="h-[110px] min-w-[300px] max-w-[600px] flex-1 lg:min-w-[400px]"
                 />
               ))}
 
@@ -273,9 +274,9 @@ const RecipesPage = () => {
               />
             ))}
             {/* Hack because I want flex wrap but with all elements to maintain their size */}
-            <div className="h-1 min-w-[300px] max-w-[600px] flex-1"></div>
-            <div className="h-1 min-w-[300px] max-w-[600px] flex-1"></div>
-            <div className="h-1 min-w-[300px] max-w-[600px] flex-1"></div>
+            <div className="h-1 min-w-[300px] max-w-[600px] flex-1 lg:min-w-[400px]"></div>
+            <div className="h-1 min-w-[300px] max-w-[600px] flex-1 lg:min-w-[400px]"></div>
+            <div className="h-1 min-w-[300px] max-w-[600px] flex-1 lg:min-w-[400px]"></div>
           </div>
         </>
       }

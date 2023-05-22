@@ -1,8 +1,10 @@
+/* eslint-disable @next/next/no-img-element */
 import { type NextPage } from 'next';
 import Link from 'next/link';
 import { Button } from '../components/ui/button';
 import { useUser } from '@clerk/nextjs';
 import { useEffect, useState } from 'react';
+import { defaultRecipeImageUrl } from '../constants';
 
 const Home: NextPage = () => {
   const { isSignedIn } = useUser();
@@ -148,7 +150,11 @@ const RecipeCard = ({
         <div>
           <img
             className="h-[150px] w-[130px] min-w-[130px] rounded-l object-cover"
-            src={recipe.imageUrl ?? '/empty-bowl.jpg'}
+            src={
+              recipe.imageUrl !== ''
+                ? recipe.imageUrl ?? ''
+                : defaultRecipeImageUrl
+            }
             alt={recipe.name}
           />
         </div>

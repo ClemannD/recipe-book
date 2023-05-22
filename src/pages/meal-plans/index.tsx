@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
 import { useState } from 'react';
 import RecipeDisplay from '../../components/recipes/recipe-display';
@@ -7,6 +8,7 @@ import { FullMealPlan, type FullRecipe } from '../../models/model';
 import { api } from '../../utils/api';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
+import { defaultRecipeImageUrl } from '../../constants';
 
 const MealPlansPage = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<FullRecipe | null>(null);
@@ -24,7 +26,7 @@ const MealPlansPage = () => {
         <>
           <div className="mb-10 flex flex-col flex-wrap items-start justify-between gap-6 md:flex-row md:items-end">
             <div>
-              <h1 className="text-2xl font-bold">Your Meal Plans</h1>
+              <h1 className="font-merri text-2xl font-bold">Your Meal Plans</h1>
               <h2 className="mt-1 text-gray-600">
                 Plan your meals for the week (This page is still a work in
                 progress)
@@ -144,7 +146,9 @@ const MealRecipeItem = ({ recipe }: { recipe: FullRecipe }) => {
     >
       <img
         className="h-auto w-[100px] min-w-[100px]  object-cover"
-        src={recipe.imageUrl ?? '/empty-bowl.jpg'}
+        src={
+          recipe.imageUrl !== '' ? recipe.imageUrl ?? '' : defaultRecipeImageUrl
+        }
         alt={recipe.name}
       />
       <div className="flex w-full flex-col p-2">

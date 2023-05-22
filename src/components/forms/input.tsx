@@ -19,6 +19,7 @@ export type InputProps = {
   autoFocus?: boolean;
   max?: number;
   min?: number;
+  required?: boolean;
   className?: string;
   inputClassName?: string;
 };
@@ -33,6 +34,7 @@ const Input = (
     hideErrorMessage,
     className = '',
     inputClassName = '',
+    required = false,
     ...props
   }: InputProps,
   ref: React.Ref<HTMLInputElement | HTMLTextAreaElement>
@@ -53,6 +55,7 @@ const Input = (
       {label && (
         <Label
           label={label}
+          required={required}
           subLabel={subLabel}
           id={props.id || props.name}
         ></Label>

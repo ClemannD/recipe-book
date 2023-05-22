@@ -31,71 +31,65 @@ const RecipeForm = ({
   const [isDuplicating, setIsDuplicating] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
 
-  const {
-    data: recipeTypes,
-    isLoading,
-    // refetch,
-  } = api.recipeType.getRecipeTypes.useQuery();
+  const { data: recipeTypes } = api.recipeType.getRecipeTypes.useQuery();
 
   const recipeFormSchema = z.object({
     name: z.string().min(1),
-    instructions: z.string().optional(),
+    instructions: z.string().max(2500).optional(),
     imageUrl: z.string().optional(),
     isPublic: z.boolean().optional(),
     recipeTypes: z.array(z.string().min(1)).optional(),
-    ingredients: z.array(
-      z
-        .object({
-          name: z.string().min(1),
+    ingredients: z
+      .array(
+        z.object({
+          name: z.string().max(40),
           quantity: z.number().min(0),
-          unit: z.string().min(1),
+          unit: z.string().max(40),
         })
-        .optional()
-    ),
+      )
+      .optional(),
   });
 
-  const { mutateAsync: createRecipe, isLoading: isCreatingRecipe } =
-    api.recipe.createRecipe.useMutation({
-      onSuccess: async () => {
-        await onSuccess();
-        setIsDuplicating(false);
-        setIsCreating(false);
-        toast({
-          title: 'Recipe created',
-        });
-      },
-      onError: (error) => {
-        setIsCreating(false);
+  const { mutateAsync: createRecipe } = api.recipe.createRecipe.useMutation({
+    onSuccess: async () => {
+      await onSuccess();
+      setIsDuplicating(false);
+      setIsCreating(false);
+      toast({
+        title: '✅ Recipe created',
+      });
+    },
+    onError: (error) => {
+      setIsCreating(false);
 
-        console.error(error);
+      console.error(error);
 
-        toast({
-          title: 'Error creating recipe',
-          description: 'Please try again later.',
-        });
-      },
-    });
+      toast({
+        title: 'Error creating recipe',
+        description: 'Please try again later.',
+      });
+    },
+  });
 
-  const { mutateAsync: updateRecipe, isLoading: isUpdatingRecipe } =
-    api.recipe.updateRecipe.useMutation({
-      onSuccess: async () => {
-        await onSuccess();
-        setIsCreating(false);
+  const { mutateAsync: updateRecipe } = api.recipe.updateRecipe.useMutation({
+    onSuccess: async () => {
+      await onSuccess();
+      setIsCreating(false);
 
-        toast({
-          title: '✅ Recipe updated',
-        });
-      },
-      onError: (error) => {
-        setIsCreating(false);
-        console.error(error);
+      toast({
+        title: '✅ Recipe updated',
+      });
+    },
+    onError: (error) => {
+      setIsCreating(false);
+      console.error(error);
 
-        toast({
-          title: 'Error updating recipe',
-          description: 'Please try again later.',
-        });
-      },
-    });
+      toast({
+        title: 'Error updating recipe',
+        description: 'Please try again later.',
+      });
+    },
+  });
 
   const { mutate: deleteRecipe, isLoading: isDeletingRecipe } =
     api.recipe.deleteRecipe.useMutation({
@@ -122,15 +116,16 @@ const RecipeForm = ({
     });
 
   return (
-    <div className="p-4 pb-24 lg:p-6">
+    <div className="p-4 pb-32 lg:p-6">
       <div className="absolute right-0 top-0 p-4">
         <button
-          className="rounded-full bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
+          className="rounded-full border bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
           onClick={() => onClose()}
         >
           <X></X>
         </button>
       </div>
+
       <h2 className="mb-6 text-3xl font-bold">
         {recipe ? 'Update' : 'Create a new'} Recipe
       </h2>
@@ -178,7 +173,7 @@ const RecipeForm = ({
       >
         {({ values, setFieldValue, errors }) => (
           <Form className="flex flex-col">
-            <Input label="Name" name="name" />
+            <Input label="Name" name="name" required />
             <Input
               label="Image URL"
               subLabel='You can find any image on the internet and right click it to get the url using "Copy Image Address". (Image Upload Coming Soon!)'
@@ -187,14 +182,14 @@ const RecipeForm = ({
             <Input textArea rows={8} label="Instructions" name="instructions" />
 
             <Label label="Recipe Types" className="mb-2"></Label>
-            <div className="mb-8 flex flex-wrap gap-2">
+            <div className="mb-8 flex flex-wrap gap-1">
               {recipeTypes?.map((recipeType) => (
                 <div
                   className={clsx(
-                    'flex h-6 w-auto cursor-pointer items-center justify-center rounded-full bg-slate-200 p-2 text-sm tracking-wide transition-all ease-in-out hover:scale-105',
+                    'flex h-6 w-auto cursor-pointer select-none items-center justify-center  rounded-full bg-slate-50 p-2 text-sm tracking-wide transition-all ease-in-out hover:scale-105',
                     values.recipeTypeIds.includes(recipeType.id)
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-slate-200'
+                      ? 'border border-slate-200 bg-slate-900 text-white'
+                      : 'border bg-slate-200'
                   )}
                   key={recipeType.id + recipeType.name + recipeType.icon}
                   onClick={() => {
@@ -224,7 +219,7 @@ const RecipeForm = ({
               {({ insert, remove, push }) => (
                 <div>
                   {/* <h3 className="text-2xl">Ingredients</h3> */}
-                  <div className="grid grid-cols-10 gap-4">
+                  <div className="grid grid-cols-10 gap-2">
                     <div className="col-span-5">
                       <Label label="Ingredient Name"></Label>
                     </div>
@@ -246,7 +241,7 @@ const RecipeForm = ({
                     ))}
 
                   <Button
-                    className="mt-0"
+                    className="mt-2 w-full"
                     variant="secondary"
                     onClick={() => {
                       push({
@@ -288,7 +283,7 @@ const RecipeForm = ({
               <div className="mt-4 flex gap-4">
                 <Button
                   className="flex-1"
-                  variant="secondary"
+                  variant="outline"
                   disabled={Object.keys(errors).length > 0}
                   isSubmitting={isDuplicating}
                   // eslint-disable-next-line @typescript-eslint/no-misused-promises
@@ -304,7 +299,7 @@ const RecipeForm = ({
                 </Button>
                 <Button
                   className="flex-1"
-                  variant="destructive"
+                  variant="destructive-outline"
                   isSubmitting={isDeletingRecipe}
                   onClick={() => {
                     toast({

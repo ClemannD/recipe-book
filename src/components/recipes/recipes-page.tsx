@@ -1,8 +1,8 @@
 import clsx from 'clsx';
+import { useEffect } from 'react';
 import { cn } from '../../utils/cn';
-import Layout from '../layout';
-import { useEffect, useState } from 'react';
 import { useWindowSize } from '../../utils/hooks/useWindowSize';
+import Layout from '../layout';
 
 const RecipesPageLayout = ({
   isExpanded,
@@ -18,12 +18,15 @@ const RecipesPageLayout = ({
   const windowSize = useWindowSize();
 
   useEffect(() => {
-    if (isExpanded && windowSize.width && windowSize.width < 1024) {
+    if (
+      (isExpanded && windowSize.width && windowSize.width < 1024) ||
+      isFullScreen
+    ) {
       document.body.className = 'noscroll';
     } else {
       document.body.className = '';
     }
-  }, [isExpanded, windowSize.width]);
+  }, [isExpanded, isFullScreen, windowSize.width]);
 
   return (
     <Layout>

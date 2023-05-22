@@ -3,6 +3,7 @@ import { Expand, Minimize, X } from 'lucide-react';
 import { type FullRecipe } from '../../models/model';
 import { roundToCleanFraction } from '../../utils/round-fraction';
 import { Button } from '../ui/button';
+import { defaultRecipeImageUrl } from '../../constants';
 
 const RecipeDisplay = ({
   recipe,
@@ -39,29 +40,29 @@ const RecipeDisplay = ({
           </button>
         </div>
 
-        <div
-          className={clsx(
-            'flex',
-            isFullscreen ? 'flex-row' : 'flex-col'
-            // 'items-center justify-center h-screen max-h-screen transition-all duration-500 ease-in-out'
-          )}
-        >
+        <div className={clsx('flex', isFullscreen ? 'flex-row' : 'flex-col')}>
           <div className="flex-1">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               className={clsx(
-                ' object-cover object-center',
+                'object-cover object-center',
                 isFullscreen
                   ? 'h-auto max-h-[500px] w-full'
-                  : 'h-[400px] w-full '
+                  : 'h-300px w-full lg:h-[400px]'
               )}
-              src={recipe.imageUrl ?? '/empty-bowl.jpg'}
+              src={
+                recipe.imageUrl !== ''
+                  ? recipe.imageUrl ?? ''
+                  : defaultRecipeImageUrl
+              }
               alt=""
             />
             <div className="mt-4 flex flex-col px-4">
               <div className="mb-3 flex items-center justify-between">
                 <div>
-                  <h2 className=" text-2xl font-bold">{recipe.name} </h2>
+                  <h2 className=" font-merri text-2xl font-bold">
+                    {recipe.name}{' '}
+                  </h2>
                   <p className="text-xs italic text-slate-500">
                     Created By {recipe.createdBy.fullName} - Last Updated{' '}
                     {new Date(recipe.updatedAt).toLocaleString()}
@@ -75,7 +76,7 @@ const RecipeDisplay = ({
                         Public
                       </div>
                     )}
-                    <Button variant={'secondary'} onClick={() => onEditClick()}>
+                    <Button variant={'outline'} onClick={() => onEditClick()}>
                       Edit
                     </Button>
                   </div>
@@ -87,7 +88,7 @@ const RecipeDisplay = ({
               <div className="mb-6 flex flex-wrap gap-2">
                 {recipe.recipeTypes.map((recipeType) => (
                   <div
-                    className="flex h-6 w-auto items-center justify-center rounded-full bg-slate-200 p-2 text-sm tracking-wide "
+                    className="flex h-6 w-auto items-center justify-center rounded-full border bg-slate-50 p-2 text-sm tracking-wide "
                     key={recipeType.id + recipeType.name + recipeType.icon}
                   >
                     {recipeType.icon}{' '}
@@ -103,7 +104,7 @@ const RecipeDisplay = ({
               <div className="mb-4 px-4">
                 <h3
                   className={clsx(
-                    ' font-bold text-slate-700',
+                    'font-medium',
                     isFullscreen ? 'mb-4 text-2xl' : 'mb-2 text-xl'
                   )}
                 >
@@ -124,7 +125,7 @@ const RecipeDisplay = ({
             <div className={clsx(isFullscreen ? 'p-10 pt-20' : 'px-4 pb-24')}>
               <h3
                 className={clsx(
-                  ' font-bold text-slate-700',
+                  'font-medium',
                   isFullscreen ? 'mb-4 text-2xl' : 'mb-2 text-xl'
                 )}
               >
