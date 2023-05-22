@@ -60,10 +60,10 @@ const Home: NextPage = () => {
             </li>
           </ul>
         </div>
-        <div className="pl-8">
+        <div className="flex-grow pl-8">
           <img
             src="https://recipes.clemann.app/recipes-page.png"
-            className="h-36 w-full rounded-lg shadow-lg"
+            className="h-auto w-full rounded-lg shadow-lg"
             alt=""
           />
         </div>
