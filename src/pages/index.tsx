@@ -31,7 +31,59 @@ const Home: NextPage = () => {
       </div>
 
       <div className="container flex justify-between py-20">
-        <div className="py-20">
+        <div className="flex-1">
+          <div className="flex flex-col items-center justify-center py-6">
+            <div className="flex w-full max-w-[500px] flex-col items-center justify-center rounded border bg-white px-4 py-12 text-center lg:px-8">
+              <div className="border-b border-b-slate-300 pb-10">
+                <h2 className="text-xl font-bold">
+                  Browse Recipes created and shared by other users
+                </h2>
+                <p className="mb-6 text-slate-700">
+                  No need to sign in or create an account
+                </p>
+
+                <Link href="/shared-recipes" passHref>
+                  <Button className="max-w-96 w-full">Browse Recipes</Button>
+                </Link>
+              </div>
+
+              <div className="mt-10">
+                <h2 className=" text-xl font-bold">
+                  Create an account to save your own recipes
+                </h2>
+                <p className="mb-6 text-slate-700">
+                  And create your own meal plans
+                </p>
+
+                {!isSignedIn ? (
+                  <>
+                    <Link href="/sign-up" passHref>
+                      <Button className="max-w-96 w-full">Sign Up</Button>
+                    </Link>
+                    <p className="mt-6">
+                      Already have an account?{' '}
+                      <Link
+                        href="/sign-in"
+                        passHref
+                        className="underline hover:scale-110"
+                      >
+                        Log In
+                      </Link>
+                    </p>
+                  </>
+                ) : (
+                  <Link href="/recipes" passHref>
+                    <Button className="max-w-96 w-full">
+                      You are already signed in. Go to Recipes
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* <div className="py-20">
           <p className="font-bold">
             The easiest way to organize, save, and share recipes
           </p>
@@ -66,7 +118,7 @@ const Home: NextPage = () => {
             className="h-auto w-full rounded-lg shadow-lg"
             alt=""
           />
-        </div>
+        </div> */}
       </div>
     </div>
     // <div className="flex h-screen w-screen flex-col items-center bg-slate-50 lg:flex-row">
@@ -100,55 +152,55 @@ const Home: NextPage = () => {
     //     </div>
     //   </div>
 
-    //   <div className="flex-1">
-    //     <div className="flex flex-col items-center justify-center py-6">
-    //       <div className="flex w-full max-w-[500px] flex-col items-center justify-center rounded border bg-white px-4 py-12 text-center lg:px-8">
-    //         <div className="border-b border-b-slate-300 pb-10">
-    //           <h2 className="text-xl font-bold">
-    //             Browse Recipes created and shared by other users
-    //           </h2>
-    //           <p className="mb-6 text-slate-700">
-    //             No need to sign in or create an account
-    //           </p>
+    // <div className="flex-1">
+    //   <div className="flex flex-col items-center justify-center py-6">
+    //     <div className="flex w-full max-w-[500px] flex-col items-center justify-center rounded border bg-white px-4 py-12 text-center lg:px-8">
+    //       <div className="border-b border-b-slate-300 pb-10">
+    //         <h2 className="text-xl font-bold">
+    //           Browse Recipes created and shared by other users
+    //         </h2>
+    //         <p className="mb-6 text-slate-700">
+    //           No need to sign in or create an account
+    //         </p>
 
-    //           <Link href="/shared-recipes" passHref>
-    //             <Button className="max-w-96 w-full">Browse Recipes</Button>
-    //           </Link>
-    //         </div>
-
-    //         <div className="mt-10">
-    //           <h2 className=" text-xl font-bold">
-    //             Create an account to save your own recipes
-    //           </h2>
-    //           <p className="mb-6 text-slate-700">
-    //             And create your own meal plans
-    //           </p>
-
-    //           {!isSignedIn ? (
-    //             <>
-    //               <Link href="/sign-up" passHref>
-    //                 <Button className="max-w-96 w-full">Sign Up</Button>
-    //               </Link>
-    //               <p className="mt-6">
-    //                 Already have an account?{' '}
-    //                 <Link
-    //                   href="/sign-in"
-    //                   passHref
-    //                   className="underline hover:scale-110"
-    //                 >
-    //                   Log In
-    //                 </Link>
-    //               </p>
-    //             </>
-    //           ) : (
-    //             <Link href="/recipes" passHref>
-    //               <Button className="max-w-96 w-full">
-    //                 You are already signed in. Go to Recipes
-    //               </Button>
-    //             </Link>
-    //           )}
-    //         </div>
+    //         <Link href="/shared-recipes" passHref>
+    //           <Button className="max-w-96 w-full">Browse Recipes</Button>
+    //         </Link>
     //       </div>
+
+    //       <div className="mt-10">
+    //         <h2 className=" text-xl font-bold">
+    //           Create an account to save your own recipes
+    //         </h2>
+    //         <p className="mb-6 text-slate-700">
+    //           And create your own meal plans
+    //         </p>
+
+    //         {!isSignedIn ? (
+    //           <>
+    //             <Link href="/sign-up" passHref>
+    //               <Button className="max-w-96 w-full">Sign Up</Button>
+    //             </Link>
+    //             <p className="mt-6">
+    //               Already have an account?{' '}
+    //               <Link
+    //                 href="/sign-in"
+    //                 passHref
+    //                 className="underline hover:scale-110"
+    //               >
+    //                 Log In
+    //               </Link>
+    //             </p>
+    //           </>
+    //         ) : (
+    //           <Link href="/recipes" passHref>
+    //             <Button className="max-w-96 w-full">
+    //               You are already signed in. Go to Recipes
+    //             </Button>
+    //           </Link>
+    //         )}
+    //       </div>
+    //     </div>
     //     </div>
     //   </div>
     // </div>
