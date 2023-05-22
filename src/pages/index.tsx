@@ -36,8 +36,8 @@ const Home: NextPage = () => {
               later.
             </li>
             <li>
-              Share recipes with your household so everyone can see what's for
-              dinner.
+              Share recipes with your household so everyone can see what&apos;s
+              for dinner.
             </li>
             <li>
               Recipe Book is the perfect way to stay organized in the kitchen
@@ -47,7 +47,7 @@ const Home: NextPage = () => {
         </div>
 
         <div className="rounded-lg shadow-lg">
-          <img src="" alt="" />
+          <img src="https://recipes.clemann.app/recipes-page.png" alt="" />
         </div>
       </div>
     </div>
