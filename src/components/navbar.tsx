@@ -5,6 +5,8 @@ import {
   Globe2,
   LucideArrowLeftSquare,
   Tags,
+  UserPlus,
+  Users,
   UtensilsCrossed,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -100,7 +102,7 @@ const UserNavItem = ({ isExpanded }: { isExpanded: boolean }) => {
           href="/sign-in"
           className="flex h-full w-full items-center justify-center transition-colors ease-in-out hover:bg-slate-100"
         >
-          Sign In or Sign Up
+          {isExpanded ? 'Sign In or Sign Up' : <UserPlus />}
         </Link>
       )}
     </div>
