@@ -106,15 +106,21 @@ const NavItem = ({
 };
 
 const UserNavItem = () => {
-  const { user } = useUser();
+  const { user, isSignedIn } = useUser();
   return (
     <div
       className={clsx(
         'flex h-20 w-full items-center justify-center border-b border-t'
       )}
     >
-      <UserButton />
-      <div className="ml-3 ">{user?.fullName}</div>
+      {isSignedIn ? (
+        <>
+          <UserButton />
+          <div className="ml-3 ">{user?.fullName}</div>
+        </>
+      ) : (
+        <Link href="/sign-in">Sign In / Sign Up</Link>
+      )}
     </div>
   );
 };

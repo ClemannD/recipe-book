@@ -186,8 +186,8 @@ const Home: NextPage = () => {
         </div>
       </div>
 
-      <div className="container flex flex-col items-center justify-between">
-        <div className="py-20 text-center lg:py-40">
+      <div className="container flex flex-col items-center justify-between overflow-hidden lg:mb-20 lg:flex-row">
+        <div className="py-20 text-center lg:w-[50%] lg:py-56 lg:pr-20 lg:text-left">
           <h1 className="mb-4 font-merri text-4xl font-bold">
             The easiest way to store and share your{' '}
             <span className="bg-gradient-to-r from-[#E6AF37] to-[#F87666] bg-clip-text font-black text-transparent">
@@ -215,10 +215,9 @@ const Home: NextPage = () => {
           </div>
         </div>
 
-        <div className="pb-20">
+        <div className="-mx-4 pb-20 lg:-mr-36 lg:max-w-[70%] lg:pb-0">
           <Image
             src={recipePageImage}
-            height={600}
             className="h-auto w-full rounded-lg border shadow-lg"
             alt=""
           />
@@ -248,8 +247,16 @@ const Home: NextPage = () => {
         </div>
       </div>
 
+      {/* <div className="relative mb-10 w-full overflow-hidden">
+        <div className="mb-6 text-center">
+          <h2 className="font-merri text-2xl">
+            Create Meal Plans for the week ahead
+          </h2>
+        </div>
+      </div> */}
+
       <div className="border-t bg-white p-3">
-        <div className="w-full text-center text-xs text-slate-400 lg:text-lg ">
+        <div className="w-full text-center text-xs text-slate-400 ">
           Created By{' '}
           <Link
             href="https://dylan.clemann.com"
@@ -266,7 +273,7 @@ const Home: NextPage = () => {
           >
             Privacy Policy
           </Link>{' '}
-          – © {new Date().getFullYear()} Recipe Book
+          – © {new Date().getFullYear()}
         </div>
       </div>
     </div>
