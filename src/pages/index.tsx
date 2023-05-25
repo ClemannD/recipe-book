@@ -156,7 +156,7 @@ const Home: NextPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen w-screen bg-slate-50">
+    <div className="min-h-screen w-screen overflow-hidden bg-slate-50">
       <NavbarMobile />
       <div className="hidden w-full border-b bg-white lg:block">
         <div className="container flex h-20 items-center justify-between">
@@ -191,7 +191,7 @@ const Home: NextPage = () => {
         </div>
       </div>
 
-      <div className="container flex flex-col items-center justify-between overflow-hidden lg:mb-20 lg:flex-row">
+      <div className="container flex flex-col items-center justify-between  lg:mb-20 lg:flex-row">
         <div className="py-20 text-center lg:w-[50%] lg:py-56 lg:pr-20 lg:text-left">
           <h1 className="mb-4 font-merri text-4xl font-bold">
             The easiest way to store and share your{' '}
@@ -222,6 +222,7 @@ const Home: NextPage = () => {
 
         <div className="-mx-4 pb-20 lg:-mr-36 lg:max-w-[70%] lg:pb-0">
           <Image
+            priority
             src={recipePageImage}
             className="h-auto w-full rounded-lg border shadow-lg"
             alt=""
