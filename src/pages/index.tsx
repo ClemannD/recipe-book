@@ -3,254 +3,274 @@ import { useUser } from '@clerk/nextjs';
 import { type NextPage } from 'next';
 import Link from 'next/link';
 import { Button } from '../components/ui/button';
-import { defaultRecipeImageUrl } from '../constants';
-import { Globe2 } from 'lucide-react';
+import { CalendarRange, Globe2, UtensilsCrossed } from 'lucide-react';
+import Image from 'next/image';
+import recipePageImage from './recipes-page.png';
+import NavbarMobile from '../components/navbar-mobile';
+import { useEffect, useState } from 'react';
+import clsx from 'clsx';
+
+const defaultRecipeTypes = [
+  {
+    name: 'Breakfast',
+    icon: '🍳',
+  },
+  {
+    name: 'Beef',
+    icon: '🥩',
+  },
+  {
+    name: 'Chicken',
+    icon: '🍗',
+  },
+  {
+    name: 'Pork',
+    icon: '🐷',
+  },
+  {
+    name: 'Fish',
+    icon: '🐟',
+  },
+  {
+    name: 'Veggies',
+    icon: '🥦',
+  },
+  {
+    name: 'Dessert',
+    icon: '🍨',
+  },
+  {
+    name: 'Potato',
+    icon: '🥔',
+  },
+  {
+    name: 'Pasta',
+    icon: '🍝',
+  },
+  {
+    name: 'Soup',
+    icon: '🍲',
+  },
+  {
+    name: 'Salad',
+    icon: '🥗',
+  },
+  {
+    name: 'Sandwich',
+    icon: '🥪',
+  },
+  {
+    name: 'Sauce',
+    icon: '🥣',
+  },
+  {
+    name: 'Shrimp',
+    icon: '🍤',
+  },
+  {
+    name: 'Turkey',
+    icon: '🦃',
+  },
+  {
+    name: 'Rice',
+    icon: '🍚',
+  },
+  {
+    name: 'Asian',
+    icon: '🍱',
+  },
+  {
+    name: 'Mexican',
+    icon: '🌮',
+  },
+  {
+    name: 'Italian',
+    icon: '🍕',
+  },
+  {
+    name: 'Cheesy',
+    icon: '🧀',
+  },
+  {
+    name: 'Bread',
+    icon: '🍞',
+  },
+  {
+    name: 'Mediterranean',
+    icon: '🥙',
+  },
+  {
+    name: 'Indian',
+    icon: '🍛',
+  },
+  {
+    name: 'American',
+    icon: '🍔',
+  },
+  {
+    name: 'Fruit',
+    icon: '🍎',
+  },
+  {
+    name: 'Seafood',
+    icon: '🦞',
+  },
+  {
+    name: 'Drink',
+    icon: '🍹',
+  },
+];
 
 const Home: NextPage = () => {
   const { isSignedIn } = useUser();
 
+  const [highlightedRecipeTypes, setHighlightedRecipeTypes] = useState<
+    (typeof defaultRecipeTypes)[number][]
+  >([]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setHighlightedRecipeTypes((prev) => {
+        if (prev.length === 3) {
+          return [];
+        } else {
+          const randomIndex = Math.floor(
+            Math.random() * defaultRecipeTypes.length
+          );
+
+          if (prev.includes(defaultRecipeTypes[randomIndex]!)) {
+            return prev;
+          } else {
+            return [...prev, defaultRecipeTypes[randomIndex]];
+          }
+        }
+      });
+    }, 800);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen w-screen bg-slate-50">
-      <div className="w-full border-b bg-white">
+      <NavbarMobile />
+      <div className="hidden w-full border-b bg-white lg:block">
         <div className="container flex h-20 items-center justify-between">
           <h1 className="font-merri text-3xl font-bold">
             🥘 📖 <span className="ml-3">Recipe Book</span>
           </h1>
 
-          <div className="flex gap-10">
+          <div className="flex gap-4">
             <Link href="/shared-recipes" passHref>
               <Button variant="ghost">
                 <Globe2 className="mr-2" /> Shared Recipes
               </Button>
             </Link>
-            <Link href="/sign-in" passHref>
-              <Button>Sign In / Sign up</Button>
+            {isSignedIn && (
+              <>
+                <Link href="/recipes" passHref>
+                  <Button variant="ghost">
+                    <UtensilsCrossed className="mr-2" /> Your Recipes
+                  </Button>
+                </Link>
+                <Link href="/" passHref>
+                  <Button variant="ghost">
+                    <CalendarRange className="mr-2" /> Meal Plans
+                  </Button>
+                </Link>
+              </>
+            )}
+            <Link href="/sign-in" passHref className="ml-6">
+              <Button>Get Started</Button>
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="container flex justify-between py-20">
-        <div className="flex-1">
-          <div className="flex flex-col items-center justify-center py-6">
-            <div className="flex w-full max-w-[500px] flex-col items-center justify-center rounded border bg-white px-4 py-12 text-center lg:px-8">
-              <div className="border-b border-b-slate-300 pb-10">
-                <h2 className="text-xl font-bold">
-                  Browse Recipes created and shared by other users
-                </h2>
-                <p className="mb-6 text-slate-700">
-                  No need to sign in or create an account
-                </p>
+      <div className="container flex flex-col items-center justify-between">
+        <div className="py-20 text-center lg:py-40">
+          <h1 className="mb-4 font-merri text-4xl font-bold">
+            The easiest way to store and share your{' '}
+            <span className="bg-gradient-to-r from-[#E6AF37] to-[#F87666] bg-clip-text font-black text-transparent">
+              Recipes
+            </span>
+          </h1>
+          <p className="text-gray-600">
+            With <b>Recipe Book</b>, you can store and organize your recipes,
+            share them with friends, and create meal plans all in one
+            easy-to-use app.
+          </p>
 
-                <Link href="/shared-recipes" passHref>
-                  <Button className="max-w-96 w-full">Browse Recipes</Button>
-                </Link>
-              </div>
-
-              <div className="mt-10">
-                <h2 className=" text-xl font-bold">
-                  Create an account to save your own recipes
-                </h2>
-                <p className="mb-6 text-slate-700">
-                  And create your own meal plans
-                </p>
-
-                {!isSignedIn ? (
-                  <>
-                    <Link href="/sign-up" passHref>
-                      <Button className="max-w-96 w-full">Sign Up</Button>
-                    </Link>
-                    <p className="mt-6">
-                      Already have an account?{' '}
-                      <Link
-                        href="/sign-in"
-                        passHref
-                        className="underline hover:scale-110"
-                      >
-                        Log In
-                      </Link>
-                    </p>
-                  </>
-                ) : (
-                  <Link href="/recipes" passHref>
-                    <Button className="max-w-96 w-full">
-                      You are already signed in. Go to Recipes
-                    </Button>
-                  </Link>
-                )}
-              </div>
-            </div>
+          <div className="mt-10">
+            <Link href="/sign-up" passHref>
+              <Button className="">Get Started Now</Button>
+            </Link>
+          </div>
+          <div className="mt-4">
+            <Link
+              href="/shared-recipes"
+              className="text-xs font-light text-slate-500 underline transition-colors ease-in-out hover:text-slate-600"
+            >
+              Browse shared recipes
+            </Link>
           </div>
         </div>
 
-        {/* <div className="py-20">
-          <p className="font-bold">
-            The easiest way to organize, save, and share recipes
-          </p>
-          <br />
-          <p className="">With Recipe Book, you can:</p>
-          <br />
-          <ul className="max-w-lg list-disc pl-5">
-            <li>
-              Find recipes from a variety of sources, including cookbooks,
-              websites, and even your own personal collection.
-            </li>
-            <br />
-            <li>
-              Save recipes that you love so you can easily find them again
-              later.
-            </li>
-            <br />
-            <li>
-              Share recipes with your household so everyone can see what&apos;s
-              for dinner.
-            </li>
-            <br />
-            <li>
-              Recipe Book is the perfect way to stay organized in the kitchen
-              and make mealtime more enjoyable for everyone.
-            </li>
-          </ul>
-        </div>
-        <div className="flex-grow pl-8">
-          <img
-            src="https://recipes.clemann.app/recipes-page.png"
-            className="h-auto w-full rounded-lg shadow-lg"
+        <div className="pb-20">
+          <Image
+            src={recipePageImage}
+            height={600}
+            className="h-auto w-full rounded-lg border shadow-lg"
             alt=""
           />
-        </div> */}
+        </div>
+      </div>
+
+      <div className="relative mb-10 w-full overflow-hidden">
+        <div className="mb-6 text-center">
+          <h2 className="font-merri text-2xl">
+            Tag your recipes for easy organization
+          </h2>
+        </div>
+        <div className="-mx-10 flex flex-wrap justify-center gap-x-2 gap-y-1 lg:gap-x-3 lg:gap-y-2">
+          {defaultRecipeTypes.map((recipeType, index) => (
+            <div
+              className={clsx(
+                'flex h-6 w-auto items-center justify-center rounded-full border bg-slate-100 p-2 tracking-wide transition-all duration-200 ease-in-out lg:h-8 lg:text-lg',
+                highlightedRecipeTypes.includes(recipeType) &&
+                  'scale-105 border-transparent bg-slate-950 text-white'
+              )}
+              key={recipeType.name}
+            >
+              {recipeType.icon}{' '}
+              <span className="ml-2 font-medium  ">{recipeType.name}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="border-t bg-white p-3">
+        <div className="w-full text-center text-xs text-slate-400 lg:text-lg ">
+          Created By{' '}
+          <Link
+            href="https://dylan.clemann.com"
+            target="_blank"
+            className="hover:underline"
+          >
+            Dylan Clemann
+          </Link>{' '}
+          –{' '}
+          <Link
+            href="https://www.freeprivacypolicy.com/live/272f9fd6-3762-4220-916a-2af5c643ae85"
+            target="_blank"
+            className="hover:underline"
+          >
+            Privacy Policy
+          </Link>{' '}
+          – © {new Date().getFullYear()} Recipe Book
+        </div>
       </div>
     </div>
-    // <div className="flex h-screen w-screen flex-col items-center bg-slate-50 lg:flex-row">
-    //   <div className="flex-1 border-r lg:border-r-slate-400">
-    //     <div className="flex flex-col items-center justify-center py-6 pt-12 lg:pt-6">
-    //       <p className="mb-4 text-6xl">🥘 📖</p>
-    //       <h1 className="font-merri text-6xl font-bold">Recipe Book</h1>
-
-    //       <p className="mt-6 max-w-[300px] text-center">
-    //         A simple app to help you organize your recipes and plan your meals
-    //       </p>
-    //     </div>
-
-    //     <div className="hidden flex-col items-center justify-center gap-y-3 p-6 lg:flex">
-    //       {/* {recipes.map((recipe) => (
-    //         <RecipeCard recipe={recipe} key={recipe.name} />
-    //       ))} */}
-    //     </div>
-
-    //     <div className="hidden flex-col items-center justify-center py-6 lg:flex">
-    //       <p>
-    //         Built by{' '}
-    //         <a
-    //           className="underline hover:scale-110 "
-    //           target="_blank"
-    //           href="https://dylan.clemann.com"
-    //         >
-    //           Dylan Clemann
-    //         </a>
-    //       </p>
-    //     </div>
-    //   </div>
-
-    // <div className="flex-1">
-    //   <div className="flex flex-col items-center justify-center py-6">
-    //     <div className="flex w-full max-w-[500px] flex-col items-center justify-center rounded border bg-white px-4 py-12 text-center lg:px-8">
-    //       <div className="border-b border-b-slate-300 pb-10">
-    //         <h2 className="text-xl font-bold">
-    //           Browse Recipes created and shared by other users
-    //         </h2>
-    //         <p className="mb-6 text-slate-700">
-    //           No need to sign in or create an account
-    //         </p>
-
-    //         <Link href="/shared-recipes" passHref>
-    //           <Button className="max-w-96 w-full">Browse Recipes</Button>
-    //         </Link>
-    //       </div>
-
-    //       <div className="mt-10">
-    //         <h2 className=" text-xl font-bold">
-    //           Create an account to save your own recipes
-    //         </h2>
-    //         <p className="mb-6 text-slate-700">
-    //           And create your own meal plans
-    //         </p>
-
-    //         {!isSignedIn ? (
-    //           <>
-    //             <Link href="/sign-up" passHref>
-    //               <Button className="max-w-96 w-full">Sign Up</Button>
-    //             </Link>
-    //             <p className="mt-6">
-    //               Already have an account?{' '}
-    //               <Link
-    //                 href="/sign-in"
-    //                 passHref
-    //                 className="underline hover:scale-110"
-    //               >
-    //                 Log In
-    //               </Link>
-    //             </p>
-    //           </>
-    //         ) : (
-    //           <Link href="/recipes" passHref>
-    //             <Button className="max-w-96 w-full">
-    //               You are already signed in. Go to Recipes
-    //             </Button>
-    //           </Link>
-    //         )}
-    //       </div>
-    //     </div>
-    //     </div>
-    //   </div>
-    // </div>
   );
 };
 
 export default Home;
-
-// const RecipeCard = ({
-//   recipe,
-// }: {
-//   recipe: {
-//     name: string;
-//     imageUrl: string;
-//     recipeTypes: { name: string; icon: string }[];
-//     path: string;
-//   };
-// }) => {
-//   return (
-//     <Link href={recipe.path}>
-//       <div className="m flex w-full  max-w-[400px] flex-1  rounded border bg-white transition-all ease-in-out hover:scale-[1.02]">
-//         <div>
-//           <img
-//             className="h-[150px] w-[130px] min-w-[130px] rounded-l object-cover"
-//             src={
-//               recipe.imageUrl !== ''
-//                 ? recipe.imageUrl ?? ''
-//                 : defaultRecipeImageUrl
-//             }
-//             alt={recipe.name}
-//           />
-//         </div>
-//         <div className="flex flex-col p-3">
-//           <h3 className="mb-2 text-lg font-bold">{recipe.name}</h3>
-
-//           <div className="flex flex-wrap gap-2">
-//             {recipe.recipeTypes.map((recipeType) => (
-//               <div
-//                 className="flex h-6 w-auto items-center justify-center rounded-full bg-slate-200 p-2 text-xs tracking-wide "
-//                 key={recipeType.name}
-//               >
-//                 {recipeType.icon}{' '}
-//                 <span className="ml-2 text-xs font-medium ">
-//                   {recipeType.name}
-//                 </span>
-//               </div>
-//             ))}
-//           </div>
-//         </div>
-//       </div>
-//     </Link>
-//   );
-// };
