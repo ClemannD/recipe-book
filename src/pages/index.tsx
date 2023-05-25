@@ -10,7 +10,12 @@ import NavbarMobile from '../components/navbar-mobile';
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 
-const defaultRecipeTypes = [
+type RecipeType = {
+  name: string;
+  icon: string;
+};
+
+const defaultRecipeTypes: RecipeType[] = [
   {
     name: 'Breakfast',
     icon: '🍳',
@@ -125,7 +130,7 @@ const Home: NextPage = () => {
   const { isSignedIn } = useUser();
 
   const [highlightedRecipeTypes, setHighlightedRecipeTypes] = useState<
-    (typeof defaultRecipeTypes)[number][]
+    RecipeType[]
   >([]);
 
   useEffect(() => {
@@ -141,7 +146,7 @@ const Home: NextPage = () => {
           if (prev.includes(defaultRecipeTypes[randomIndex]!)) {
             return prev;
           } else {
-            return [...prev, defaultRecipeTypes[randomIndex]];
+            return [...prev, defaultRecipeTypes[randomIndex] as RecipeType];
           }
         }
       });
