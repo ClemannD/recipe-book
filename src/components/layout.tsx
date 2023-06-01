@@ -1,5 +1,23 @@
+import clsx from 'clsx';
+import { Form, Formik } from 'formik';
 import Head from 'next/head';
+import { useEffect, useState } from 'react';
+import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { api } from '../utils/api';
+import { useNavbarState } from '../utils/context/navbarState.context';
+import Input from './forms/input';
+import Navbar from './navbar';
+import NavbarMobile from './navbar-mobile';
 import { Button } from './ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from './ui/dialog';
 
 const Layout = (props: { children: React.ReactNode; title?: string }) => {
   const { desktopNavbarExpanded } = useNavbarState();
@@ -39,25 +57,6 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
 };
 
 export default Layout;
-
-import { Form, Formik } from 'formik';
-import { useEffect, useState } from 'react';
-import { z } from 'zod';
-import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { api } from '../utils/api';
-import Input from './forms/input';
-import Navbar from './navbar';
-import NavbarMobile from './navbar-mobile';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from './ui/dialog';
-import { useNavbarState } from '../utils/context/navbarState.context';
-import clsx from 'clsx';
 
 export function HouseholdDialog() {
   const [isOpen, setIsOpen] = useState(false);

@@ -42,11 +42,49 @@ export const mealPlanRouter = createTRPCRouter({
       return mealPlan;
     }),
 
-  getMealPlans: authenticatedProcedure.query(({ ctx }) => {
+  getLatestMealPlan: authenticatedProcedure.query(async ({ ctx }) => {
     if (!ctx.householdId) {
       throw new TRPCError({
         code: 'UNAUTHORIZED',
         message: 'You must be in a household to create a recipe',
+      });
+    }
+
+    console.log(
+      `🔎 Getting latest meal plan for user ${ctx.userId} and householdId ${ctx.householdId}...`
+    );
+    const mealPlan = await ctx.prisma.mealPlan.findFirst({
+      where: {
+        householdId: ctx.householdId,
+      },
+      include: {
+        meals: {
+          include: {
+            recipes: {
+              include: {
+                recipeTypes: true,
+                ingredients: true,
+                createdBy: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+
+    console.log(`🔎 Got meal plan ${JSON.stringify(mealPlan, null, 2)}`);
+
+    return mealPlan;
+  }),
+
+  listMealPlans: authenticatedProcedure.query(({ ctx }) => {
+    if (!ctx.householdId) {
+      throw new TRPCError({
+        code: 'UNAUTHORIZED',
+        message: 'You must be in a household',
       });
     }
     console.log(
@@ -74,7 +112,7 @@ export const mealPlanRouter = createTRPCRouter({
       orderBy: {
         createdAt: 'desc',
       },
-      take: 10,
+      take: 100,
     });
     return mealPlans;
   }),

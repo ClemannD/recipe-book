@@ -47,8 +47,8 @@ const RecipeDisplay = ({
               className={clsx(
                 'object-cover object-center',
                 isFullscreen
-                  ? 'h-auto max-h-[500px] w-full'
-                  : 'h-300px w-full lg:h-[400px]'
+                  ? 'h-auto max-h-[300px] w-full lg:max-h-[500px]'
+                  : 'h-300px max-h-[300px] w-full lg:h-[400px] lg:max-h-[400px]'
               )}
               src={
                 recipe.imageUrl !== ''
@@ -64,7 +64,7 @@ const RecipeDisplay = ({
                     {recipe.name}{' '}
                   </h2>
                   <p className="text-xs italic text-slate-500">
-                    Created By {recipe.createdBy.fullName} - Last Updated{' '}
+                    Created By {recipe.createdBy?.fullName} - Last Updated{' '}
                     {new Date(recipe.updatedAt).toLocaleString()}
                   </p>
                 </div>

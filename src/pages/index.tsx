@@ -177,7 +177,7 @@ const Home: NextPage = () => {
                     <UtensilsCrossed className="mr-2" /> Your Recipes
                   </Button>
                 </Link>
-                <Link href="/" passHref>
+                <Link href="/meal-plans" passHref>
                   <Button variant="ghost">
                     <CalendarRange className="mr-2" /> Meal Plans
                   </Button>
@@ -261,7 +261,7 @@ const Home: NextPage = () => {
         </div>
       </div> */}
 
-      <div className="border-t bg-white p-3">
+      <div className="mt-20 border-t bg-white p-3">
         <div className="w-full text-center text-xs text-slate-400 ">
           Created By{' '}
           <Link

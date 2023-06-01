@@ -1,22 +1,45 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import RecipeDisplay from '../../components/recipes/recipe-display';
 import RecipesPageLayout from '../../components/recipes/recipes-page';
 import { Button } from '../../components/ui/button';
-import { FullMealPlan, type FullRecipe } from '../../models/model';
+import { type FullMealPlan, type FullRecipe } from '../../models/model';
 import { api } from '../../utils/api';
 import clsx from 'clsx';
 import { useRouter } from 'next/router';
 import { defaultRecipeImageUrl } from '../../constants';
+import { Skeleton } from '../../components/ui/skeleton';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '../../components/ui/dialog';
 
 const MealPlansPage = () => {
   const [selectedRecipe, setSelectedRecipe] = useState<FullRecipe | null>(null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
+  const [isSelectingMealPlan, setIsSelectingMealPlan] = useState(false);
+  const [selectedMealPlan, setSelectedMealPlan] = useState<FullMealPlan | null>(
+    null
+  );
+
+  const [mealPlan, setMealPlan] = useState<FullMealPlan | null>(null);
+
   // Data Fetching
-  const { data: mealPlans, isLoading: isMealPlansLoading } =
-    api.mealPlan.getMealPlans.useQuery();
+  const { data: latestMealPlan, isLoading: isMealPlanLoading } =
+    api.mealPlan.getLatestMealPlan.useQuery();
+
+  useEffect(() => {
+    if (selectedMealPlan) {
+      setMealPlan(selectedMealPlan);
+    } else if (latestMealPlan) {
+      setMealPlan(latestMealPlan);
+    }
+  }, [latestMealPlan, selectedMealPlan]);
 
   return (
     <RecipesPageLayout
@@ -28,39 +51,64 @@ const MealPlansPage = () => {
             <div>
               <h1 className="font-merri text-2xl font-bold">Your Meal Plans</h1>
               <h2 className="mt-1 text-gray-600">
-                Plan your meals for the week (This page is still a work in
-                progress)
+                Plan the recipes you want to cook for the week
               </h2>
             </div>
-            <div className="flex w-full flex-col flex-wrap justify-end gap-4 lg:w-auto lg:flex-row">
-              <Link href="/meal-plans/create">
-                <Button>Create</Button>
+            <div className="flex w-full justify-end gap-4 lg:w-auto">
+              <Button
+                variant="outline"
+                className="w-full flex-1 lg:min-w-[150px]"
+                onClick={() => setIsSelectingMealPlan(true)}
+              >
+                Switch Meal Plan
+              </Button>
+              <Link href="/meal-plans/create" className="flex-1">
+                <Button className="w-full">Create</Button>
               </Link>
+              <MealPlanSelectDialog
+                isOpen={isSelectingMealPlan}
+                onClose={() => setIsSelectingMealPlan(false)}
+                mealPlanSelected={(plan) => {
+                  setIsSelectingMealPlan(false);
+                  setSelectedMealPlan(plan);
+                }}
+              />
             </div>
           </div>
 
           <div className="flex flex-wrap gap-4">
-            {mealPlans?.map((mealPlan) => (
-              <MealPlanDisplay
-                key={mealPlan.id}
-                mealPlan={mealPlan}
-                onRecipeClicked={(recipe) => setSelectedRecipe(recipe)}
-              />
-            ))}
+            {isMealPlanLoading ? (
+              <>
+                <Skeleton className="h-96 w-full" />
+                <Skeleton className="h-96 w-full" />
+                <Skeleton className="h-96 w-full" />
+              </>
+            ) : (
+              mealPlan && (
+                <MealPlanDisplay
+                  mealPlan={mealPlan}
+                  onRecipeClicked={(recipe) => setSelectedRecipe(recipe)}
+                />
+              )
+            )}
           </div>
         </>
       }
       rightChildren={
-        <RecipeDisplay
-          recipe={selectedRecipe}
-          isOnPublicPage={true}
-          isFullscreen={isFullScreen}
-          onClose={() => {
-            setSelectedRecipe(null);
-            setIsFullScreen(false);
-          }}
-          onFullscreenClick={() => setIsFullScreen(!isFullScreen)}
-        />
+        <>
+          {selectedRecipe && (
+            <RecipeDisplay
+              recipe={selectedRecipe}
+              isOnPublicPage={true}
+              isFullscreen={isFullScreen}
+              onClose={() => {
+                setSelectedRecipe(null);
+                setIsFullScreen(false);
+              }}
+              onFullscreenClick={() => setIsFullScreen(!isFullScreen)}
+            />
+          )}
+        </>
       }
     ></RecipesPageLayout>
   );
@@ -78,7 +126,7 @@ const MealPlanDisplay = ({
   const router = useRouter();
 
   return (
-    <div className="w-full border-b  pb-10">
+    <div className="w-full">
       <div className="mb-4 flex justify-between gap-4">
         <h2 className="text-xl font-bold">{mealPlan.name}</h2>
         <div className="flex gap-4">
@@ -92,8 +140,8 @@ const MealPlanDisplay = ({
         {mealPlan.meals.map((meal, index) => (
           <div key={meal.id} className=" min-w-full flex-1  lg:min-w-[450px]">
             <div className="flex min-h-[133px] flex-col rounded border  bg-white">
-              <div className="flex items-center justify-between border-b p-3">
-                <h3 className="text-lg font-bold">Meal {index + 1}</h3>
+              <div className="flex items-center justify-between border-b p-2">
+                <h3 className=" font-bold">Meal {index + 1}</h3>
               </div>
 
               <div className="flex flex-grow flex-col">
@@ -169,5 +217,59 @@ const MealRecipeItem = ({ recipe }: { recipe: FullRecipe }) => {
         </div>
       </div>
     </div>
+  );
+};
+
+const MealPlanSelectDialog = ({
+  isOpen,
+  mealPlanSelected,
+  onClose,
+}: {
+  isOpen: boolean;
+  mealPlanSelected: (mealPlan: FullMealPlan) => void;
+  onClose: () => void;
+}) => {
+  const { data: mealPlans, isLoading: isMealPlansLoading } =
+    api.mealPlan.listMealPlans.useQuery();
+
+  return (
+    <Dialog
+      open={isOpen}
+      onOpenChange={(isOpen) => {
+        if (!isOpen) {
+          onClose();
+        }
+      }}
+    >
+      <DialogContent className="overflow-auto sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Select Meal Plan</DialogTitle>
+          <DialogDescription>Select a meal plan to view</DialogDescription>
+        </DialogHeader>
+
+        <div className="flex flex-col rounded border">
+          {isMealPlansLoading ? (
+            <>
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+              <Skeleton className="h-10 w-full" />
+            </>
+          ) : (
+            mealPlans &&
+            mealPlans.map((mealPlan) => (
+              <div
+                key={mealPlan.id}
+                className="flex cursor-pointer items-center justify-between border-b p-2 first-of-type:rounded-t last-of-type:rounded-b last-of-type:border-b-0 hover:bg-slate-100"
+                onClick={() => {
+                  mealPlanSelected(mealPlan);
+                }}
+              >
+                <h3 className="text-sm font-bold">{mealPlan.name}</h3>
+              </div>
+            ))
+          )}
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };
