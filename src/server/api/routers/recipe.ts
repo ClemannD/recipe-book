@@ -94,17 +94,17 @@ export const recipeRouter = createTRPCRouter({
   createRecipe: authenticatedProcedure
     .input(
       z.object({
-        name: z.string().min(1),
+        name: z.string().min(1).max(500),
         instructions: z.string().max(2500).optional(),
-        imageUrl: z.string().optional(),
+        imageUrl: z.string().max(500).optional(),
         isPublic: z.boolean().optional(),
         recipeTypeIds: z.array(z.string()).optional(),
         ingredients: z
           .array(
             z.object({
-              name: z.string().min(1),
+              name: z.string().min(1).max(150),
               quantity: z.number(),
-              unit: z.string().min(1),
+              unit: z.string().min(1).max(30),
             })
           )
           .optional(),
@@ -156,17 +156,17 @@ export const recipeRouter = createTRPCRouter({
     .input(
       z.object({
         id: z.string(),
-        name: z.string().min(1),
-        instructions: z.string().min(1),
-        imageUrl: z.string().min(1),
+        name: z.string().min(1).max(500),
+        instructions: z.string().min(1).max(2500).optional(),
+        imageUrl: z.string().min(1).max(500).optional(),
         isPublic: z.boolean().optional(),
         recipeTypeIds: z.array(z.string()).optional(),
         ingredients: z.array(
           z.object({
             id: z.string().optional(),
-            name: z.string().min(1),
+            name: z.string().min(1).max(150),
             quantity: z.number(),
-            unit: z.string().min(1),
+            unit: z.string().min(1).max(30),
           })
         ),
       })

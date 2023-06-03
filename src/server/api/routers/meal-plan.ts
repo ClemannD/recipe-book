@@ -120,7 +120,7 @@ export const mealPlanRouter = createTRPCRouter({
   createMealPlan: authenticatedProcedure
     .input(
       z.object({
-        name: z.string(),
+        name: z.string().max(255),
         meals: z.array(
           z.object({
             recipeIds: z.array(z.string()),
