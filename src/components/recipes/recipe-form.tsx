@@ -36,15 +36,15 @@ const RecipeForm = ({
   const recipeFormSchema = z.object({
     name: z.string().min(1),
     instructions: z.string().max(2500).optional(),
-    imageUrl: z.string().optional(),
+    imageUrl: z.string().max(500).optional(),
     isPublic: z.boolean().optional(),
     recipeTypes: z.array(z.string().min(1)).optional(),
     ingredients: z
       .array(
         z.object({
-          name: z.string().max(40),
+          name: z.string().max(40).optional(),
           quantity: z.number().min(0),
-          unit: z.string().max(40),
+          unit: z.string().max(30).optional(),
         })
       )
       .optional(),
@@ -66,7 +66,7 @@ const RecipeForm = ({
 
       toast({
         title: 'Error creating recipe',
-        description: 'Please try again later.',
+        description: error.message,
       });
     },
   });
@@ -86,7 +86,7 @@ const RecipeForm = ({
 
       toast({
         title: 'Error updating recipe',
-        description: 'Please try again later.',
+        description: 'Please check form inputs and try again.',
       });
     },
   });
@@ -110,7 +110,7 @@ const RecipeForm = ({
 
         toast({
           title: 'Error deleting recipe',
-          description: 'Please try again later.',
+          description: error.message,
         });
       },
     });
@@ -159,6 +159,12 @@ const RecipeForm = ({
         }}
         validationSchema={toFormikValidationSchema(recipeFormSchema)}
         onSubmit={async (values) => {
+          // Delete empty ingredients
+          values.ingredients = values.ingredients.filter(
+            (ingredient) =>
+              ingredient.name || ingredient.quantity || ingredient.unit
+          );
+
           if (recipe) {
             setIsCreating(true);
             await updateRecipe({
@@ -230,15 +236,29 @@ const RecipeForm = ({
                       <Label label="Unit"></Label>
                     </div>
                   </div>
-                  {values.ingredients.length > 0 &&
-                    values.ingredients.map((ingredient, index) => (
-                      <IngredientInput
-                        key={index}
-                        index={index}
-                        remove={remove}
-                        namePrefix={`ingredients.${index}`}
-                      />
-                    ))}
+                  {values.ingredients.map((_, index) => (
+                    <IngredientInput
+                      key={index}
+                      index={index}
+                      remove={remove}
+                      namePrefix={`ingredients.${index}`}
+                      onKeyDownTrashIcon={(e) => {
+                        if (
+                          e.key === 'Tab' &&
+                          index === values.ingredients.length - 1 &&
+                          values.ingredients[index]!.name !== '' &&
+                          values.ingredients[index]!.quantity !== null &&
+                          values.ingredients[index]!.unit !== ''
+                        ) {
+                          push({
+                            name: '',
+                            quantity: 0,
+                            unit: '',
+                          });
+                        }
+                      }}
+                    />
+                  ))}
 
                   <Button
                     className="mt-2 w-full"

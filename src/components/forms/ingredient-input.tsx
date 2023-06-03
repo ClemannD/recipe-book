@@ -6,10 +6,12 @@ const IngredientInput = ({
   index,
   namePrefix,
   remove,
+  onKeyDownTrashIcon,
 }: {
   index: number;
   namePrefix: string;
   remove: (index: number) => undefined;
+  onKeyDownTrashIcon: (event: React.KeyboardEvent<HTMLElement>) => void;
 }) => {
   return (
     <div className="mb-1 grid grid-cols-10 gap-1">
@@ -29,6 +31,9 @@ const IngredientInput = ({
           size="icon"
           onClick={() => {
             remove(index);
+          }}
+          onKeyDown={(event) => {
+            onKeyDownTrashIcon(event);
           }}
         >
           🗑️
