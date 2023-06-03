@@ -125,6 +125,15 @@ const MealPlanDisplay = ({
 }) => {
   const router = useRouter();
 
+  const [longestMealPlanLength, setLongestMealPlanLength] = useState(0);
+
+  useEffect(() => {
+    const longestMealPlanLength = Math.max(
+      ...mealPlan.meals.map((meal) => meal.recipes.length)
+    );
+    setLongestMealPlanLength(longestMealPlanLength);
+  }, [mealPlan]);
+
   return (
     <div className="w-full">
       <div className="mb-4 flex justify-between gap-4">
@@ -138,17 +147,25 @@ const MealPlanDisplay = ({
 
       <div className="flex flex-wrap gap-4">
         {mealPlan.meals.map((meal, index) => (
-          <div key={meal.id} className=" min-w-full flex-1  lg:min-w-[450px]">
-            <div className="flex min-h-[133px] flex-col rounded border  bg-white">
-              <div className="flex items-center justify-between border-b p-2">
-                <h3 className=" font-bold">Meal {index + 1}</h3>
+          <div
+            key={meal.id}
+            className=" min-h-[122px] min-w-full flex-1 overflow-clip rounded border bg-white lg:min-w-[450px]"
+          >
+            <div className="flex flex-col ">
+              <div className="flex items-center justify-between border-b p-2 px-3">
+                <h3 className="font-bold">Meal {index + 1}</h3>
               </div>
 
               <div className="flex flex-grow flex-col">
-                {meal.recipes.map((recipe) => (
+                {meal.recipes.map((recipe, index) => (
                   <div
                     key={recipe.id}
-                    className="overflow-clip border-b last-of-type:rounded-bl last-of-type:border-none"
+                    className={clsx(
+                      'border-b',
+                      index + 1 < longestMealPlanLength
+                        ? 'last-of-type:border-b-0 lg:last-of-type:border-b'
+                        : 'last-of-type:border-b-0'
+                    )}
                     onClick={() => {
                       onRecipeClicked(recipe);
                     }}

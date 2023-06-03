@@ -20,18 +20,20 @@ const RecipeDisplay = ({
   isFetching?: boolean;
   onClose: () => void;
   onEditClick?: () => void;
-  onFullscreenClick: () => void;
+  onFullscreenClick?: () => void;
 }) => {
   return (
     recipe && (
       <>
         <div className="absolute right-0 top-0 p-4 pb-12">
-          <button
-            className="hidden rounded-full border bg-white p-2 transition-all ease-in-out hover:bg-gray-200 lg:block"
-            onClick={() => onFullscreenClick()}
-          >
-            {isFullscreen ? <Minimize></Minimize> : <Expand></Expand>}
-          </button>
+          {onFullscreenClick && (
+            <button
+              className="hidden rounded-full border bg-white p-2 transition-all ease-in-out hover:bg-gray-200 lg:block"
+              onClick={() => onFullscreenClick()}
+            >
+              {isFullscreen ? <Minimize></Minimize> : <Expand></Expand>}
+            </button>
+          )}
         </div>
         <div className="absolute left-0 top-0 p-4">
           <button

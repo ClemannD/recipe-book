@@ -13,6 +13,7 @@ import { FullRecipe } from '../../../models/model';
 import { api } from '../../../utils/api';
 import { Skeleton } from '../../../components/ui/skeleton';
 import { defaultRecipeImageUrl } from '../../../constants';
+import RecipeDisplay from '../../../components/recipes/recipe-display';
 
 interface MealFormMeal {
   id: string;
@@ -37,6 +38,8 @@ const CreateMealPlanPage = () => {
   const [selectedMealIndex, setSelectedMealIndex] = useState<number | null>(
     null
   );
+
+  const [selectedRecipe, setSelectedRecipe] = useState<FullRecipe | null>(null);
 
   // Data fetching
   const {
@@ -200,6 +203,10 @@ const CreateMealPlanPage = () => {
     });
   };
 
+  useEffect(() => {
+    console.log(mealPlan);
+  }, [mealPlan]);
+
   return (
     <RecipesPageLayout
       isExpanded={selectedMealIndex !== null}
@@ -277,21 +284,28 @@ const CreateMealPlanPage = () => {
                   mealIndex: number,
                   recipeId: string
                 ) => {
-                  setMealPlan((previousMealPlan) => ({
-                    ...previousMealPlan,
-                    meals: previousMealPlan.meals.map((meal, index) => {
-                      if (index !== mealIndex) {
-                        return meal;
-                      }
-
-                      return {
-                        ...meal,
-                        recipes: meal.recipes.filter(
+                  setMealPlan((previousMealPlan) => {
+                    return {
+                      ...previousMealPlan,
+                      meals: previousMealPlan.meals.map((meal, index) => {
+                        console.log('index', index);
+                        console.log('mealIndex', mealIndex);
+                        if (index !== mealIndex) {
+                          return meal;
+                        }
+                        console.log('meal.recipes', meal.recipes);
+                        const newRecipes = meal.recipes.filter(
                           (mealRecipe) => mealRecipe.id !== recipeId
-                        ),
-                      };
-                    }),
-                  }));
+                        );
+                        console.log('newRecipes', newRecipes);
+
+                        return {
+                          ...meal,
+                          recipes: newRecipes,
+                        };
+                      }),
+                    };
+                  });
                 }}
               />
             )}
@@ -299,62 +313,76 @@ const CreateMealPlanPage = () => {
         </>
       }
       rightChildren={
-        <RecipesSelectWindow
-          selectedMealIndex={selectedMealIndex || 1}
-          recipesData={recipesData}
-          publicRecipesData={publicRecipesData}
-          selectedRecipeIds={
-            selectedMealIndex !== null
-              ? mealPlan?.meals[selectedMealIndex]?.recipes.map(
-                  (recipe) => recipe.id
-                ) ?? []
-              : []
-          }
-          onCloseClicked={() => {
-            setSelectedMealIndex(null);
-          }}
-          onRecipeClicked={(recipe: FullRecipe) => {
-            if (selectedMealIndex === null) {
-              return;
-            }
+        <>
+          {selectedRecipe ? (
+            <RecipeDisplay
+              recipe={selectedRecipe}
+              onClose={() => {
+                setSelectedRecipe(null);
+              }}
+            />
+          ) : (
+            <RecipesSelectWindow
+              selectedMealIndex={selectedMealIndex || 1}
+              recipesData={recipesData}
+              publicRecipesData={publicRecipesData}
+              selectedRecipeIds={
+                selectedMealIndex !== null
+                  ? mealPlan?.meals[selectedMealIndex]?.recipes.map(
+                      (recipe) => recipe.id
+                    ) ?? []
+                  : []
+              }
+              onCloseClicked={() => {
+                setSelectedMealIndex(null);
+              }}
+              onRecipeViewClicked={(recipe: FullRecipe) => {
+                setSelectedRecipe(recipe);
+              }}
+              onRecipeClicked={(recipe: FullRecipe) => {
+                if (selectedMealIndex === null) {
+                  return;
+                }
 
-            if (
-              mealPlan?.meals[selectedMealIndex]?.recipes.some(
-                (mealRecipe) => mealRecipe.id === recipe.id
-              )
-            ) {
-              setMealPlan((previousMealPlan) => ({
-                ...previousMealPlan,
-                meals: previousMealPlan.meals.map((meal, index) => {
-                  if (index !== selectedMealIndex) {
-                    return meal;
-                  }
+                if (
+                  mealPlan?.meals[selectedMealIndex]?.recipes.some(
+                    (mealRecipe) => mealRecipe.id === recipe.id
+                  )
+                ) {
+                  setMealPlan((previousMealPlan) => ({
+                    ...previousMealPlan,
+                    meals: previousMealPlan.meals.map((meal, index) => {
+                      if (index !== selectedMealIndex) {
+                        return meal;
+                      }
 
-                  return {
-                    ...meal,
-                    recipes: meal.recipes.filter(
-                      (mealRecipe) => mealRecipe.id !== recipe.id
-                    ),
-                  };
-                }),
-              }));
-            } else {
-              setMealPlan((previousMealPlan) => ({
-                ...previousMealPlan,
-                meals: previousMealPlan.meals.map((meal, index) => {
-                  if (index !== selectedMealIndex) {
-                    return meal;
-                  }
+                      return {
+                        ...meal,
+                        recipes: meal.recipes.filter(
+                          (mealRecipe) => mealRecipe.id !== recipe.id
+                        ),
+                      };
+                    }),
+                  }));
+                } else {
+                  setMealPlan((previousMealPlan) => ({
+                    ...previousMealPlan,
+                    meals: previousMealPlan.meals.map((meal, index) => {
+                      if (index !== selectedMealIndex) {
+                        return meal;
+                      }
 
-                  return {
-                    ...meal,
-                    recipes: [...meal.recipes, recipe],
-                  };
-                }),
-              }));
-            }
-          }}
-        />
+                      return {
+                        ...meal,
+                        recipes: [...meal.recipes, recipe],
+                      };
+                    }),
+                  }));
+                }
+              }}
+            />
+          )}
+        </>
       }
     ></RecipesPageLayout>
   );
@@ -362,11 +390,139 @@ const CreateMealPlanPage = () => {
 
 export default CreateMealPlanPage;
 
+const MealPlanForm = ({
+  mealPlan,
+  onMealPlanNameChanged,
+  onAddRecipeToMealClicked,
+  onAddMealClicked,
+  onRemoveMealClicked,
+  onRemoveRecipeFromMealClicked,
+}: {
+  mealPlan: MealPlan;
+  onMealPlanNameChanged: (name: string) => void;
+  onAddRecipeToMealClicked: (mealIndex: number) => void;
+  onAddMealClicked: () => void;
+  onRemoveMealClicked: (index: number) => void;
+  onRemoveRecipeFromMealClicked: (mealIndex: number, recipeId: string) => void;
+}) => {
+  const [longestMealPlanLength, setLongestMealPlanLength] = useState(0);
+  useEffect(() => {
+    const longestMealPlanLength = Math.max(
+      ...mealPlan.meals.map((meal) => meal.recipes.length)
+    );
+    setLongestMealPlanLength(longestMealPlanLength);
+  }, [mealPlan]);
+
+  return (
+    <div className="w-full">
+      {/* <div className="w-full rounded bg-white p-4 shadow"> */}
+      <div className="mb-4 ">
+        <Label label={'Meal Plan Name'}></Label>
+        <PlainInput
+          value={mealPlan.name}
+          onChange={(e) => {
+            onMealPlanNameChanged(e.target.value);
+          }}
+        />
+
+        {/* <div className="flex gap-4">
+          <Button
+            disabled={meals.length === 1}
+            variant="outline"
+            onClick={addMeal}
+          >
+            Remove Meal
+          </Button>
+        </div> */}
+      </div>
+      <div className="flex flex-wrap gap-4">
+        {mealPlan.meals.map((meal, mealIndex) => (
+          <div
+            key={mealIndex}
+            className="flex min-h-[140px] min-w-full flex-1 flex-col rounded border bg-white lg:min-w-[450px]"
+          >
+            <div className="flex items-center justify-between border-b p-2 px-3">
+              <h3 className="font-bold">Meal {mealIndex + 1}</h3>
+              <div className="flex gap-1 text-gray-500">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => {
+                    onAddRecipeToMealClicked(mealIndex);
+                  }}
+                >
+                  <PlusCircle />
+                </Button>
+                <Button
+                  variant="ghost"
+                  className="text-red-500"
+                  disabled={mealPlan.meals.length === 1}
+                  size="icon"
+                  onClick={() => {
+                    onRemoveMealClicked(mealIndex);
+                  }}
+                >
+                  <XCircle />
+                </Button>
+              </div>
+            </div>
+
+            <div className="flex flex-grow flex-col">
+              {meal.recipes.map((recipe, index) => (
+                <MealRecipeItem
+                  key={recipe.id}
+                  recipe={recipe}
+                  index={index}
+                  longestMealPlanLength={longestMealPlanLength}
+                  onClick={() => {
+                    onRemoveRecipeFromMealClicked(mealIndex, recipe.id);
+                  }}
+                />
+              ))}
+
+              {
+                //If there are no recipes in this meal, show a message
+                meal.recipes.length === 0 && (
+                  <div className="flex flex-grow items-center justify-center">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        onAddRecipeToMealClicked(mealIndex);
+                      }}
+                    >
+                      Click to add recipes for this meal
+                    </Button>
+                  </div>
+                )
+              }
+            </div>
+          </div>
+        ))}
+
+        <div className="flex h-[140px] min-w-full flex-1 items-center justify-center rounded border bg-white  lg:lg:min-w-[450px]">
+          <Button
+            disabled={mealPlan.meals.length === 7}
+            variant="outline"
+            onClick={onAddMealClicked}
+          >
+            Add Meal
+          </Button>
+        </div>
+
+        {/* Hack because I want flex wrap but with all elements to maintain their size */}
+        <div className="h-1 flex-1 lg:min-w-[450px]"></div>
+        <div className="h-1 flex-1 lg:min-w-[450px]"></div>
+      </div>
+    </div>
+  );
+};
+
 const RecipesSelectWindow = ({
   selectedMealIndex,
   recipesData,
   publicRecipesData,
   selectedRecipeIds,
+  onRecipeViewClicked,
   onRecipeClicked,
   onCloseClicked,
 }: {
@@ -374,6 +530,7 @@ const RecipesSelectWindow = ({
   recipesData: FullRecipe[] | undefined;
   publicRecipesData: FullRecipe[] | undefined;
   selectedRecipeIds: string[];
+  onRecipeViewClicked: (recipe: FullRecipe) => void;
   onRecipeClicked: (recipe: FullRecipe) => void;
   onCloseClicked?: () => void;
 }) => {
@@ -465,7 +622,7 @@ const RecipesSelectWindow = ({
         </div>
       </div>
 
-      <div className="pt-[132px]">
+      <div className="pt-[156px]">
         {recipesToShow?.length === 0 && (
           <div className="flex w-full items-center justify-center gap-4 py-8">
             <div className="rounded bg-white p-6 text-center shadow">
@@ -482,6 +639,7 @@ const RecipesSelectWindow = ({
             key={recipe.id + recipe.name}
             recipe={recipe}
             isSelected={selectedRecipeIds.includes(recipe.id)}
+            onRecipeViewClicked={() => onRecipeViewClicked(recipe)}
             onClick={() => {
               onRecipeClicked(recipe);
             }}
@@ -492,169 +650,66 @@ const RecipesSelectWindow = ({
   );
 };
 
-const MealPlanForm = ({
-  mealPlan,
-  onMealPlanNameChanged,
-  onAddRecipeToMealClicked,
-  onAddMealClicked,
-  onRemoveMealClicked,
-  onRemoveRecipeFromMealClicked,
-}: {
-  mealPlan: MealPlan;
-  onMealPlanNameChanged: (name: string) => void;
-  onAddRecipeToMealClicked: (mealIndex: number) => void;
-  onAddMealClicked: () => void;
-  onRemoveMealClicked: (index: number) => void;
-  onRemoveRecipeFromMealClicked: (mealIndex: number, recipeId: string) => void;
-}) => (
-  <div className="w-full">
-    {/* <div className="w-full rounded bg-white p-4 shadow"> */}
-    <div className="mb-4 ">
-      <Label label={'Meal Plan Name'}></Label>
-      <PlainInput
-        value={mealPlan.name}
-        onChange={(e) => {
-          onMealPlanNameChanged(e.target.value);
-        }}
-      />
-
-      {/* <div className="flex gap-4">
-          <Button
-            disabled={meals.length === 1}
-            variant="outline"
-            onClick={addMeal}
-          >
-            Remove Meal
-          </Button>
-        </div> */}
-    </div>
-    <div className="flex flex-wrap gap-4">
-      {mealPlan.meals.map((meal, index) => (
-        <div
-          key={index}
-          className="flex min-h-[140px] min-w-full flex-1 flex-col rounded border bg-white lg:min-w-[450px]"
-        >
-          <div className="flex items-center justify-between border-b p-3">
-            <h3 className="text-lg font-bold">Meal {index + 1}</h3>
-            <div className="flex gap-1 text-gray-500">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
-                  onAddRecipeToMealClicked(index);
-                }}
-              >
-                <PlusCircle />
-              </Button>
-              <Button
-                variant="ghost"
-                className="text-red-500"
-                disabled={mealPlan.meals.length === 1}
-                size="icon"
-                onClick={() => {
-                  onRemoveMealClicked(index);
-                }}
-              >
-                <XCircle />
-              </Button>
-            </div>
-          </div>
-
-          <div className="flex flex-grow flex-col">
-            {meal.recipes.map((recipe) => (
-              <MealRecipeItem
-                key={recipe.id}
-                recipe={recipe}
-                onClick={() => {
-                  onRemoveRecipeFromMealClicked(index, recipe.id);
-                }}
-              />
-            ))}
-
-            {
-              //If there are no recipes in this meal, show a message
-              meal.recipes.length === 0 && (
-                <div className="flex flex-grow items-center justify-center">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      onAddRecipeToMealClicked(index);
-                    }}
-                  >
-                    Click to add recipes for this meal
-                  </Button>
-                </div>
-              )
-            }
-          </div>
-        </div>
-      ))}
-
-      <div className="flex h-[140px] min-w-full flex-1 items-center justify-center rounded border bg-white  lg:lg:min-w-[450px]">
-        <Button
-          disabled={mealPlan.meals.length === 7}
-          variant="outline"
-          onClick={onAddMealClicked}
-        >
-          Add Meal
-        </Button>
-      </div>
-
-      {/* Hack because I want flex wrap but with all elements to maintain their size */}
-      <div className="h-1 flex-1 lg:min-w-[450px]"></div>
-      <div className="h-1 flex-1 lg:min-w-[450px]"></div>
-    </div>
-  </div>
-);
-
 const SelectRecipeItem = ({
   recipe,
   isSelected,
+  onRecipeViewClicked,
   onClick,
 }: {
   recipe: FullRecipe;
   isSelected?: boolean;
+  onRecipeViewClicked: () => void;
   onClick: () => void;
 }) => {
   return (
     <div
       className={clsx(
-        'flex max-h-[120px] min-h-[120px] min-w-full flex-1 cursor-pointer overflow-clip  border-t transition-all ease-in-out last-of-type:border-b lg:max-h-[80px] lg:min-h-[80px]',
-        isSelected ? 'bg-green-50' : 'hover:bg-gray-100'
+        'flex min-w-full flex-1 cursor-pointer overflow-clip border-t last-of-type:border-b'
       )}
-      onClick={() => {
-        onClick();
-      }}
     >
-      <img
-        className="h-auto w-[100px] min-w-[100px]  object-cover"
-        src={
-          recipe.imageUrl !== '' ? recipe.imageUrl ?? '' : defaultRecipeImageUrl
-        }
-        alt={recipe.name}
-      />
-      <div className="flex w-full flex-col p-2">
-        <h3 className="text-sm font-bold">{recipe.name}</h3>
+      <div
+        className="flex max-h-[120px] min-h-[120px] flex-1 hover:bg-gray-100 lg:max-h-[80px] lg:min-h-[80px]"
+        onClick={onRecipeViewClicked}
+      >
+        <img
+          className="h-auto w-[100px] min-w-[100px] object-cover"
+          src={
+            recipe.imageUrl !== ''
+              ? recipe.imageUrl ?? ''
+              : defaultRecipeImageUrl
+          }
+          alt={recipe.name}
+        />
+        <div className="flex w-full flex-col p-2">
+          <h3 className="text-sm font-bold">{recipe.name}</h3>
 
-        <p className="mb-1 text-[10px] italic text-slate-500 ">
-          Created By {recipe.createdBy.fullName}
-        </p>
+          <p className="mb-1 text-[10px] italic text-slate-500 ">
+            Created By {recipe.createdBy.fullName}
+          </p>
 
-        <div className="flex flex-wrap gap-1 lg:gap-2">
-          {recipe.recipeTypes.map((recipeType) => (
-            <div
-              className="flex h-4 w-auto items-center justify-center rounded-full bg-slate-200 p-2 text-[10px] tracking-wide  "
-              key={recipeType.id + recipeType.name + recipeType.icon}
-            >
-              {recipeType.icon}{' '}
-              <span className="ml-2 text-[10px] font-medium">
-                {recipeType.name}
-              </span>
-            </div>
-          ))}
+          <div className="flex flex-wrap gap-1 lg:gap-2">
+            {recipe.recipeTypes.map((recipeType) => (
+              <div
+                className="flex h-4 w-auto items-center justify-center rounded-full bg-slate-200 p-2 text-[10px] tracking-wide  "
+                key={recipeType.id + recipeType.name + recipeType.icon}
+              >
+                {recipeType.icon}{' '}
+                <span className="ml-2 text-[10px] font-medium">
+                  {recipeType.name}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-      <div className="flex min-w-[80px] items-center justify-center">
+
+      <div
+        className={clsx(
+          'flex min-w-[80px] items-center justify-center border-l',
+          isSelected ? 'bg-green-50' : 'hover:bg-gray-100'
+        )}
+        onClick={onClick}
+      >
         {isSelected ? (
           <CheckCircle className="text-green-700" />
         ) : (
@@ -667,11 +722,13 @@ const SelectRecipeItem = ({
 
 const MealRecipeItem = ({
   recipe,
+  index,
+  longestMealPlanLength,
   onClick,
-}: // isSelected,
-{
+}: {
   recipe: FullRecipe;
-  // isSelected?: boolean;
+  index: number;
+  longestMealPlanLength: number;
   onClick: () => void;
 }) => {
   const [isHovering, setIsHovering] = useState(false);
@@ -679,8 +736,10 @@ const MealRecipeItem = ({
   return (
     <div
       className={clsx(
-        'flex max-h-[80px] min-h-[80px] flex-1 overflow-clip border-b transition-all ease-in-out last-of-type:rounded-bl last-of-type:border-none'
-        // isSelected ? 'bg-green-50' : 'hover:bg-gray-100'
+        'flex max-h-[80px] min-h-[80px] flex-1 overflow-clip border-b transition-all ease-in-out last-of-type:rounded-bl ',
+        index + 1 < longestMealPlanLength
+          ? 'last-of-type:border-b-0 lg:last-of-type:border-b'
+          : 'last-of-type:border-b-0'
       )}
       onMouseEnter={() => {
         setIsHovering(true);
@@ -713,16 +772,10 @@ const MealRecipeItem = ({
           ))}
         </div>
       </div>
-      <div
-        onClick={onClick}
-        className={clsx(
-          'flex cursor-pointer items-center justify-center  p-3 ',
-          isHovering ? 'flex' : 'flex lg:hidden'
-        )}
-      >
-        <Button size="icon" variant="ghost" className="text-red-300">
-          <X />
-        </Button>
+      <div onClick={onClick} className={clsx('p-2')}>
+        <div className="cursor-pointer text-red-300 transition-colors ease-in-out hover:text-red-500">
+          <X className="h-4 w-4" />
+        </div>
       </div>
     </div>
   );
