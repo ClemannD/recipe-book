@@ -241,7 +241,7 @@ const MealPlanSelectDialog = ({
         }
       }}
     >
-      <DialogContent className="overflow-auto sm:max-w-[425px]">
+      <DialogContent className="overflow-auto sm:max-w-[525px]">
         <DialogHeader>
           <DialogTitle>Select Meal Plan</DialogTitle>
           <DialogDescription>Select a meal plan to view</DialogDescription>

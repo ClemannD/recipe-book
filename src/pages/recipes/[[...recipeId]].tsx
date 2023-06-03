@@ -22,6 +22,7 @@ const RecipesPage = () => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
   const [firstLoadComplete, setFirstLoadComplete] = useState(false);
+  const [isRefreshingRecipes, setIsRefreshingRecipes] = useState(false);
 
   // Recipe states
   const [recipesToShow, setRecipesToShow] = useState<FullRecipe[] | null>(null);
@@ -39,7 +40,11 @@ const RecipesPage = () => {
     data: recipesData,
     isLoading: recipesAreLoading,
     refetch: refetchRecipes,
-  } = api.recipe.getRecipes.useQuery();
+  } = api.recipe.getRecipes.useQuery(undefined, {
+    onSuccess: () => {
+      setIsRefreshingRecipes(false);
+    },
+  });
 
   const { data: recipeTags, isLoading: recipeTagsAreLoading } =
     api.recipeType.getRecipeTypes.useQuery();
@@ -67,6 +72,14 @@ const RecipesPage = () => {
       setFirstLoadComplete(true);
     }
   }, [recipesData, router.query]);
+
+  useEffect(() => {
+    if (selectedRecipe) {
+      setSelectedRecipe(
+        recipesData?.find((recipe) => recipe.id === selectedRecipe.id) ?? null
+      );
+    }
+  }, [recipesData, selectedRecipe]);
 
   /**
    * Filter the recipes to show based on the search and filter states
@@ -286,6 +299,7 @@ const RecipesPage = () => {
             <RecipeDisplay
               recipe={selectedRecipe}
               isFullscreen={isFullScreen}
+              isFetching={isRefreshingRecipes}
               onClose={() => {
                 setIsExpanded(false);
                 setIsFullScreen(false);
@@ -328,12 +342,9 @@ const RecipesPage = () => {
               }}
               onSuccess={async () => {
                 setEditingRecipe(null);
+                setIsRefreshingRecipes(true);
+
                 await refetchRecipes();
-                setSelectedRecipe(
-                  recipesData?.find(
-                    (recipe) => recipe.id === selectedRecipe?.id
-                  ) ?? null
-                );
               }}
               onDelete={async () => {
                 setEditingRecipe(null);

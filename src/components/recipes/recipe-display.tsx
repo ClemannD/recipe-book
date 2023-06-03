@@ -9,6 +9,7 @@ const RecipeDisplay = ({
   recipe,
   isFullscreen,
   isOnPublicPage = false,
+  isFetching = false,
   onClose,
   onEditClick = () => {},
   onFullscreenClick,
@@ -16,6 +17,7 @@ const RecipeDisplay = ({
   recipe: FullRecipe | null;
   isFullscreen?: boolean;
   isOnPublicPage?: boolean;
+  isFetching?: boolean;
   onClose: () => void;
   onEditClick?: () => void;
   onFullscreenClick: () => void;
@@ -61,7 +63,12 @@ const RecipeDisplay = ({
               <div className="mb-3 flex items-center justify-between">
                 <div>
                   <h2 className=" font-merri text-2xl font-bold">
-                    {recipe.name}{' '}
+                    {recipe.name}
+                    {isFetching && (
+                      <span className="ml-2 animate-pulse font-sans text-sm">
+                        Loading...
+                      </span>
+                    )}
                   </h2>
                   <p className="text-xs italic text-slate-500">
                     Created By {recipe.createdBy?.fullName} - Last Updated{' '}

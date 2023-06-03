@@ -22,9 +22,13 @@ const RecipeCard = ({
       onClick={() => {
         if (navigateOnClick) {
           if (isOnPublicPage) {
-            void router.replace(`/shared-recipes/${recipe.id}`);
+            void router.replace(`/shared-recipes/${recipe.id}`, undefined, {
+              scroll: false,
+            });
           } else {
-            void router.replace(`/recipes/${recipe.id}`);
+            void router.replace(`/recipes/${recipe.id}`, undefined, {
+              scroll: false,
+            });
           }
         }
 

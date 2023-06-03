@@ -42,12 +42,14 @@ const SharedRecipesPage = () => {
         setIsExpanded(true);
         setSelectedRecipe(foundRecipe);
       } else {
-        void router.push('/recipes');
+        void router.push('/recipes', undefined, {
+          scroll: false,
+        });
       }
 
       setFirstLoadComplete(true);
     }
-  }, [recipesData, router.query]);
+  }, [firstLoadComplete, recipesData, router, router.query]);
 
   /**
    * Filter the recipes to show based on the search and filter states
@@ -140,7 +142,9 @@ const SharedRecipesPage = () => {
           onClose={() => {
             setIsExpanded(false);
             setIsFullScreen(false);
-            void router.push('/shared-recipes');
+            void router.push('/shared-recipes', undefined, {
+              scroll: false,
+            });
           }}
           onFullscreenClick={() => setIsFullScreen(!isFullScreen)}
         />
