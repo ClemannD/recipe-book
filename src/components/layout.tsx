@@ -45,7 +45,7 @@ const Layout = (props: { children: React.ReactNode; title?: string }) => {
 
         <div
           className={clsx(
-            'width-screen overflow-x-hidden transition duration-100 ease-in-out',
+            'width-screen overflow-x-hidden transition-all duration-100 ease-in-out',
             desktopNavbarExpanded ? 'lg:pl-56' : 'lg:pl-20'
           )}
         >

@@ -202,7 +202,7 @@ const RecipesPage = () => {
             {recipeTags?.map((recipeType) => (
               <div
                 className={clsx(
-                  'flex h-6 w-auto cursor-pointer items-center justify-center rounded-full p-2 text-sm tracking-wide transition ease-in-out hover:scale-105',
+                  'flex h-6 w-auto cursor-pointer items-center justify-center rounded-full p-2 text-sm tracking-wide transition-all ease-in-out hover:scale-105',
                   recipeTypeFilter?.includes(recipeType.id)
                     ? 'bg-slate-900 text-white'
                     : 'border bg-white'

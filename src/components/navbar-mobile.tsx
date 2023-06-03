@@ -18,7 +18,7 @@ const NavbarMobile = () => {
   return (
     <div
       className={clsx(
-        'sticky left-0 top-0 z-50 flex w-full transform flex-col overflow-hidden border-b bg-white transition duration-300 ease-in-out lg:hidden',
+        'sticky left-0 top-0 z-50 flex w-full transform flex-col overflow-hidden border-b bg-white transition-all duration-300 ease-in-out lg:hidden',
         isExpanded ? 'h-screen max-h-screen' : 'h-14'
       )}
     >

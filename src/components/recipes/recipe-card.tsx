@@ -18,7 +18,7 @@ const RecipeCard = ({
 
   return (
     <div
-      className="flex max-h-[110px] min-h-[110px] min-w-[300px] flex-1 cursor-pointer rounded border bg-white transition ease-in-out hover:scale-[1.02] lg:min-w-[400px]"
+      className="flex max-h-[110px] min-h-[110px] min-w-[300px] flex-1 cursor-pointer rounded border bg-white transition-all ease-in-out hover:scale-[1.02] lg:min-w-[400px]"
       onClick={() => {
         if (navigateOnClick) {
           if (isOnPublicPage) {

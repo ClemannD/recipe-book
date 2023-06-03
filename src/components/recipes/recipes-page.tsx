@@ -33,7 +33,7 @@ const RecipesPageLayout = ({
       <div className="relative flex">
         <div
           className={clsx(
-            ` transition- w-screen flex-grow p-4 pb-12 duration-300 ease-in-out lg:w-[550px] lg:p-10`
+            ` w-screen flex-grow p-4 pb-12 transition-all duration-300 ease-in-out lg:w-[550px] lg:p-10`
             // isExpanded ? 'overflow-hidden' : ''
           )}
         >
@@ -44,7 +44,7 @@ const RecipesPageLayout = ({
         <div
           className={cn(
             clsx(
-              `hidden h-screen max-h-screen max-w-[700px] transition duration-300 ease-in-out lg:block`,
+              `hidden h-screen max-h-screen max-w-[700px] transition-all duration-300 ease-in-out lg:block`,
               isExpanded ? 'w-[600px] min-w-[600px]' : 'w-0 min-w-0'
             )
           )}
@@ -53,7 +53,7 @@ const RecipesPageLayout = ({
         <div
           className={cn(
             clsx(
-              `fixed top-0 z-50 h-screen  max-w-[700px] overflow-y-auto  bg-white transition duration-300 ease-in-out`,
+              `fixed top-0 z-50 h-screen  max-w-[700px] overflow-y-auto  bg-white transition-all duration-300 ease-in-out`,
               isExpanded
                 ? isFullScreen
                   ? 'right-0 w-full min-w-full'

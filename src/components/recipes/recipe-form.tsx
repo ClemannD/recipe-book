@@ -119,7 +119,7 @@ const RecipeForm = ({
     <div className="p-4 pb-32 lg:p-6">
       <div className="absolute right-0 top-0 p-4">
         <button
-          className="rounded-full border bg-gray-100 p-2 transition-colors ease-in-out hover:bg-gray-200"
+          className="rounded-full border bg-gray-100 p-2 transition-all ease-in-out hover:bg-gray-200"
           onClick={() => onClose()}
         >
           <X></X>
@@ -192,7 +192,7 @@ const RecipeForm = ({
               {recipeTypes?.map((recipeType) => (
                 <div
                   className={clsx(
-                    'flex h-6 w-auto cursor-pointer select-none items-center justify-center  rounded-full bg-slate-50 p-2 text-sm tracking-wide transition ease-in-out hover:scale-105',
+                    'flex h-6 w-auto cursor-pointer select-none items-center justify-center  rounded-full bg-slate-50 p-2 text-sm tracking-wide transition-all ease-in-out hover:scale-105',
                     values.recipeTypeIds.includes(recipeType.id)
                       ? 'border border-slate-200 bg-slate-900 text-white'
                       : 'border bg-slate-200'

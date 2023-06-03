@@ -736,7 +736,7 @@ const MealRecipeItem = ({
   return (
     <div
       className={clsx(
-        'flex max-h-[80px] min-h-[80px] flex-1 overflow-clip border-b transition ease-in-out last-of-type:rounded-bl ',
+        'flex max-h-[80px] min-h-[80px] flex-1 overflow-clip border-b transition-all ease-in-out last-of-type:rounded-bl ',
         index + 1 < longestMealPlanLength
           ? 'last-of-type:border-b-0 lg:last-of-type:border-b'
           : 'last-of-type:border-b-0'

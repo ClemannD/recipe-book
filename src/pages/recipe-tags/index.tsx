@@ -100,7 +100,7 @@ const RecipeTagBox = ({
         'min-w-full flex-1 rounded border bg-white lg:min-w-[375px]',
         recipeTag &&
           !isEditing &&
-          'cursor-pointer transition ease-in-out hover:scale-[1.02]'
+          'cursor-pointer transition-all ease-in-out hover:scale-[1.02]'
       )}
       onClick={() => {
         setIsEditing(true);
@@ -246,7 +246,7 @@ const RecipeTagForm = ({
               >
                 <PopoverTrigger className="mr-4 ">
                   <div
-                    className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 p-2 text-3xl transition ease-in-out hover:scale-105"
+                    className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-200 p-2 text-3xl transition-all ease-in-out hover:scale-105"
                     onClick={(e) => {
                       setIsPopoverOpen(!isPopoverOpen);
                       e.stopPropagation();
