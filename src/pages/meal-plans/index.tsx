@@ -206,7 +206,7 @@ const MealRecipeItem = ({ recipe }: { recipe: FullRecipe }) => {
   return (
     <div
       className={clsx(
-        'flex max-h-[80px] min-h-[80px] flex-1 cursor-pointer overflow-clip  transition-all ease-in-out  hover:bg-slate-100'
+        'flex max-h-[80px] min-h-[80px] flex-1 cursor-pointer overflow-clip  transition ease-in-out  hover:bg-slate-100'
       )}
     >
       <img

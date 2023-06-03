@@ -102,7 +102,7 @@ const Button = ({
         border-none
         p-0
         text-base
-        transition-all
+        transition-colors
         ease-in-out
         ${appearanceStyles[appearance]}
         ${sizeStyles[size]}

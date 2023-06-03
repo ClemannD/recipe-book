@@ -28,7 +28,7 @@ const Navbar = () => {
   return (
     <div
       className={clsx(
-        'hidden h-screen flex-col overflow-hidden whitespace-nowrap border-r bg-white transition-all duration-100 ease-in-out lg:flex',
+        'hidden h-screen flex-col overflow-hidden whitespace-nowrap border-r bg-white transition duration-100 ease-in-out lg:flex',
         navbarState.desktopNavbarExpanded
           ? 'w-56 min-w-[224px]'
           : 'w-20 min-w-[80px]'

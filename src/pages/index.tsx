@@ -240,7 +240,7 @@ const Home: NextPage = () => {
           {defaultRecipeTypes.map((recipeType, index) => (
             <div
               className={clsx(
-                'flex h-6 w-auto items-center justify-center rounded-full border bg-slate-100 p-2 tracking-wide transition-all duration-200 ease-in-out lg:h-8 lg:text-lg',
+                'flex h-6 w-auto items-center justify-center rounded-full border bg-slate-100 p-2 tracking-wide transition duration-200 ease-in-out lg:h-8 lg:text-lg',
                 highlightedRecipeTypes.includes(recipeType) &&
                   'scale-105 border-transparent bg-slate-950 text-white'
               )}
