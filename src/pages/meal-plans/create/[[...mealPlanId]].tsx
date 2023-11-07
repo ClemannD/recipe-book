@@ -30,6 +30,7 @@ const CreateMealPlanPage = () => {
   const { toast, dismiss } = useToast();
   const router = useRouter();
 
+  const [search, setSearch] = useState('');
   const [hasFetched, setHasFetched] = useState(false);
   const [initialized, setInitialized] = useState(false);
   const [editingMealPlanId, setEditingMealPlanId] = useState<string | null>(
@@ -333,6 +334,10 @@ const CreateMealPlanPage = () => {
                     ) ?? []
                   : []
               }
+              search={search}
+              onSearchChanged={(search: string) => {
+                setSearch(search);
+              }}
               onCloseClicked={() => {
                 setSelectedMealIndex(null);
               }}
@@ -522,20 +527,23 @@ const RecipesSelectWindow = ({
   recipesData,
   publicRecipesData,
   selectedRecipeIds,
+  search,
   onRecipeViewClicked,
   onRecipeClicked,
   onCloseClicked,
+  onSearchChanged,
 }: {
   selectedMealIndex: number;
   recipesData: FullRecipe[] | undefined;
   publicRecipesData: FullRecipe[] | undefined;
   selectedRecipeIds: string[];
+  search: string;
   onRecipeViewClicked: (recipe: FullRecipe) => void;
   onRecipeClicked: (recipe: FullRecipe) => void;
   onCloseClicked?: () => void;
+  onSearchChanged: (search: string) => void;
 }) => {
   //Recipe search and filter states
-  const [search, setSearch] = useState('');
   const [showPublicRecipes, setShowPublicRecipes] = useState(true);
   const [recipesToShow, setRecipesToShow] = useState<FullRecipe[] | null>(null);
 
@@ -616,7 +624,7 @@ const RecipesSelectWindow = ({
             value={search}
             className="w-full"
             onChange={(e) => {
-              setSearch(e.target.value);
+              onSearchChanged(e.target.value);
             }}
           />
         </div>
