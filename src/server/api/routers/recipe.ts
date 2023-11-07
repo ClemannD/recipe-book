@@ -157,7 +157,7 @@ export const recipeRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string().min(1).max(500),
-        instructions: z.string().min(1).max(2500).optional(),
+        instructions: z.string().max(2500).optional(),
         imageUrl: z.string().min(1).max(500).optional(),
         isPublic: z.boolean().optional(),
         recipeTypeIds: z.array(z.string()).optional(),
