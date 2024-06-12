@@ -10,6 +10,11 @@ export default function Document() {
           href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&display=swap"
           rel="stylesheet"
         />
+        <script
+          defer
+          src="https://umami.clemann.app/script.js"
+          data-website-id="80cbc138-1917-4a84-a271-2075b6a0c288"
+        ></script>
       </Head>
       <body>
         <Main />
